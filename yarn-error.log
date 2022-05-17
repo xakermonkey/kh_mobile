@@ -1,0 +1,70 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/bin/yarn add react-native-reanimated react-native-gesture-handler
+
+PATH: 
+  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/VMware Fusion.app/Contents/Public:/Library/Apple/usr/bin:/Users/antonsimakov/Users/antonsimakov/Library/Android/sdk/platform-tools:/Users/antonsimakov/Library/Android/sdk/platform-tools
+
+Yarn version: 
+  1.22.17
+
+Node version: 
+  14.17.6
+
+Platform: 
+  darwin x64
+
+Trace: 
+  Error: getaddrinfo ENOTFOUND registry.yarnpkg.com
+      at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:69:26)
+
+npm manifest: 
+  {
+    "name": "bag_client",
+    "version": "1.0.0",
+    "main": "node_modules/expo/AppEntry.js",
+    "scripts": {
+      "start": "expo start",
+      "android": "expo start --android",
+      "ios": "expo start --ios",
+      "web": "expo start --web",
+      "eject": "expo eject"
+    },
+    "dependencies": {
+      "@expo-google-fonts/inter": "^0.2.0",
+      "@expo/vector-icons": "^12.0.0",
+      "@gorhom/bottom-sheet": "4",
+      "@haskkor/react-native-pincode": "^1.22.6",
+      "@react-native-community/datetimepicker": "3.5.2",
+      "@react-navigation/native": "^6.0.6",
+      "@react-navigation/native-stack": "^6.2.5",
+      "axios": "^0.26.1",
+      "expo": "~43.0.2",
+      "expo-app-loading": "~1.2.1",
+      "expo-image-picker": "~11.0.3",
+      "expo-linear-gradient": "~10.0.3",
+      "expo-local-authentication": "~12.0.1",
+      "expo-status-bar": "~1.1.0",
+      "react": "17.0.1",
+      "react-dom": "17.0.1",
+      "react-native": "0.64.3",
+      "react-native-biometrics": "^2.1.4",
+      "react-native-bouncy-checkbox": "^2.1.10",
+      "react-native-elements": "^3.4.2",
+      "react-native-gesture-handler": "~1.10.2",
+      "react-native-reanimated": "~2.2.0",
+      "react-native-safe-area-context": "^3.3.2",
+      "react-native-screens": "~3.8.0",
+      "react-native-simple-radio-button": "^2.7.4",
+      "react-native-web": "0.17.1"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.12.9"
+    },
+    "private": true
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
