@@ -2,16 +2,20 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react'
 import { Appearance, useColorScheme, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'; 
+import MaskInput, {formatWithMask} from 'react-native-mask-input';
+import axios from 'axios';
+import { domain } from '../domain';
 
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({navigation, route}) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
 
-    const [number, setNumber] = useState('+7');
+    const [number, setNumber] = useState(route.params.code);
+    const [mask, setMask] = useState([...route.params.code.split(""), " ", '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/ ]);
 
 
     const Click = (num) => {
@@ -25,11 +29,14 @@ const LoginScreen = ({navigation}) => {
     };
 
     useEffect(() => {
-        if (number.length === 12) {
-            navigation.navigate('code', { 'login': number })
+        if (number.length === route.params.code.length + 10) {
+            axios.post(domain + "/login", {"number": number})
+            .then((res) => {
+                navigation.navigate('code', { 'login': number})
+            })
+            
         }
-    }, [number])
-
+    }, [number, mask])
 
     return (
        <SafeAreaView style={[styles.container, themeContainerStyle]} >
@@ -38,8 +45,8 @@ const LoginScreen = ({navigation}) => {
            <Text style={[styles.subtext, themeSubTextStyle]} >Введите номер телефона, </Text>
            <Text style={[styles.subsubtext, themeSubTextStyle]} >чтобы войти в существующий аккаунт </Text>
            <Text style={[styles.subsubtext, themeSubTextStyle]} >или создать новый</Text>
-            <TextInput autoFocus style={[styles.inputText, themeTextStyle]} showSoftInputOnFocus={false} value={number} />
-            <View style={styles.keyboard}>
+            <MaskInput autoFocus style={[styles.inputText, themeTextStyle]} mask={mask} showSoftInputOnFocus={false} value={number} />
+            <View style={styles.keyboard}>                
                 <View style={styles.row} >
                     <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('1')}  ><Text style={[styles.num, themeTextStyle]} >1</Text></TouchableOpacity>
                     <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('2')}><Text style={[styles.num, themeTextStyle]}>2</Text></TouchableOpacity>
@@ -96,7 +103,7 @@ const styles = StyleSheet.create({
     },
     keyboard:{
         width: '85%',
-        marginTop: '25%'
+        marginTop: '15%'
     },
     row:{
         flexDirection: 'row',

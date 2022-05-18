@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
-const BiometricScreen = ({navigation}) => {
+const BiometricScreen = ({ navigation }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
@@ -16,14 +16,14 @@ const BiometricScreen = ({navigation}) => {
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
 
-    const [title,setTitle] = useState('');
-    const [image,setImage] = useState();
+    const [title, setTitle] = useState('');
+    const [image, setImage] = useState();
     const [textBtn, settextBtn] = useState('')
 
 
     useEffect(() => {
-        LocalAuthentication.supportedAuthenticationTypesAsync().then((type)=>{
-            if (type.indexOf(1) != -1){
+        LocalAuthentication.supportedAuthenticationTypesAsync().then((type) =>{
+            if (type.indexOf(1) != -1) {
                 setTitle('Использовать отпечаток пальца');
                 settextBtn('Использовать Touch ID');
                 if (colorScheme === 'light') {
@@ -31,7 +31,7 @@ const BiometricScreen = ({navigation}) => {
                 } else {
                     setImage(require('../assets/images/fingerprint_white.png'));
                 }
-            }else if (type.indexOf(2) != -1){
+            } else if (type.indexOf(2) != -1) {
                 setTitle('Использовать сканирование лица');
                 settextBtn('Использовать Face ID');
                 if (colorScheme === 'light') {
@@ -45,19 +45,19 @@ const BiometricScreen = ({navigation}) => {
 
     const Biomentric = (press) => {
         AsyncStorage.setItem("biometric", press.toString()).then(() => {
-            navigation.replace('document')
-    })
-}
+            navigation.replace('last_name')
+        })
+    }
 
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]}>
-            <StatusBar/>
+            <StatusBar />
             <Image style={styles.img} source={image} />
             {/* <View style={[styles.circle, themeContainerSelectStyle]} ></View> */}
             <Text style={[styles.title, themeTextStyle]} >{title}</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>для быстрого входа в приложение</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>без ввода ПИН-кода?</Text>
-            <Button title={textBtn} onPress={() => Biomentric(false)} titleStyle={styles.text_primary}  containerStyle={styles.primary_btn} buttonStyle={styles.primary} />
+            <Button title={textBtn} onPress={() => Biomentric(false)} titleStyle={styles.text_primary} containerStyle={styles.primary_btn} buttonStyle={styles.primary} />
             <Button title="Пропустить" onPress={() => navigation.navigate('document')} titleStyle={[styles.text_secondary, themeBtn]} containerStyle={styles.secondary_btn} buttonStyle={[styles.secondary, themeContainerSelectStyle]} />
         </SafeAreaView>
     )
@@ -66,64 +66,64 @@ const BiometricScreen = ({navigation}) => {
 export default BiometricScreen
 
 const styles = StyleSheet.create({
-    container:{
+    container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-end',
         height: '100%',
     },
-    img:{
+    img: {
         position: 'absolute',
         top: '25%'
     },
-    circle:{
+    circle: {
         position: 'absolute',
         top: '35%',
         width: 128,
         height: 128,
         borderRadius: 128,
     },
-    title:{
+    title: {
         fontFamily: "Inter_800ExtraBold",
         fontSize: 24,
         width: '75%',
         textAlign: 'center',
         marginBottom: 8
     },
-    subtext:{
+    subtext: {
         fontSize: 16,
         fontFamily: "Inter_500Medium",
     },
-    primary_btn:{
+    primary_btn: {
         width: '80%',
         borderRadius: 12,
         marginTop: '25%',
         marginBottom: 12
     },
-    primary:{
+    primary: {
         backgroundColor: '#F5CB57',
         paddingVertical: 15
     },
-    secondary_btn:{
+    secondary_btn: {
         width: '80%',
         borderRadius: 12,
         marginBottom: 10,
     },
-    secondary:{
+    secondary: {
         paddingVertical: 15,
     },
-    text_primary:{
+    text_primary: {
         fontSize: 14,
         fontFamily: "Inter_700Bold",
-        color:"#000000",
+        color: "#000000",
     },
-    text_secondary:{
+    text_secondary: {
         fontSize: 14,
         fontFamily: "Inter_700Bold"
     },
 
 
-    
+
     lightContainer: {
         color: "#0C0C0D7A",
     },

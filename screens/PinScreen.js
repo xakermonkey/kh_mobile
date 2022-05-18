@@ -30,26 +30,28 @@ const PinScreen = ({navigation}) => {
 
     useEffect(() =>{
         if (pin.length == 4){
-            AsyncStorage.getItem("pin")
-            .then((verify) => {
-                if (verify == pin){
-                    AsyncStorage.getItem("full_document").then((doc) => {
-                        if (doc == "true"){
-                            AsyncStorage.getItem("airport").then((airport) => {
-                                if (airport != null){
-                                    navigation.replace("select_terminal");
-                                }else{
-                                    navigation.replace("select_airport");
-                                }  
-                            })
+            (async () => {
+                const pin = await AsyncStorage.getItem("pin");
+                if (pin = verify){
+                    const doc = await AsyncStorage.getItem("first_join");
+                    if (doc == "true"){
+                        const airport = await AsyncStorage.getItem("airport");
+                        if (airport != null){
+                            navigation.replace("select_terminal", {"title":airport});
+                            return 0;
                         }else{
-                            navigation.replace("document");
+                            navigation.replace("select_airport");
+                            return 0;
                         }
-                    })
+                    }else{
+                        navigation.replace("last_name");
+                        return 0;
+                    }
                 }else{
                     setBad(true);
+                    return 0;
                 }
-            })
+            })();
         }else{
             setBad(false);
         }

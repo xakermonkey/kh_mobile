@@ -4965,6 +4965,11 @@
   "resolved" "https://registry.npmjs.org/react-native-keychain/-/react-native-keychain-6.2.0.tgz"
   "version" "6.2.0"
 
+"react-native-mask-input@^1.2.0":
+  "integrity" "sha512-0bLJ9Szlly4tt59RrbLBS5TSJAGVoH22Hpka85HQ3q4qy10AH+UkcDkozXEonSY5oJK6sobnmzKQ4px5+mkCWg=="
+  "resolved" "https://registry.npmjs.org/react-native-mask-input/-/react-native-mask-input-1.2.0.tgz"
+  "version" "1.2.0"
+
 "react-native-ratings@8.0.4":
   "integrity" "sha512-Xczu5lskIIRD6BEdz9A0jDRpEck/SFxRqiglkXi0u67yAtI1/pcJC76P4MukCbT8K4BPVl+42w83YqXBoBRl7A=="
   "resolved" "https://registry.npmjs.org/react-native-ratings/-/react-native-ratings-8.0.4.tgz"

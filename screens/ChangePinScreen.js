@@ -17,6 +17,19 @@ const ChangePinScreen = ({navigation}) => {
     const [secondPin, setSecondPin] = useState('');
     const [bFirst, setFirst] = useState(false);
 
+    useEffect(() =>{
+        if (firstPin.length === 4){
+            setFirst(true);
+        }else{
+            setFirst(false);
+        }
+        if (firstPin.length === 4 && secondPin.length === 4 && firstPin == secondPin){
+            AsyncStorage.setItem("pin", firstPin).then(() => navigation.replace('biometric'))
+        } else if(firstPin.length === 4 && secondPin.length == 4 && firstPin != secondPin){
+            // Error
+        }
+    })
+
     const Click = (num) => {
         if (num === 'del'){
             if (firstPin.length <= 4 && secondPin.length === 0){
@@ -27,25 +40,11 @@ const ChangePinScreen = ({navigation}) => {
         }else{
             if (firstPin.length < 4){
                 setFirstPin(firstPin + num);
-            }else{
+            }else if (secondPin.length < 4){
                 setSecondPin(secondPin + num);
             }
         }
     }
-
-    useEffect(() =>{
-        if (firstPin.length === 4){
-            setFirst(true);
-        }else{
-            setFirst(false);
-        }
-        if (firstPin.length === 4 && secondPin.length === 4 && firstPin == secondPin){
-            AsyncStorage.setItem("pin", firstPin).then(() => navigation.navigate('biometric'))
-        } else if(firstPin.length === 4 && secondPin.length == 4 && firstPin != secondPin){
-            // Error
-        }
-    })
-
 
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]}>

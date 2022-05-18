@@ -27,7 +27,19 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.flydata.Keepit"
+      "bundleIdentifier": "com.flydata.Keepit",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes on event tickets.",
+        "NSFaceIDUsageDescription": "Enabling Face ID allows you quick and secure access to your account.",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true,
+          "NSAllowsArbitraryLoadsForMedia": true,
+          "NSAllowsLocalNetworking": true,
+          "UIBackgroundModes": [
+            "audio"
+          ]
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {

@@ -32,38 +32,30 @@ const CodeScreen = ({navigation, route}) => {
     };
 
     useEffect(() => {
-        if (code.length === 4) { 
-            navigation.navigate("changepin")
-            axios.post(domain + "/activate_sms", { 'phone_number': route.params.login, 'activate_code': code })
-                .then((res) => {
-                    console.log(res.data);
-                    if (res.data.message == "Код из смс не верен") {
-                        setVerify(false);
-                    } else {
-                        AsyncStorage.setItem("token", res.data.accessToken);
-                        AsyncStorage.setItem("refreshToken", res.data.refreshToken);
-                        AsyncStorage.getItem('pin').then((pin) => {
-                            if (pin == null){
-                                navigation.replace('changepin');
-                            }else{
-                                AsyncStorage.getItem("biometric").then((bio) => {
-                                    if (bio == null){
-                                        navigation.replace("biometric");
-                                    }else{
-                                        navigation.replace('pin');
-                                    }
-                                })
-                                
-                            }
-                        })
+        if (code.length === 4) {
+            (async () => {
+                try{
+                    const res = await axios.post(domain + "/set_code", { 'number': route.params.login, 'code': code })
+                    await AsyncStorage.setItem("token", res.data.token);
+                    const pin = await AsyncStorage.getItem('pin');
+                    const biometric = await AsyncStorage.getItem("biometric");
+                    if (pin == null) {
+                        navigation.replace('changepin');
+                        return 0;
                     }
-
-
-                }).catch((err) => {
+                    if (biometric == null) {
+                        navigation.replace("biometric");
+                        return 0;
+                    }
+                    navigation.replace("pin");
+                    return 0;
+                }
+                catch (err) {
                     console.log(err);
-                    setVerify(false)
-                })
-
+                    setVerify(false);
+                    return 0;
+                }
+            })();
         }
         else if (code.length < 4 && !verify) {
             setVerify(true);
