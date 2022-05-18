@@ -64,7 +64,7 @@ const InputPatronymicScreen = ({ navigation }) => {
         } else {
             AsyncStorage.setItem("patronymic", text)
                 .then(() => {
-                    navigation.navigate("birthday")
+                    navigation.navigate("birthday");
                 })
         }
     }

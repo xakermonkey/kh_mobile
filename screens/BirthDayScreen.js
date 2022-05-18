@@ -1,9 +1,10 @@
 import React, { useLayoutEffect, useState } from 'react'
-import { Appearance, useColorScheme, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { Appearance, useColorScheme, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native'
 import { Button } from 'react-native-elements'
 import { AntDesign } from '@expo/vector-icons'; 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MaskInput from 'react-native-mask-input';
 
 const BirthDayScreen = ({navigation}) => {
     const colorScheme = useColorScheme();
@@ -25,28 +26,50 @@ const BirthDayScreen = ({navigation}) => {
                 return(<TouchableOpacity activeOpacity={0.5} onPress={Pass} ><Text style={[{fontSize: 16, fontFamily: "Inter_800ExtraBold" }, themeTextStyle]} >Пропустить</Text></TouchableOpacity>)
             }
         })
+        AsyncStorage.getItem('birthday').then(bd => {
+            if (bd != null){
+                navigation.replace('type_doc');
+            }
+        })
     }, [navigation])
 
-    const [date, setDate] = useState(new Date(1598051730000));
+    const [date, setDate] = useState("");
 
-    const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setDate(currentDate);
-      };
-
-      const Pass = () => {
-        AsyncStorage.setItem("birthday", "")
-        .then(() => {
-            navigation.navigate("how_get")
-        })
-    } 
+    const Pass = async () => {
+        const token = await AsyncStorage.getItem("token");
+        const first_name = await AsyncStorage.getItem("first_name");
+        const last_name = await AsyncStorage.getItem("last_name");
+        const patronymic = await AsyncStorage.getItem("patronymic");
+        const data = new FormData();
+        data.append("last_name", last_name);
+        data.append("first_name", first_name);
+        data.append("patronymic", patronymic);
+        const res = await fetch(domain + "/set_document",
+            {
+                method: "POST",
+                body: data,
+                headers: {
+                    "Authorization": "Token " + token,
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+        const res_json = await res.json();
+        if (res_json.ok == "ok") {
+            await AsyncStorage.setItem("first_join", "true");
+            navigation.navigate("select_airport");
+        }
+    }
 
 
     const setDoc = () => {
-        AsyncStorage.setItem("birthday",date.toString())
+        if (/[0-9]{2}.[0-9]{2}.[0-9]{4}/.test(date)) {
+            const dt = new Date(date.split(".")[2], date.split(".")[1], date.split(".")[0])
+            AsyncStorage.setItem("birthday",dt.getTime().toString())
         .then(() => {
-            navigation.navigate("how_get")
+            navigation.navigate("type_doc");
         })
+        }
     }
 
     return (
@@ -54,17 +77,8 @@ const BirthDayScreen = ({navigation}) => {
             <Text style={[styles.title, themeTextStyle]} >Введите паспортные данные</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>для ускорения обслуживания и получения</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>дополнительных привилегий</Text>
-            <Text style={[styles.label, themeTextStyle]} >Дата рождения</Text>
-            <DateTimePicker
-                style={styles.picker}
-                value={date}
-                mode="date"
-                is24Hour={true}
-                display="spinner"
-                onChange={onChange}
-                textColor={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                locale="ru-RU"
-                />
+            <Text style={[styles.label, themeTextStyle]} >Дата рождения (в формате ДД.ММ.ГГГГ)</Text>
+            <TextInput autoFocus value={date} style={[styles.inputtext, themeTextStyle]} onChangeText={(text) => setDate(text)} />
             <KeyboardAvoidingView behavior='padding' style={styles.row}>
                 <TouchableOpacity activeOpacity={0.5}>
                     <Text style={[styles.subtext, themeTextStyle]} >Зачем нам ваши </Text>
@@ -110,6 +124,11 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         textAlign: 'left',
+    },
+    inputtext: {
+        fontSize: 32,
+        fontFamily: "Inter_800ExtraBold",
+        marginBottom: '35%'
     },
     btn:{
         backgroundColor: '#F5CB58',

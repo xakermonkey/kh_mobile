@@ -55,9 +55,11 @@ const InputFirstNameScreen = ({ navigation }) => {
         }
     }
     const [text, setText] = useState('')
+    const [bad, setBad] = useState(false);
 
     const setDoc = async () => {
-        if (/[0-9]/.test(text)) {
+        if (/[^А-Яа-я]/.test(text)) {
+            console.log("Error!");2
             setBad(true);
         } else {
             await AsyncStorage.setItem("first_name", text);

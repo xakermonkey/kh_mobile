@@ -28,25 +28,48 @@ const DocumentScreen = ({navigation}) => {
         AsyncStorage.getItem("number_doc")
         .then((number) => {
             if (number != null){
-                navigation.replace("last_name")
+                navigation.replace("how_get")
             }
         })
     }, [navigation])
 
     const [text, setText] = useState('')
 
-    const Pass = () => {
-        AsyncStorage.setItem("number_doc", "")
-        .then(() => {
-            navigation.navigate("last_name")
-        })
-    } 
+    const Pass = async () => {
+        const token = await AsyncStorage.getItem("token");
+        const first_name = await AsyncStorage.getItem("first_name");
+        const last_name = await AsyncStorage.getItem("last_name");
+        const patronymic = await AsyncStorage.getItem("patronymic");
+        const birthday = await AsyncStorage.getItem("birthday");
+        const type_doc = await AsyncStorage.getItem("type_doc");
+        const data = new FormData();
+        data.append("last_name", last_name);
+        data.append("first_name", first_name);
+        data.append("patronymic", patronymic);
+        data.append("birthday", birthday);
+        data.append("type_doc", type_doc);
+        const res = await fetch(domain + "/set_document",
+            {
+                method: "POST",
+                body: data,
+                headers: {
+                    "Authorization": "Token " + token,
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+        const res_json = await res.json();
+        if (res_json.ok == "ok") {
+            await AsyncStorage.setItem("first_join", "true");
+            navigation.navigate("select_airport");
+        }
+    }
 
 
     const setDoc = () => {
         AsyncStorage.setItem("number_doc",text)
         .then(() => {
-            navigation.navigate("last_name")
+            navigation.navigate("how_get")
         })
     }
     useEffect(()=>{

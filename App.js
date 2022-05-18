@@ -36,6 +36,7 @@ import SelectTransportCompany from './screens/SelectTransportCompany';
 import Profile from './screens/Profile/Profile';
 import AddCard from './screens/Profile/AddCard';
 import PaymentMethods from './screens/Profile/PaymentMethods';
+import TypeDocScreen from './screens/TypeDocScreen';
 
 
 const Stack = createNativeStackNavigator()
@@ -69,6 +70,7 @@ function App() {
         <Stack.Screen name='first_name' component={InputFirstNameScreen} />
         <Stack.Screen name='patronymic' component={InputPatronymicScreen} />
         <Stack.Screen name='birthday' component={BirthDayScreen} />
+        <Stack.Screen name='type_doc' component={TypeDocScreen} />
         <Stack.Screen name='how_get' component={HowGetScreen} />
         <Stack.Screen name='date_get' component={DateGetScreen} />
         <Stack.Screen name='input_image' component={ImageScreen} />

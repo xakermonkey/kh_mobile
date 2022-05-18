@@ -31,8 +31,8 @@ const PinScreen = ({navigation}) => {
     useEffect(() =>{
         if (pin.length == 4){
             (async () => {
-                const pin = await AsyncStorage.getItem("pin");
-                if (pin = verify){
+                const verify = await AsyncStorage.getItem("pin");
+                if (pin == verify){
                     const doc = await AsyncStorage.getItem("first_join");
                     if (doc == "true"){
                         const airport = await AsyncStorage.getItem("airport");

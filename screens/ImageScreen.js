@@ -52,79 +52,78 @@ const ImageScreen = ({navigation}) => {
     }
 
     const Pass = async () => {
-        await AsyncStorage.setItem("avatar", "");
         const token = await AsyncStorage.getItem("token");
         const first_name = await AsyncStorage.getItem("first_name");
         const last_name = await AsyncStorage.getItem("last_name");
         const patronymic = await AsyncStorage.getItem("patronymic");
-        const numberDoc = await AsyncStorage.getItem("number_doc");
-
-        let birthday = await AsyncStorage.getItem("birthday");
-        if (birthday != ""){
-            birthday = new Date(birthday);
-            birthday = `${birthday.getFullYear()}-${birthday.getMonth()}-${birthday.getDate()}`;
-        }
+        const birthday = await AsyncStorage.getItem("birthday");
+        const type_doc = await AsyncStorage.getItem("type_doc");
+        const number_doc = await AsyncStorage.getItem("number_doc");
         const how_get = await AsyncStorage.getItem("how_get");
-        let date_get = await AsyncStorage.getItem("date_get");
-        if (date_get != ""){
-            date_get = new Date(date_get);
-            date_get = `${date_get.getFullYear()}-${date_get.getMonth()}-${date_get.getDate()}`;
+        const date_get = await AsyncStorage.getItem("date_get");
+        const data = new FormData();
+        data.append("last_name", last_name);
+        data.append("first_name", first_name);
+        data.append("patronymic", patronymic);
+        data.append("birthday", birthday);
+        data.append("type_doc", type_doc);
+        data.append("series_number", number_doc);
+        data.append("how_get", how_get);
+        data.append("date_get", date_get);
+        const res = await fetch(domain + "/set_document",
+            {
+                method: "POST",
+                body: data,
+                headers: {
+                    "Authorization": "Token " + token,
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+        const res_json = await res.json();
+        if (res_json.ok == "ok") {
+            await AsyncStorage.setItem("first_join", "true");
+            navigation.navigate("select_airport");
         }
-        const res = await axios.post(domain + "/add_user_passport", 
-        {
-            "first_name": first_name,
-            "last_name": last_name,
-            "patronymic": patronymic,
-            "serial": numberDoc == "" ? "" : numberDoc.split(" ")[0],
-            "number": numberDoc == "" ? "" : numberDoc.split(" ")[1],
-            "issued_by": how_get,
-            "photo": "",
-            "birth_day": birthday,
-            "date_of_issue": date_get
-          }, 
-        {headers: {
-            "Autorization": token
-        }});
-        await AsyncStorage.setItem("full_document", "true");
-        navigation.navigate("select_airport")
     }
 
     const setDoc = async () => {
-        await AsyncStorage.setItem("avatar", "");
+        await AsyncStorage.setItem("avatar", img.uri);
         const token = await AsyncStorage.getItem("token");
         const first_name = await AsyncStorage.getItem("first_name");
         const last_name = await AsyncStorage.getItem("last_name");
         const patronymic = await AsyncStorage.getItem("patronymic");
-        const numberDoc = await AsyncStorage.getItem("number_doc");
-
-        let birthday = await AsyncStorage.getItem("birthday");
-        if (birthday != ""){
-            birthday = new Date(birthday);
-            birthday = `${birthday.getFullYear()}-${birthday.getMonth()}-${birthday.getDate()}`;
-        }
+        const birthday = await AsyncStorage.getItem("birthday");
+        const type_doc = await AsyncStorage.getItem("type_doc");
+        const number_doc = await AsyncStorage.getItem("number_doc");
         const how_get = await AsyncStorage.getItem("how_get");
-        let date_get = await AsyncStorage.getItem("date_get");
-        if (date_get != ""){
-            date_get = new Date(date_get);
-            date_get = `${date_get.getFullYear()}-${date_get.getMonth()}-${date_get.getDate()}`;
+        const date_get = await AsyncStorage.getItem("date_get");
+        const data = new FormData();
+        data.append("last_name", last_name);
+        data.append("first_name", first_name);
+        data.append("patronymic", patronymic);
+        data.append("birthday", birthday);
+        data.append("type_doc", type_doc);
+        data.append("series_number", number_doc);
+        data.append("how_get", how_get);
+        data.append("date_get", date_get);
+        data.append("photo", img);
+        const res = await fetch(domain + "/set_document",
+            {
+                method: "POST",
+                body: data,
+                headers: {
+                    "Authorization": "Token " + token,
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+        const res_json = await res.json();
+        if (res_json.ok == "ok") {
+            await AsyncStorage.setItem("first_join", "true");
+            await AsyncStorage.setItem("full_document", "true");
+            navigation.navigate("select_airport");
         }
-        const res = await axios.post(domain + "/add_user_passport", 
-        {
-            "first_name": first_name,
-            "last_name": last_name,
-            "patronymic": patronymic,
-            "serial": numberDoc == "" ? "" : numberDoc.split(" ")[0],
-            "number": numberDoc == "" ? "" : numberDoc.split(" ")[1],
-            "issued_by": how_get,
-            "photo": img,
-            "birth_day": birthday,
-            "date_of_issue": date_get
-          }, 
-        {headers: {
-            "Autorization": token
-        }});
-        await AsyncStorage.setItem("full_document", "true");
-        navigation.navigate("select_airport")
     }
 
 
@@ -137,7 +136,7 @@ const ImageScreen = ({navigation}) => {
             <TouchableOpacity onPress={pickImage} activeOpacity={0.5} style={[styles.add, themeContainerSelectStyle]}><AntDesign name="pluscircleo" size={24} color={colorScheme === 'light' ? '#17171C' : '#f2f2f2'} /></TouchableOpacity>
             }
             <Text style={[styles.label, themeSubTextStyle]} >Первый разворот с ФИО и фото лица</Text>
-            {img && <Button titleStyle={styles.textbtn} onPress={navigation.navigate('select_airport')} containerStyle={styles.cntbtn} buttonStyle={styles.btn} title="Завершить" />}
+            {img && <Button titleStyle={styles.textbtn} onPress={setDoc} containerStyle={styles.cntbtn} buttonStyle={styles.btn} title="Завершить" />}
         </SafeAreaView>
     )
 }
