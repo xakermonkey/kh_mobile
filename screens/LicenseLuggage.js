@@ -43,7 +43,7 @@ const LicenseLuggage = ({ navigation }) => {
                 </View>
             </ScrollView>
             <View style={styles.container_btn} >
-                <Button title="Я согласен с правилами" titleStyle={{fontFamily: 'Inter_700Bold',fontSize: 14,color: '#F2F2F3',}} containerStyle={styles.btn} buttonStyle={styles.innertBtn} onPress={() => navigation.navigate('add_luggage')} />
+                <Button title="Я согласен с правилами" titleStyle={{fontFamily: 'Inter_700Bold',fontSize: 14,color: '#000',}} containerStyle={styles.btn} buttonStyle={styles.innertBtn} onPress={() => navigation.navigate('add_luggage')} />
                 <Button title="Отмена" titleStyle={[styles.text_secondary, themeTextStyle]} containerStyle={styles.secondary_btn} buttonStyle={[styles.secondary, themeContainerSelectStyle]}  onPress={() => navigation.back()}/>
             </View>
         </SafeAreaView>
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     innertBtn: {
-        backgroundColor: '#3333FF',
+        backgroundColor: '#F5CB57',
         paddingVertical: 14
     },
 

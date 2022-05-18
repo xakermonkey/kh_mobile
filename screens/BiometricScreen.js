@@ -51,7 +51,7 @@ const BiometricScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]}>
-            <StatusBar />
+            <StatusBar/>
             <Image style={styles.img} source={image} />
             {/* <View style={[styles.circle, themeContainerSelectStyle]} ></View> */}
             <Text style={[styles.title, themeTextStyle]} >{title}</Text>
@@ -66,64 +66,64 @@ const BiometricScreen = ({ navigation }) => {
 export default BiometricScreen
 
 const styles = StyleSheet.create({
-    container: {
+    container:{
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-end',
         height: '100%',
     },
-    img: {
+    img:{
         position: 'absolute',
         top: '25%'
     },
-    circle: {
+    circle:{
         position: 'absolute',
         top: '35%',
         width: 128,
         height: 128,
         borderRadius: 128,
     },
-    title: {
+    title:{
         fontFamily: "Inter_800ExtraBold",
         fontSize: 24,
         width: '75%',
         textAlign: 'center',
         marginBottom: 8
     },
-    subtext: {
+    subtext:{
         fontSize: 16,
         fontFamily: "Inter_500Medium",
     },
-    primary_btn: {
-        width: '80%',
+    primary_btn:{
+        width: '90%',
         borderRadius: 12,
         marginTop: '25%',
         marginBottom: 12
     },
-    primary: {
+    primary:{
         backgroundColor: '#F5CB57',
         paddingVertical: 15
     },
-    secondary_btn: {
-        width: '80%',
+    secondary_btn:{
+        width: '90%',
         borderRadius: 12,
         marginBottom: 10,
     },
-    secondary: {
+    secondary:{
         paddingVertical: 15,
     },
-    text_primary: {
+    text_primary:{
         fontSize: 14,
         fontFamily: "Inter_700Bold",
-        color: "#000000",
+        color:"#000000",
     },
-    text_secondary: {
+    text_secondary:{
         fontSize: 14,
         fontFamily: "Inter_700Bold"
     },
 
 
-
+    
     lightContainer: {
         color: "#0C0C0D7A",
     },

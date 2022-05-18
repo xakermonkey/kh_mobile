@@ -18,6 +18,7 @@ import InputFirstNameScreen from './screens/InputFirstNameScreen';
 import InputPatronymicScreen from './screens/InputPatronymicScreen';
 import HowGetScreen from './screens/HowGetScreen';
 import BirthDayScreen from './screens/BirthDayScreen';
+import SelectDocument from './screens/SelectDocument';
 import DateGetScreen from './screens/DateGetScreen';
 import ImageScreen from './screens/ImageScreen';
 
@@ -56,21 +57,22 @@ function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='select_country_code' >
+      <Stack.Navigator initialRouteName='select_airport' >
         <Stack.Screen name='select_country_code' component={SelectCountryCode} />
 
-        <Stack.Screen options={{ headerShown: false }} name='license' component={LicenseScreen} />
         <Stack.Screen options={{ headerShown: false }} name='login' component={LoginScreen} />
+        <Stack.Screen name='license' component={LicenseScreen} />
         <Stack.Screen options={{ headerShown: false }} name='code' component={CodeScreen} />
         <Stack.Screen options={{ headerShown: false }} name='changepin' component={ChangePinScreen} />
         <Stack.Screen options={{ headerShown: false }} name='pin' component={PinScreen} />
         <Stack.Screen options={{ headerShown: false }} name='biometric' component={BiometricScreen} />
-        <Stack.Screen name='document' component={DocumentScreen} />
+
         <Stack.Screen name='last_name' component={InputLastNameScreen} />
         <Stack.Screen name='first_name' component={InputFirstNameScreen} />
         <Stack.Screen name='patronymic' component={InputPatronymicScreen} />
         <Stack.Screen name='birthday' component={BirthDayScreen} />
-        <Stack.Screen name='type_doc' component={TypeDocScreen} />
+        <Stack.Screen name='select_document' component={SelectDocument} />
+        <Stack.Screen name='document' component={DocumentScreen} />
         <Stack.Screen name='how_get' component={HowGetScreen} />
         <Stack.Screen name='date_get' component={DateGetScreen} />
         <Stack.Screen name='input_image' component={ImageScreen} />

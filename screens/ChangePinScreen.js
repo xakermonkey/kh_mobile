@@ -4,7 +4,7 @@ import { Appearance, useColorScheme, SafeAreaView, StyleSheet, Text, TouchableOp
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ChangePinScreen = ({navigation}) => {
+const ChangePinScreen = ({ navigation }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
@@ -51,41 +51,55 @@ const ChangePinScreen = ({navigation}) => {
             <StatusBar />
             <Text style={[styles.title, themeTextStyle]}>Установите ПИН-код</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>для входа</Text>
-            <View style={[styles.row_circle, bFirst ? {marginTop: '16%'} : {marginTop: '25%'} ]} >
-                <View style={[styles.circle, firstPin.length < 1 ? themeDot: themeKeyboardStyle ]} ></View>
-                <View style={[styles.circle, firstPin.length < 2 ? themeDot: themeKeyboardStyle ]} ></View>
-                <View style={[styles.circle, firstPin.length < 3 ? themeDot: themeKeyboardStyle ]} ></View>
-                <View style={[styles.circle, firstPin.length < 4 ? themeDot: themeKeyboardStyle ]} ></View>
+
+            <View style={[styles.row_circle, bFirst ? { marginTop: '16%' } : { marginTop: '25%' }]} >
+                <View style={[styles.circle, firstPin.length < 1 ? themeDot : themeKeyboardStyle]} ></View>
+                <View style={[styles.circle, firstPin.length < 2 ? themeDot : themeKeyboardStyle]} ></View>
+                <View style={[styles.circle, firstPin.length < 3 ? themeDot : themeKeyboardStyle]} ></View>
+                <View style={[styles.circle, firstPin.length < 4 ? themeDot : themeKeyboardStyle]} ></View>
             </View>
             {bFirst &&
-             <View style={styles.row_circle_second} >
-                <View style={[styles.circle, secondPin.length < 1 ? themeDot: themeKeyboardStyle ]} ></View>
-                <View style={[styles.circle, secondPin.length < 2 ? themeDot: themeKeyboardStyle ]} ></View>
-                <View style={[styles.circle, secondPin.length < 3 ? themeDot: themeKeyboardStyle ]} ></View>
-                <View style={[styles.circle, secondPin.length < 4 ? themeDot: themeKeyboardStyle ]} ></View>
-            </View>
+            <View style={{alignItems:'center'}}>
+                <Text style={[{ color: '#000', fontFamily: 'Inter_400Regular', size: 12, textAlign: 'center' }]} >Повторите ПИН-код</Text>
+                <View style={styles.row_circle_second} >
+                    <View style={[styles.circle, secondPin.length < 1 ? themeDot : themeKeyboardStyle]} ></View>
+                    <View style={[styles.circle, secondPin.length < 2 ? themeDot : themeKeyboardStyle]} ></View>
+                    <View style={[styles.circle, secondPin.length < 3 ? themeDot : themeKeyboardStyle]} ></View>
+                    <View style={[styles.circle, secondPin.length < 4 ? themeDot : themeKeyboardStyle]} ></View>
+                </View>
+                <Text style={[{ color: '#000', fontFamily: 'Inter_400Regular', size: 12, textAlign: 'center' }]} >ПИН-коды не совпадают</Text>
+
+                </View>
             }
-            <TouchableOpacity><Text style={[styles.repeat, themeTextStyle]}>Забыл пароль</Text></TouchableOpacity>
-            <View style={styles.keyboard}>
-                <View style={styles.row} >
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('1')}  ><Text style={[styles.num, themeTextStyle]} >1</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('2')}><Text style={[styles.num, themeTextStyle]}>2</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('3')}><Text style={[styles.num, themeTextStyle]}>3</Text></TouchableOpacity>
-                </View>
-                <View style={styles.row}>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('4')}><Text style={[styles.num, themeTextStyle]}>4</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('5')}><Text style={[styles.num, themeTextStyle]}>5</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('6')}><Text style={[styles.num, themeTextStyle]}>6</Text></TouchableOpacity>
-                </View>
-                <View style={styles.row}>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('7')}><Text style={[styles.num, themeTextStyle]}>7</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('8')}><Text style={[styles.num, themeTextStyle]}>8</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('9')}><Text style={[styles.num, themeTextStyle]}>9</Text></TouchableOpacity>
-                </View>
-                <View style={styles.row}>
-                    <TouchableOpacity style={[styles.btn, themeContainerStyle]} ><Text></Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('0')}><Text style={[styles.num, themeTextStyle]}>0</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerStyle]} activeOpacity={0.5} onPress={()=> Click('del')}><Ionicons name="backspace-outline" size={28} color={colorScheme === 'light' ? '#F5CB57' : '#F2F2F3'} /></TouchableOpacity>
+            <View style={{
+                bottom: 48,
+                position: 'absolute',
+                alignItems: 'center'
+            }}>
+                <TouchableOpacity onPress={() => navigation.navigate('license')}>
+                    <Text style={[{ color: '#000', fontFamily: 'Inter_700Bold', size: 14, textAlign: 'center' }]} >Забыли пароль?</Text>
+                </TouchableOpacity>
+                <View style={styles.keyboard}>
+                    <View style={styles.row} >
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('1')}  ><Text style={[styles.num, themeTextStyle]} >1</Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('2')}><Text style={[styles.num, themeTextStyle]}>2</Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('3')}><Text style={[styles.num, themeTextStyle]}>3</Text></TouchableOpacity>
+                    </View>
+                    <View style={styles.row}>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('4')}><Text style={[styles.num, themeTextStyle]}>4</Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('5')}><Text style={[styles.num, themeTextStyle]}>5</Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('6')}><Text style={[styles.num, themeTextStyle]}>6</Text></TouchableOpacity>
+                    </View>
+                    <View style={styles.row}>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('7')}><Text style={[styles.num, themeTextStyle]}>7</Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('8')}><Text style={[styles.num, themeTextStyle]}>8</Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('9')}><Text style={[styles.num, themeTextStyle]}>9</Text></TouchableOpacity>
+                    </View>
+                    <View style={styles.row}>
+                        <TouchableOpacity style={[styles.btn, themeContainerStyle]} ><Text></Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('0')}><Text style={[styles.num, themeTextStyle]}>0</Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerStyle]} activeOpacity={0.5} onPress={() => Click('del')}><Ionicons name="backspace-outline" size={28} color={colorScheme === 'light' ? '#F5CB57' : '#F2F2F3'} /></TouchableOpacity>
+                    </View>
                 </View>
             </View>
         </SafeAreaView>
@@ -95,68 +109,69 @@ const ChangePinScreen = ({navigation}) => {
 export default ChangePinScreen
 
 const styles = StyleSheet.create({
-    container:{
+    container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start',
     },
-    title:{
+    title: {
         marginTop: 24,
         fontSize: 24,
         fontFamily: "Inter_800ExtraBold",
     },
-    subtext:{
+    subtext: {
         fontSize: 16,
         fontFamily: "Inter_500Medium",
         lineHeight: 24,
     },
-    keyboard:{
-        width: '85%',
-        marginTop: '10%'
+    keyboard: {
+        // width: '85%',
+        // marginTop: '10%'
     },
-    row:{
+    row: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginTop: 24
+        marginTop: 24,
+        width: 262
     },
-    row_circle:{
+    row_circle: {
         flexDirection: 'row',
         width: '30%',
         justifyContent: 'space-between',
         marginTop: '25%'
     },
-    row_circle_second:{
+    row_circle_second: {
         flexDirection: 'row',
         marginTop: 12,
         width: '30%',
         justifyContent: 'space-between',
     },
-    circle:{
+    circle: {
         height: 20,
         width: 20,
-        
+
         borderRadius: 20
     },
-    repeat:{
+    repeat: {
         fontSize: 14,
         fontFamily: "Inter_700Bold",
         marginTop: '25%'
     },
-    btn:{
+    btn: {
         width: 72,
         height: 72,
         borderRadius: 72,
         alignItems: 'center',
         justifyContent: 'center'
-        
+
     },
-    num:{
+    num: {
         fontSize: 20,
         fontFamily: "Inter_800ExtraBold",
     },
 
 
-    
+
     lightContainer: {
         color: "#0C0C0D7A",
     },

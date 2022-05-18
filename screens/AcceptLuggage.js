@@ -65,7 +65,7 @@ const AcceptLuggage = ({ navigation }) => {
                 </View>
             </View>
             <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('qr_code')} >
-                <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Перейти к оплате</Text>
+                <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Оплатить</Text>
             </TouchableOpacity>
         </SafeAreaView>
     )

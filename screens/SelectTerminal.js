@@ -66,7 +66,7 @@ const SelectTerminal = ({ navigation, route }) => {
             <View style={[styles.container_select, themeContainerSelectStyle]}>
                 <View><Text style={[styles.text_holder, themeTextStyle]} >Выберите терминал</Text></View>
                 <View style={styles.radiobutton_container}>
-                    <TouchableOpacity activeOpacity={0.5} onPress={() => customSelectTerinal(0)} >
+                    <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('orders')} >
                         <View style={styles.terminal_line}>
                             <View style={styles.name_terminal}>
                                 <Text style={[styles.title, themeTextStyle]} >Терминал A</Text>

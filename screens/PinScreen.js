@@ -69,27 +69,35 @@ const PinScreen = ({navigation}) => {
                 <View style={[styles.circle, pin.length < 3 ? themeDot: themeKeyboardStyle ]} ></View>
                 <View style={[styles.circle, pin.length < 4 ? themeDot: themeKeyboardStyle ]} ></View>
             </View>
-            <TouchableOpacity><Text style={[styles.repeat, themeTextStyle]}>Забыл пароль</Text></TouchableOpacity>
-            <View style={styles.keyboard}>
-                <View style={styles.row} >
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('1')}  ><Text style={[styles.num, themeTextStyle]} >1</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('2')}><Text style={[styles.num, themeTextStyle]}>2</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('3')}><Text style={[styles.num, themeTextStyle]}>3</Text></TouchableOpacity>
-                </View>
-                <View style={styles.row}>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('4')}><Text style={[styles.num, themeTextStyle]}>4</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('5')}><Text style={[styles.num, themeTextStyle]}>5</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('6')}><Text style={[styles.num, themeTextStyle]}>6</Text></TouchableOpacity>
-                </View>
-                <View style={styles.row}>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('7')}><Text style={[styles.num, themeTextStyle]}>7</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('8')}><Text style={[styles.num, themeTextStyle]}>8</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('9')}><Text style={[styles.num, themeTextStyle]}>9</Text></TouchableOpacity>
-                </View>
-                <View style={styles.row}>
-                    <TouchableOpacity style={[styles.btn, themeContainerStyle]} ><Text></Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={()=> Click('0')}><Text style={[styles.num, themeTextStyle]}>0</Text></TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, themeContainerStyle]} activeOpacity={0.5} onPress={()=> Click('del')}><Ionicons name="backspace-outline" size={28} color={colorScheme === 'light' ? '#F5CB57' : '#F2F2F3'} /></TouchableOpacity>
+            <View style={{
+                bottom: 48,
+                position: 'absolute',
+                alignItems:'center'
+            }}>
+                <TouchableOpacity onPress={() => navigation.navigate('license')}>
+                    <Text style={[{ color: '#000', fontFamily: 'Inter_700Bold', size: 14, textAlign: 'center' }]} >Забыли пароль?</Text>
+                </TouchableOpacity>
+                <View style={styles.keyboard}>
+                    <View style={styles.row} >
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('1')}  ><Text style={[styles.num, themeTextStyle]} >1</Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('2')}><Text style={[styles.num, themeTextStyle]}>2</Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('3')}><Text style={[styles.num, themeTextStyle]}>3</Text></TouchableOpacity>
+                    </View>
+                    <View style={styles.row}>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('4')}><Text style={[styles.num, themeTextStyle]}>4</Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('5')}><Text style={[styles.num, themeTextStyle]}>5</Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('6')}><Text style={[styles.num, themeTextStyle]}>6</Text></TouchableOpacity>
+                    </View>
+                    <View style={styles.row}>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('7')}><Text style={[styles.num, themeTextStyle]}>7</Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('8')}><Text style={[styles.num, themeTextStyle]}>8</Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('9')}><Text style={[styles.num, themeTextStyle]}>9</Text></TouchableOpacity>
+                    </View>
+                    <View style={styles.row}>
+                        <TouchableOpacity style={[styles.btn, themeContainerStyle]} ><Text></Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('0')}><Text style={[styles.num, themeTextStyle]}>0</Text></TouchableOpacity>
+                        <TouchableOpacity style={[styles.btn, themeContainerStyle]} activeOpacity={0.5} onPress={() => Click('del')}><Ionicons name="backspace-outline" size={28} color={colorScheme === 'light' ? '#F5CB57' : '#F2F2F3'} /></TouchableOpacity>
+                    </View>
                 </View>
             </View>
         </SafeAreaView>
@@ -115,13 +123,14 @@ const styles = StyleSheet.create({
         lineHeight: 24,
     },
     keyboard:{
-        width: '85%',
-        marginTop: '10%'
+        // width: '85%',
+        // marginTop: '10%'
     },
     row:{
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginTop: 24
+        marginTop: 24,
+        width: 262
     },
     row_circle:{
         flexDirection: 'row',
