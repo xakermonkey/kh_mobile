@@ -33,18 +33,10 @@ const SelectTerminal = ({ navigation, route }) => {
             headerRight: () => {
                 return (
                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                        <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
-                            <Icon
-                                name="location-outline"
-                                type="ionicon"
-                                color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Profile')} >
-                            <Icon
-                                name="person-circle-outline"
-                                type="ionicon"
-                                color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                        <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('Profile')} >
+                            <Image
+                                source={require("../assets/images/profile.png")}
+                                style={{width:24, height:30}}
                             />
                         </TouchableOpacity>
                     </View>)
@@ -64,23 +56,6 @@ const SelectTerminal = ({ navigation, route }) => {
 
     }
 
-
-    const renderTerminal = ({ item }) => {
-        return (<TouchableOpacity activeOpacity={0.5} onPress={() => customSelectTerinal(0)} >
-            <View style={styles.terminal_line}>
-                <View style={styles.name_terminal}>
-                    <Text style={[styles.title, themeTextStyle]} >Терминал A</Text>
-                    <Text style={[styles.subtext, themeSubTextStyle]} >2 этаж</Text>
-                </View>
-                <Icon
-                    name="chevron-forward-outline"
-                    type="ionicon"
-                    color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                />
-            </View>
-        </TouchableOpacity>)
-    }
-
     return (
         <View style={[styles.container, themeContainerStyle]} >
             <StatusBar />
@@ -88,11 +63,35 @@ const SelectTerminal = ({ navigation, route }) => {
             <View style={[styles.container_select, themeContainerSelectStyle]}>
                 <View><Text style={[styles.text_holder, themeTextStyle]} >Выберите терминал</Text></View>
                 <View style={styles.radiobutton_container}>
-                <FlatList
-                    data={terminals}
-                    keyExtractor={item => item.id}
-                    renderItem={renderTerminal}
-                />
+                    <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('terminal')} >
+                        <View style={styles.terminal_line}>
+                            <View style={styles.name_terminal}>
+                                <Text style={[styles.title, themeTextStyle]} >Терминал A</Text>
+                                <Text style={[styles.subtext, themeSubTextStyle]} >2 этаж</Text>
+                            </View>
+                            <Icon
+                                name="chevron-forward-outline"
+                                type="ionicon"
+                                color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                            />
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('orders')} >
+                        <View style={styles.terminal_line}>
+                            <View style={styles.name_terminal}>
+                                <Text style={[styles.title, themeTextStyle]} >Терминал B</Text>
+                                <Text style={[styles.subtext, themeSubTextStyle]} >2 этаж</Text>
+                            </View>
+                            <View style={{flexDirection:'row', alignItems:'center'}}>
+                            <Text style={[styles.subtext, themeSubTextStyle]} >2 заказа</Text>
+                            <Icon
+                                name="chevron-forward-outline"
+                                type="ionicon"
+                                color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                            />
+                            </View>
+                        </View>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View >

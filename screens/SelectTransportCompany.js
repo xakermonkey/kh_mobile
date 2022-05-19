@@ -68,11 +68,13 @@ const SelectTransportCompany = ({ navigation }) => {
                     <Text style={[styles.price_line_text, themeSubTextStyle]} >Продление хранения</Text>
                     <Text style={[styles.price_line_price, themeTextStyle]} >500 ₽</Text>
                 </View>
+                <View style={{ height: 1, backgroundColor: '#fff' }}></View>
                 <View style={styles.price_line}>
                     <Text style={[styles.price_line_text, themeSubTextStyle]} >Списание миль</Text>
                     <Text style={[styles.price_line_price, themeTextStyle]} >-250 миль</Text>
                 </View>
-                <View style={[styles.price_line, themeContainerSelectStyle]}>
+                <View style={{ height: 1, backgroundColor: '#fff' }}></View>
+                <View style={[styles.price_line]}>
                     <View style={styles.transport_company} >
                         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                             <Image
@@ -87,12 +89,54 @@ const SelectTransportCompany = ({ navigation }) => {
                         <Text style={[styles.price_line_price, themeTextStyle]} >500 ₽</Text>
                     </View>
                 </View>
-                {/* <View style={[styles.line, themeContainerStyle]} ></View> */}
+                <View style={{ height: 1, backgroundColor: '#fff' }}></View>
                 <View style={styles.price_line}>
                     <Text style={[styles.price_line_text, themeSubTextStyle]} >Итоговая стоимость</Text>
                     <Text style={[styles.price_line_price, themeTextStyle]} >250 ₽</Text>
                 </View>
             </View>
+
+            <View style={{ height: 150, width:'100%', marginTop:'5%' }}>
+                <View style={styles.container_mileonair} >
+                    <View  >
+                        <Text style={[styles.value, themeTextStyle]} >Оплатить милями MILEONAIR</Text>
+                        <Text style={[styles.label_mile, themeSubTextStyle]} >3 600 миль</Text>
+                    </View>
+                    <Switch
+                        trackColor={{ false: "#23232A14", true: "#23232A14" }}
+                        thumbColor={isEnabled ? "#F5CB57" : "#F2F2F3"}
+                        ios_backgroundColor="#23232A14"
+                        onValueChange={toggleSwitch}
+                        value={isEnabled}
+                    />
+                </View>
+                {isEnabled &&
+                    <View style={[{ borderRadius: 12, flexDirection: 'row', justifyContent: 'space-between', marginTop: '5%' }, themeContainerSelectStyle]}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={{ alignItems: 'center', alignContent: 'center', paddingHorizontal: 20, paddingVertical: 6 }}>
+                                <Icon
+                                    name="airplane"
+                                    type="ionicon"
+                                    color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                                />
+                                <Text style={themeSubTextStyle} >миль</Text>
+                            </View>
+                            <View style={[{ width: 1, backgroundColor:'#fff' }, themeContainerStyle]}></View>
+                        </View>
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1, paddingHorizontal: 20 }}>
+                            <TextInput
+                                value={mile}
+                                placeholder="40"
+                                style={[styles.text_input, themeTextStyle]}
+                                keyboardType="number-pad"
+                            />
+                            <Text style={[{ textAlign: 'right', fontSize: 12, fontFamily: "Inter_400Regular" }, themeSubTextStyle]} >Мининимальное {"\n"}списание 40 миль</Text>
+                        </View>
+                    </View>
+                }
+            </View>
+
 
             <View style={styles.type_pay} >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }} >
@@ -131,13 +175,13 @@ const SelectTransportCompany = ({ navigation }) => {
                         backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
                     >
                         <Text style={[styles.bottom_title, themeTextStyle]} >Транспортная компания</Text>
-                        <View style={{padding:'4%'}}>
+                        <View style={{ padding: '4%' }}>
                             <View style={styles.inline}>
                                 <View style={styles.row}>
                                     <Image source={require('../assets/images/sdek.png')} style={{ marginRight: 10 }} />
                                     <View style={{ alignItems: 'flex-start' }}>
                                         <Text style={[styles.bottom_title, themeTextStyle]} >СДЭК</Text>
-                                        <Text style={[styles.label, {marginTop:4}, themeSubTextStyle]} >Дата доставки: 24 декабря</Text>
+                                        <Text style={[styles.label, { marginTop: 4 }, themeSubTextStyle]} >Дата доставки: 24 декабря</Text>
                                     </View>
                                 </View>
                                 <View style={styles.row}>
@@ -159,7 +203,7 @@ const SelectTransportCompany = ({ navigation }) => {
                                     <Image source={require('../assets/images/dhl.png')} style={{ marginRight: 10 }} />
                                     <View style={{ alignItems: 'flex-start' }}>
                                         <Text style={[styles.bottom_title, themeTextStyle]} >DHL</Text>
-                                        <Text style={[styles.label, {marginTop:4}, themeSubTextStyle]} >Дата доставки: 24 декабря</Text>
+                                        <Text style={[styles.label, { marginTop: 4 }, themeSubTextStyle]} >Дата доставки: 24 декабря</Text>
                                     </View>
                                 </View>
                                 <View style={styles.row}>
@@ -181,7 +225,7 @@ const SelectTransportCompany = ({ navigation }) => {
                                     <Image source={require('../assets/images/pochta_rus.png')} style={{ marginRight: 10 }} />
                                     <View style={{ alignItems: 'flex-start' }}>
                                         <Text style={[styles.bottom_title, themeTextStyle]} >Почта России</Text>
-                                        <Text style={[styles.label, {marginTop:4}, themeSubTextStyle]} >Дата доставки: 24 декабря</Text>
+                                        <Text style={[styles.label, { marginTop: 4 }, themeSubTextStyle]} >Дата доставки: 24 декабря</Text>
                                     </View>
                                 </View>
                                 <View style={styles.row}>
@@ -220,8 +264,8 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     container_price: {
-        borderRadius: 12,
-        marginTop: "15%",
+        borderRadius: 16,
+        marginTop: "10%",
     },
     price_line: {
         flexDirection: 'row',
@@ -278,7 +322,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         width: "100%",
         justifyContent: 'space-between',
-        marginTop: "40%"
+        // marginTop: "40%"
     },
     transport_company: {
         alignItems: 'center',
@@ -314,6 +358,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+    },
+    container_mileonair: {
+        flexDirection: 'row',
+        justifyContent: "space-between",
+        alignItems:'center'
+    },
+    text_input: {
+        fontSize: 32,
+        fontFamily: 'Inter_800ExtraBold',
+        // color: "#0C0C0D7A",
     },
 
 

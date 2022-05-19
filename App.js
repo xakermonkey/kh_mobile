@@ -32,7 +32,7 @@ import DeliverHome from './screens/DeliverHome';
 import AcceptLuggage from './screens/AcceptLuggage';
 import QRCode from './screens/QRCode';
 
-import AcceptLuggageMileonAir from './screens/AcceptLuggageMileonAir';
+import AcceptLuggageMileonAir from './screens/GetLuggage';
 import SelectTransportCompany from './screens/SelectTransportCompany';
 import Profile from './screens/Profile/Profile';
 import AddCard from './screens/Profile/AddCard';

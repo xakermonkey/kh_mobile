@@ -1,4 +1,4 @@
-import { Appearance, useColorScheme, StyleSheet, Text, View, TouchableOpacity, Switch, TextInput, Platform } from 'react-native'
+import { Appearance, useColorScheme, StyleSheet, Text, View, TouchableOpacity, Switch, TextInput, Platform, Image } from 'react-native'
 import React, { useLayoutEffect, useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
@@ -7,6 +7,7 @@ import {
     BottomSheetModal,
     BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
+import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 const DeliverHome = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
@@ -92,51 +93,9 @@ const DeliverHome = ({ navigation, route }) => {
     return (
         <View style={[styles.container, themeContainerStyle]}  >
             <StatusBar />
-            <Text style={[styles.text14, themeSubTextStyle]} >Укажите адрес доставки и транспортную компанию, мы рассчитаем стоимость и пришлём вам push-уведомление с информацией о стоимости и дате доставки</Text>
-
-            <View style={{ marginTop: '100%' }}>
-                <View style={{ height: 150 }}>
-                    <View style={styles.container_mileonair} >
-                        <View  >
-                            <Text style={[styles.value, themeTextStyle]} >Оплатить милями MILEONAIR</Text>
-                            <Text style={[styles.label_mile, themeSubTextStyle]} >3 600 миль</Text>
-                        </View>
-                        <Switch
-                            trackColor={{ false: "#23232A14", true: "#23232A14" }}
-                            thumbColor={isEnabled ? "#F5CB57" : "#F2F2F3"}
-                            ios_backgroundColor="#23232A14"
-                            onValueChange={toggleSwitch}
-                            value={isEnabled}
-                        />
-                    </View>
-                    {isEnabled &&
-                        <View style={[{ borderRadius: 12, flexDirection: 'row', justifyContent: 'space-between', marginTop: '5%' }, themeContainerSelectStyle]}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{ alignItems: 'center', alignContent: 'center', paddingHorizontal: 20, paddingVertical: 6 }}>
-                                    <Icon
-                                        name="airplane"
-                                        type="ionicon"
-                                        color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                                    />
-                                    <Text style={themeSubTextStyle} >миль</Text>
-                                </View>
-                                <View style={[{ width: 2 }, themeContainerStyle]}></View>
-                            </View>
-
-                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1, paddingHorizontal: 20 }}>
-                                <TextInput
-                                    value={mile}
-                                    placeholder="40"
-                                    style={[styles.text_input, themeTextStyle]}
-                                    keyboardType="number-pad"
-                                />
-                                <Text style={[{ textAlign: 'right', fontSize: 12, fontFamily: "Inter_400Regular" }, themeSubTextStyle]} >Мининимальное {"\n"}списание 40 миль</Text>
-                            </View>
-                        </View>
-                    }
-                </View>
-
-                <TouchableOpacity activeOpacity={.9} onPress={handlePresentModalPress}>
+            <Text style={[styles.text14, themeSubTextStyle]} >Укажите адрес доставки и транспортную{"\n"}компанию, мы рассчитаем стоимость{"\n"}и пришлём вам push-уведомление{"\n"}с информацией о стоимости и дате доставки</Text>
+            
+            <TouchableOpacity activeOpacity={.9} onPress={handlePresentModalPress}>
                     <View style={styles.type_pay} >
                         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                             <View>
@@ -158,8 +117,6 @@ const DeliverHome = ({ navigation, route }) => {
                 <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('select_transport_company')} >
                     <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Создать заявку</Text>
                 </TouchableOpacity>
-            </View>
-
 
             <BottomSheetModalProvider>
                 <View>
@@ -170,7 +127,38 @@ const DeliverHome = ({ navigation, route }) => {
                         onChange={handleSheetChanges}
                         backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
                     >
-                        <Text style={[styles.bottom_title, themeTextStyle]} >Новый адрес</Text>
+                        {/* Если есть адреса  */}
+                        <Text style={[styles.bottom_title, themeTextStyle]} >Адрес доставки</Text>
+                        <View style={{padding:'4%'}}>
+                            <View style={styles.inline}>
+                                <View style={styles.row}>
+                                    <View style={{ alignItems: 'flex-start' }}>
+                                        <Text style={[styles.bottom_title, themeTextStyle]} >Духовской пер., 17А, к. 24</Text>
+                                        <Text style={[styles.label, {marginTop:4}, themeSubTextStyle]} >Москва, Россия</Text>
+                                    </View>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text style={[styles.label, { marginRight: 16 }, themeSubTextStyle]} >1 000 ₽</Text>
+                                    <BouncyCheckbox
+                                        size={24}
+                                        fillColor='#F5CB57'
+                                        unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
+                                        iconStyle={{
+                                            borderWidth: 0
+                                        }}
+                                        disableText={true}
+                                        checkIconImageSource={null}
+                                    />
+                                </View>
+                            </View>
+                            <TouchableOpacity activeOpacity={.9} style={styles.btn_bottomsheet} onPress={() => navigation.navigate('qr_code')} >
+                                <Text style={{ fontFamily: 'Inter_700Bold', color: '#000', fontSize: 14 }}>Сохранить чеки</Text>
+                            </TouchableOpacity>
+                        </View>
+
+
+                        {/* Если нет адресов  */}
+                        {/* <Text style={[styles.bottom_title, themeTextStyle]} >Новый адрес</Text>
                         <View style={{ padding: '3%' }}>
                             <View>
                                 <Text style={[styles.bottom_text, themeSubTextStyle]} >Адрес</Text>
@@ -199,7 +187,7 @@ const DeliverHome = ({ navigation, route }) => {
                             <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('accept_luggage')} >
                                 <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Сохранить</Text>
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                     </BottomSheetModal>
                 </View>
             </BottomSheetModalProvider>
@@ -221,7 +209,8 @@ const styles = StyleSheet.create({
     text14: {
         // color: "#0C0C0D7A",
         fontSize: 14,
-        fontFamily: "Inter_500Medium"
+        fontFamily: "Inter_500Medium",
+        lineHeight:22,
     },
     bottom_title: {
         fontSize: 14,
@@ -309,8 +298,37 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: "Inter_500Medium"
     },
-    label_mile: {
-        // color: "#0C0C0D7A",
+    inline: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginVertical: '3%',
+    },
+    
+    label: {
+        fontSize: 12,
+        fontFamily: "Inter_500Medium",
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    btn_bottomsheet: {
+        backgroundColor: '#F5CB57',
+        borderRadius: 12,
+        fontSize: 14,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: '5%',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 8,
+        },
+        shadowOpacity: 0.48,
+        shadowRadius: 16,
+        elevation: 12,
     },
 
 
