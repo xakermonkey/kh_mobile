@@ -4,6 +4,8 @@ import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
 import { domain } from '../domain';
+import { FlatList } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SelectTerminal = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
@@ -11,6 +13,8 @@ const SelectTerminal = ({ navigation, route }) => {
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
+
+    const [terminals, setTerminals] = useState([]);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -45,18 +49,36 @@ const SelectTerminal = ({ navigation, route }) => {
                         </TouchableOpacity>
                     </View>)
             }
-        })
-        axios.get(domain + "/port_terminals")
-            .then((res) => {
-                console.log(res.data);
-            })
+        });
+        (async () => {
+            const iata = await AsyncStorage.getItem("airport_iata");
+            const res = await  axios.get(domain + "/get_terminal", { params: { "iata": iata } })
+            console.log(res.data);
+        })();
     }, [navigation, colorScheme])
 
-    const [terminals, setTerminals] = useState([]);
+
 
     const customSelectTerinal = (ind) => {
         navigation.navigate('terminal', { "airport": route.params.title, "terminal": ind == 0 ? "Терминал A, 2 этаж" : "Терминал C, 2 этаж" })
 
+    }
+
+
+    const renderTerminal = ({ item }) => {
+        return (<TouchableOpacity activeOpacity={0.5} onPress={() => customSelectTerinal(0)} >
+            <View style={styles.terminal_line}>
+                <View style={styles.name_terminal}>
+                    <Text style={[styles.title, themeTextStyle]} >Терминал A</Text>
+                    <Text style={[styles.subtext, themeSubTextStyle]} >2 этаж</Text>
+                </View>
+                <Icon
+                    name="chevron-forward-outline"
+                    type="ionicon"
+                    color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                />
+            </View>
+        </TouchableOpacity>)
     }
 
     return (
@@ -66,19 +88,11 @@ const SelectTerminal = ({ navigation, route }) => {
             <View style={[styles.container_select, themeContainerSelectStyle]}>
                 <View><Text style={[styles.text_holder, themeTextStyle]} >Выберите терминал</Text></View>
                 <View style={styles.radiobutton_container}>
-                    <TouchableOpacity activeOpacity={0.5} onPress={() => customSelectTerinal(0)} >
-                        <View style={styles.terminal_line}>
-                            <View style={styles.name_terminal}>
-                                <Text style={[styles.title, themeTextStyle]} >Терминал A</Text>
-                                <Text style={[styles.subtext, themeSubTextStyle]} >2 этаж</Text>
-                            </View>
-                            <Icon
-                                name="chevron-forward-outline"
-                                type="ionicon"
-                                color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                            />
-                        </View>
-                    </TouchableOpacity>
+                <FlatList
+                    data={terminals}
+                    keyExtractor={item => item.id}
+                    renderItem={renderTerminal}
+                />
                 </View>
             </View>
         </View >
@@ -90,7 +104,7 @@ export default SelectTerminal
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding:'3%',
+        padding: '3%',
     },
     container_select: {
         borderRadius: 12,
