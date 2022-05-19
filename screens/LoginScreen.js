@@ -5,8 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import MaskInput, {formatWithMask} from 'react-native-mask-input';
 import axios from 'axios';
 import { domain } from '../domain';
-import { Ionicons } from '@expo/vector-icons';
-
+// import { Ionicons } from '@expo/vector-icons';
 
 const LoginScreen = ({navigation, route}) => {
     const colorScheme = useColorScheme();
@@ -46,7 +45,7 @@ const LoginScreen = ({navigation, route}) => {
             <Text style={[styles.subtext, themeSubTextStyle]} >Введите номер телефона, </Text>
             <Text style={[styles.subsubtext, themeSubTextStyle]} >чтобы войти в существующий аккаунт </Text>
             <Text style={[styles.subsubtext, themeSubTextStyle]} >или создать новый</Text>
-            <TextInput autoFocus style={[styles.inputText, themeTextStyle]} showSoftInputOnFocus={false} value={number} />
+            <MaskInput mask={mask} style={[styles.inputText, themeTextStyle]} showSoftInputOnFocus={false} value={number} />
 
             <View style={{
                 bottom: 48,
