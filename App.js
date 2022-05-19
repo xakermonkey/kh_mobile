@@ -57,7 +57,7 @@ function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='select_airport' >
+      <Stack.Navigator initialRouteName='select_country_code' >
         <Stack.Screen name='select_country_code' component={SelectCountryCode} />
 
         <Stack.Screen options={{ headerShown: false }} name='login' component={LoginScreen} />
@@ -71,7 +71,7 @@ function App() {
         <Stack.Screen name='first_name' component={InputFirstNameScreen} />
         <Stack.Screen name='patronymic' component={InputPatronymicScreen} />
         <Stack.Screen name='birthday' component={BirthDayScreen} />
-        <Stack.Screen name='select_document' component={SelectDocument} />
+        <Stack.Screen name='type_doc' component={SelectDocument} />
         <Stack.Screen name='document' component={DocumentScreen} />
         <Stack.Screen name='how_get' component={HowGetScreen} />
         <Stack.Screen name='date_get' component={DateGetScreen} />

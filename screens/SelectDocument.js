@@ -9,6 +9,7 @@ import {
     BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 
 const SelectDocument = ({ navigation, route }) => {
@@ -37,7 +38,12 @@ const SelectDocument = ({ navigation, route }) => {
             headerBackTitleVisible: false,
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
             headerRight: () => {
-                return (<TouchableOpacity activeOpacity={0.5}  ><Text style={[{ fontSize: 16, fontFamily: "Inter_800ExtraBold" }, themeTextStyle]} >Пропустить</Text></TouchableOpacity>)
+                return (<TouchableOpacity onPress={Pass} activeOpacity={0.5}  ><Text style={[{ fontSize: 16, fontFamily: "Inter_800ExtraBold" }, themeTextStyle]} >Пропустить</Text></TouchableOpacity>)
+            }
+        })
+        AsyncStorage.getItem("type_doc").then(td => {
+            if (td != null) {
+                navigation.replace("document");
             }
         })
     }, [navigation])
@@ -46,54 +52,57 @@ const SelectDocument = ({ navigation, route }) => {
     const [images, setImages] = useState([]);
     const [isEnabled, setIsEnabled] = useState(false);
     const [mile, setMile] = useState("")
+    const [type, setType] = useState("Паспорт РФ");
 
 
 
+    const ClickType = (text) => {
+        setType(text);
+        bottomSheetModalRef.current.close();
+
+    }
+
+    const Pass = async () => {
+        const token = await AsyncStorage.getItem("token");
+        const first_name = await AsyncStorage.getItem("first_name");
+        const last_name = await AsyncStorage.getItem("last_name");
+        const patronymic = await AsyncStorage.getItem("patronymic");
+        const birthday = await AsyncStorage.getItem("birthday");
+        const data = new FormData();
+        data.append("last_name", last_name);
+        data.append("first_name", first_name);
+        data.append("patronymic", patronymic);
+        data.append("birthday", birthday);
+        const res = await fetch(domain + "/set_document",
+            {
+                method: "POST",
+                body: data,
+                headers: {
+                    "Authorization": "Token " + token,
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+        const res_json = await res.json();
+        if (res_json.ok == "ok") {
+            await AsyncStorage.setItem("first_join", "true");
+            navigation.navigate("select_airport");
+        }
+    }
+
+    const setDoc = async () => {
+        await AsyncStorage.setItem("type_doc", type);
+        navigation.navigate("document")
+
+    }
 
     const toggleSwitch = () => {
         setIsEnabled(!isEnabled)
     }
 
 
-    useEffect(() => {
-        (async () => {
-            if (Platform.OS !== 'web') {
-                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-                if (status !== 'granted') {
-                    alert('Sorry, we need camera roll permissions to make this work!');
-                }
-            }
-        })();
-    }, []);
 
 
-
-
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync();
-        if (!result.cancelled) {
-            let shir = result.uri.split(".")
-            shir = shir[shir.length - 1]
-            const obj = {
-                uri: Platform.OS === 'android' ? result.uri : result.uri, //.replace("file://", ""),
-                type: 'image/' + shir,
-                name: `img${images.length + 1}.${shir}`
-            }
-            console.log(obj)
-            setImages([...images, obj]);
-        }
-    };
-
-
-
-    const Remove = (id) => {
-        setImages((img) => {
-            if (img.length === 1) {
-                return [];
-            }
-            return [...img.slice(0, id), ...img.slice(id + 1)];
-        })
-    }
 
     return (
         <View style={[styles.container, themeContainerStyle]}  >
@@ -106,7 +115,7 @@ const SelectDocument = ({ navigation, route }) => {
                 <Text style={[styles.text14, themeSubTextStyle]} >Выберите тип документа</Text>
                 <TouchableOpacity activeOpacity={.9} onPress={handlePresentModalPress}>
                     <View style={[styles.select, themeContainerSelectStyle]} >
-                        <Text style={[styles.value, themeTextStyle]} >Почта России</Text>
+                        <Text style={[styles.value, themeTextStyle]} >{type}</Text>
                         <Icon
                             name="chevron-down-outline"
                             type="ionicon"
@@ -115,9 +124,9 @@ const SelectDocument = ({ navigation, route }) => {
                     </View>
                 </TouchableOpacity>
             </View>
-            <Text style={[{fontFamily:'Inter_500Medium', fontSize:12, lineHeight:18, marginTop:32}, themeSubTextStyle]}>Мы зарегистрировали Вас в MILEONAIR. Для того, чтобы начать пользоваться милями Вам необходимо скачать мобильное приложение MILEONAIR</Text>
-            <View style={{ marginTop: '30%' }}>
-                <View style={{ height: 130 }}>
+            {mile != "" && <Text style={[{fontFamily:'Inter_500Medium', fontSize:12, lineHeight:18, marginTop:32}, themeSubTextStyle]}>Мы зарегистрировали Вас в MILEONAIR. Для того, чтобы начать пользоваться милями Вам необходимо скачать мобильное приложение MILEONAIR</Text>}
+            <View style={{ marginTop: '30%',  }}>
+                <View style={{marginBottom: "10%"}}>
                     <View style={styles.container_mileonair} >
                         <Text style={[styles.value, themeTextStyle]} >Я являюсь участником MILEONAIR{"\n"}и хочу копить/тратить мили</Text>
                         <Switch
@@ -128,33 +137,7 @@ const SelectDocument = ({ navigation, route }) => {
                             value={isEnabled}
                         />
                     </View>
-                    {isEnabled &&
-                        <View style={[{ borderRadius: 12, flexDirection: 'row', justifyContent: 'space-between', marginTop: '5%' }, themeContainerSelectStyle]}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{ alignItems: 'center', alignContent: 'center', paddingHorizontal: 20, paddingVertical: 6 }}>
-                                    <Icon
-                                        name="airplane"
-                                        type="ionicon"
-                                        color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                                    />
-                                    <Text style={themeSubTextStyle} >миль</Text>
-                                </View>
-                                <View style={[{ width: 2 }, themeContainerStyle]}></View>
-                            </View>
-
-                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1, paddingHorizontal: 20 }}>
-                                <TextInput
-                                    value={mile}
-                                    placeholder="40"
-                                    style={[styles.text_input, themeTextStyle]}
-                                    keyboardType="number-pad"
-                                />
-                                <Text style={[{ textAlign: 'right', fontSize: 12, fontFamily: "Inter_400Regular" }, themeSubTextStyle]} >Мининимальное {"\n"}списание 40 миль</Text>
-                            </View>
-                        </View>
-                    }
                 </View>
-
                 <View style={styles.container_mileonair} >
                     <Text style={[styles.value, themeTextStyle]} >Хочу стать участником MILEONAIR</Text>
                     <Icon
@@ -191,10 +174,12 @@ const SelectDocument = ({ navigation, route }) => {
                                 <BouncyCheckbox
                                     size={24}
                                     fillColor='#F5CB57'
+                                    value={type == "Паспорт РФ"}
                                     unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
                                     iconStyle={{
                                         borderWidth: 0
                                     }}
+                                    onPress={() => ClickType("Паспорт РФ")}
                                     disableText={true}
                                     checkIconImageSource={null}
                                 />
@@ -204,10 +189,12 @@ const SelectDocument = ({ navigation, route }) => {
                                 <BouncyCheckbox
                                     size={24}
                                     fillColor='#F5CB57'
+                                    value={type == "Заграничный паспорт"}
                                     unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
                                     iconStyle={{
                                         borderWidth: 0
                                     }}
+                                    onPress={() => ClickType("Заграничный паспорт")}
                                     disableText={true}
                                     checkIconImageSource={null}
                                 />

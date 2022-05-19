@@ -36,22 +36,27 @@ const InputLastNameScreen = ({ navigation }) => {
 
     const Pass = async () => {
         await AsyncStorage.setItem("last_name", "")
-        await AsyncStorage.setItem("first_join", "true")
-        navigation.navigate("first_name")
+        const fj = await AsyncStorage.getItem("first_join");
+        if (fj == null) {
+            await AsyncStorage.setItem("first_join", "true");
+            navigation.navigate("select_airport");
+        } else {
+            navigation.navigate("license_luggage");
+        }
     }
     const [text, setText] = useState('');
     const [bad, setBad] = useState(false);
 
     const setDoc = () => {
-        if(/[0-9]/.test(text)){
+        if (/[0-9]/.test(text)) {
             setBad(true);
-        }else{
+        } else {
             AsyncStorage.setItem("last_name", text)
-            .then(() => {
-                navigation.navigate("first_name");
-            })
+                .then(() => {
+                    navigation.navigate("first_name");
+                })
         }
-        
+
     }
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]}>

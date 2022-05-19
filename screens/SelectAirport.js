@@ -32,7 +32,6 @@ const SelectAirport = ({ navigation }) => {
         .then(token => {
             axios.get(domain + "/get_airport", {headers: {"Authorization": "Token " + token }})
             .then(res => {
-                console.log(res.data);
                 setAirport(res.data);
             })
         })
