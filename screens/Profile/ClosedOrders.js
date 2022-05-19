@@ -11,7 +11,7 @@ import {
 
 
 
-const Orders = ({ navigation, route }) => {
+const ClosedOrders = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
@@ -42,7 +42,7 @@ const Orders = ({ navigation, route }) => {
             headerTitle: () => {
                 return (<View style={{ alignItems: 'center' }} >
                     <Text style={[styles.title, themeTextStyle]} >Терминал A, 2 этаж</Text>
-                    <Text style={[styles.subtext, themeSubTextStyle]} >Шепеметьево</Text>
+                    <Text style={[styles.subtext, themeSubTextStyle]} >Шереметьево</Text>
                 </View>)
             },
             headerRight: () => {
@@ -50,7 +50,7 @@ const Orders = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                         <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                             <Image
-                                source={require("../assets/images/profile.png")}
+                                source={require("../../assets/images/profile.png")}
                                 style={{width:24, height:30}}
                             />
                         </TouchableOpacity>
@@ -65,26 +65,18 @@ const Orders = ({ navigation, route }) => {
 
     return (
         <View style={[styles.container, themeContainerStyle]} >
-
             <StatusBar />
-            {/* <View style={styles.row_center_between}>
-                <Text style={[styles.text, themeTextStyle]} >Показать закрытые заказы</Text>
-                <Switch
-                    trackColor={{ false: '#767577', true: '#23232A14' }}
-                    thumbColor={isEnabled ? '#F5CB57' : '#f4f3f4'}
-                    ios_backgroundColor="#23232A14"
-                    onValueChange={toggleSwitch}
-                    value={isEnabled}
-                />
-            </View> */}
+            <View style={{alignContent:'center', alignItems:'center', height:'100%', justifyContent:'center'}}>
+            <Image source={require('../../assets/images/NoOrders.png')} style={{width:128, height:172}} />
+            <Text style={[styles.text, { textAlign: 'center', marginTop:'20%' }, themeTextStyle]} >Заказов нет</Text>
+            </View>
 
-
-            <View style={[styles.container_location, themeContainerSelectStyle]}>
+            {/* <View style={[styles.container_location, themeContainerSelectStyle]}>
                 <View style={styles.row_center}>
-                    <Image source={require('../assets/images/Orders/img1.png')} style={styles.img} />
-                    <Image source={require('../assets/images/Orders/img2.png')} style={styles.img} />
-                    <Image source={require('../assets/images/Orders/img3.png')} style={styles.img} />
-                    <Image source={require('../assets/images/Orders/img4.png')} style={styles.img} />
+                    <Image source={require('../../assets/images/Orders/img1.png')} style={styles.img} />
+                    <Image source={require('../../assets/images/Orders/img2.png')} style={styles.img} />
+                    <Image source={require('../../assets/images/Orders/img3.png')} style={styles.img} />
+                    <Image source={require('../../assets/images/Orders/img4.png')} style={styles.img} />
                 </View>
                 <View style={{ marginTop: '4%' }}>
                     <View style={styles.row_center_between}>
@@ -113,36 +105,11 @@ const Orders = ({ navigation, route }) => {
                     </View>
                 </View>
                 <View style={[styles.row_center_between, { marginTop: '4%' }]}>
-                    <View style={styles.row_center}>
-                        <BouncyCheckbox
-                            size={24}
-                            fillColor='#F5CB57'
-                            unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
-                            iconStyle={{
-                                borderWidth: 0
-                            }}
-                            disableText={false}
-                            checkIconImageSource={null}
-                        />
-                        <Text style={[styles.text_select, themeSubTextStyle]} >Выбрать для возврата</Text>
-                    </View>
                     <TouchableOpacity activeOpacity={.9} style={[styles.btn_check, themeContainerSelectStyle]} onPress={handlePresentModalPress} >
                         <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14 }, themeTextStyle]}>Чеки</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
-
-
-            <View style={{ position: 'absolute', bottom: '5%', width: '100%' }}>
-                <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('accept_luggage_mileonair')} >
-                    <Text style={{ fontFamily: 'Inter_700Bold', color: '#000', fontSize: 14 }}>Забрать сейчас</Text>
-                    <Text style={styles.subtext_btn}>2 единицы на сумму 3 000 ₽</Text>
-                </TouchableOpacity>
-                <TouchableOpacity activeOpacity={.9} style={[styles.btn_2, themeBtn]} onPress={() => navigation.navigate('deliver_home')} >
-                    <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14 }, themeBtnSubText]}>Доставить домой</Text>
-                    <Text style={[styles.subtext_btn, themeBtnSubText2]}>2 единицы на сумму 3 000 ₽ + доставка</Text>
-                </TouchableOpacity>
-            </View>
+            </View> */}
 
             <BottomSheetModalProvider>
                 <View>
@@ -176,7 +143,7 @@ const Orders = ({ navigation, route }) => {
     )
 }
 
-export default Orders
+export default ClosedOrders
 
 const styles = StyleSheet.create({
     row_center_between: {
@@ -193,8 +160,8 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     text: {
-        fontSize: 14,
-        fontFamily: "Inter_600SemiBold",
+        fontSize: 24,
+        fontFamily: "Inter_800ExtraBold",
     },
     subtext: {
     },

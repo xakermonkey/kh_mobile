@@ -34,10 +34,16 @@ import QRCode from './screens/QRCode';
 
 import AcceptLuggageMileonAir from './screens/GetLuggage';
 import SelectTransportCompany from './screens/SelectTransportCompany';
+
 import Profile from './screens/Profile/Profile';
+import AddEmail from './screens/Profile/AddEmail';
+import ChangePin from './screens/Profile/ChangePin';
 import AddCard from './screens/Profile/AddCard';
+import Airports from './screens/Profile/Airports';
+import Terminals from './screens/Profile/Terminals';
+import ClosedOrders from './screens/Profile/ClosedOrders';
 import PaymentMethods from './screens/Profile/PaymentMethods';
-import TypeDocScreen from './screens/TypeDocScreen';
+import ChooseLanguage from './screens/Profile/ChooseLanguage';
 
 
 const Stack = createNativeStackNavigator()
@@ -57,7 +63,7 @@ function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='select_airport' >
+      <Stack.Navigator initialRouteName='profile' >
         <Stack.Screen name='select_country_code' component={SelectCountryCode} />
 
         <Stack.Screen options={{ headerShown: false }} name='login' component={LoginScreen} />
@@ -90,9 +96,15 @@ function App() {
         <Stack.Screen name='deliver_home' component={DeliverHome} />
         <Stack.Screen name='select_transport_company' component={SelectTransportCompany} />
 
-        <Stack.Screen name='Profile' component={Profile} />
+        <Stack.Screen name='profile' component={Profile} />
+        <Stack.Screen name='add_email' component={AddEmail} />
+        <Stack.Screen name='change_pin' component={ChangePin} />
         <Stack.Screen name='add_card' component={AddCard} />
-        <Stack.Screen name='PaymentMethods' component={PaymentMethods} />
+        <Stack.Screen name='airports' component={Airports} />
+        <Stack.Screen name='terminals' component={Terminals} />
+        <Stack.Screen name='closed_orders' component={ClosedOrders} />
+        <Stack.Screen name='payment_methods' component={PaymentMethods} />
+        <Stack.Screen name='choose_language' component={ChooseLanguage} />
 
       </Stack.Navigator>
     </NavigationContainer>

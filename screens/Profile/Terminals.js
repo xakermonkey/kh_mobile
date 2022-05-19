@@ -3,9 +3,9 @@ import React, { useLayoutEffect, useState } from 'react'
 import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { domain } from '../domain';
+import { domain } from '../../domain';
 
-const SelectTerminal = ({ navigation, route }) => {
+const Terminals = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
@@ -18,11 +18,12 @@ const SelectTerminal = ({ navigation, route }) => {
             headerStyle: {
                 backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C'
             },
-            headerBackVisible: false,
+            headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
+            // headerBackVisible: false,
             headerBackTitleVisible: false,
             headerTitle: () => {
                 return (<View style={{ alignItems: 'center' }} >
-                    {/* <Text style={[styles.title_header, themeTextStyle]} >{route.params.title}</Text> */}
+                    <Text style={[styles.title_header, themeTextStyle]} >Шереметьево</Text>
                     <Text style={[styles.subtext, themeSubTextStyle]} >Вы здесь</Text>
                 </View>)
             },
@@ -31,7 +32,7 @@ const SelectTerminal = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                         <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                             <Image
-                                source={require("../assets/images/profile.png")}
+                                source={require("../../assets/images/profile.png")}
                                 style={{width:24, height:30}}
                             />
                         </TouchableOpacity>
@@ -58,7 +59,7 @@ const SelectTerminal = ({ navigation, route }) => {
             <View style={[styles.container_select, themeContainerSelectStyle]}>
                 <View><Text style={[styles.text_holder, themeTextStyle]} >Выберите терминал</Text></View>
                 <View style={styles.radiobutton_container}>
-                    <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('terminal')} >
+                    <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('closed_orders')} >
                         <View style={styles.terminal_line}>
                             <View style={styles.name_terminal}>
                                 <Text style={[styles.title, themeTextStyle]} >Терминал A</Text>
@@ -71,7 +72,7 @@ const SelectTerminal = ({ navigation, route }) => {
                             />
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('orders')} >
+                    <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('closed_orders')} >
                         <View style={styles.terminal_line}>
                             <View style={styles.name_terminal}>
                                 <Text style={[styles.title, themeTextStyle]} >Терминал B</Text>
@@ -93,7 +94,7 @@ const SelectTerminal = ({ navigation, route }) => {
     )
 }
 
-export default SelectTerminal
+export default Terminals
 
 const styles = StyleSheet.create({
     container: {

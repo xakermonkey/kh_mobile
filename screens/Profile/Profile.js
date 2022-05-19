@@ -2,6 +2,7 @@ import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { Image, StyleSheet, Text, View, TouchableOpacity, ScrollView, Switch, Appearance, useColorScheme  } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { Icon } from 'react-native-elements';
+import Loading from '../Loading';
 
 
 function Profile({ navigation }) {
@@ -40,7 +41,8 @@ function Profile({ navigation }) {
     }, [navigation, colorScheme])
 
     return (
-        <ScrollView style={[styles.container, themeContainerStyle]}>
+        <View style={[styles.container, themeContainerStyle]}>
+        <ScrollView >
             <View style={[styles.panel, themeContainerSelectStyle]}>
                 <Text style={[styles.title, themeTextStyle]} >Персональные данные</Text>
                 <View style={{ marginTop: '5%' }}>
@@ -58,12 +60,15 @@ function Profile({ navigation }) {
                                 />
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.inline}>
+                    <TouchableOpacity style={styles.inline} onPress={() => navigation.navigate('add_email')}>
                         <View>
                             <Text style={[styles.text, themeTextStyle]} >Email</Text>
                         </View>
                         <View style={styles.row_center}>
-                            <Text style={[styles.subtext, themeSubTextStyle]} >vladstarun@gmail.com</Text>
+                            <View style={{alignItems:'flex-end'}}>
+                            <Text style={[styles.subtext, themeSubTextStyle]} >Добавить и подтвердить</Text>
+                            <Text style={[styles.subtext, {color:'#FF3956'}]} >Ожидается подтверждение</Text>
+                            </View>
                             <Icon
                                     name="chevron-forward-outline"
                                     type="ionicon"
@@ -72,9 +77,9 @@ function Profile({ navigation }) {
                                 />
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.inline}>
+                    <TouchableOpacity style={styles.inline} onPress={() => navigation.navigate('change_pin')}>
                         <View>
-                            <Text style={[styles.text, themeTextStyle]} >Пароль</Text>
+                            <Text style={[styles.text, themeTextStyle]} >ПИН-код</Text>
                         </View>
                         <View style={styles.row_center}>
                             <Text style={[styles.subtext, themeSubTextStyle]} >Изменить</Text>
@@ -147,7 +152,7 @@ function Profile({ navigation }) {
                             value={isEnabled}
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.inline}>
+                    <TouchableOpacity style={styles.inline} onPress={() => navigation.navigate('choose_language')}>
                         <View>
                             <Text style={[styles.text, themeTextStyle]} >Язык</Text>
                         </View>
@@ -161,7 +166,42 @@ function Profile({ navigation }) {
                                 />
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.inline} onPress={() => navigation.navigate('add_card')}>
+                    <TouchableOpacity style={styles.inline} onPress={() => navigation.navigate('airports')}>
+                        <View>
+                            <Text style={[styles.text, themeTextStyle]} >Посмотреть закрытые заказы</Text>
+                        </View>
+                            <Icon
+                                    name="chevron-forward-outline"
+                                    type="ionicon"
+                                    color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                                    style={{marginLeft: 10}}
+                                />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.inline}>
+                        <View>
+                            <Text style={[styles.text, themeTextStyle]} >Я являюсь участником MILEONAIR{"\n"}и хочу копить/тратить мили</Text>
+                        </View>
+                        <Switch
+                            trackColor={{ false: '#767577', true: '#23232A14' }}
+                            thumbColor={isEnabled ? '#F5CB57' : '#f4f3f4'}
+                            ios_backgroundColor="#23232A14"
+                            onValueChange={toggleSwitch}
+                            value={isEnabled}
+                        />
+                    </TouchableOpacity>
+                    <Text style={[styles.subtext, {lineHeight:18}, themeSubTextStyle]} >Мы зарегистрировали Вас в MILEONAIR. Для того, чтобы начать пользоваться милями Вам необходимо скачать мобильное приложение MILEONAIR</Text>
+                    <TouchableOpacity style={styles.inline}>
+                        <View>
+                            <Text style={[styles.text, themeTextStyle]} >Хочу стать участником MILEONAIR</Text>
+                        </View>
+                            <Icon
+                                    name="chevron-forward-outline"
+                                    type="ionicon"
+                                    color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                                    style={{marginLeft: 10}}
+                                />
+                    </TouchableOpacity>
+                    {/* <TouchableOpacity style={styles.inline} onPress={() => navigation.navigate('add_card')}>
                         <View>
                             <Text style={[styles.text, themeTextStyle]} >MILEONAIR</Text>
                             <Text style={[styles.subtext, themeSubTextStyle]} >Программа лояльности</Text>
@@ -175,10 +215,11 @@ function Profile({ navigation }) {
                                     style={{marginLeft: 10}}
                                 />
                         </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.inline} onPress={() => navigation.navigate('PaymentMethods')}>
+                    </TouchableOpacity> */}
+                    <TouchableOpacity style={styles.inline} onPress={() => navigation.navigate('payment_methods')}>
                         <View>
                             <Text style={[styles.text, themeTextStyle]} >Способы оплаты</Text>
+                            <Text style={[styles.subtext, themeSubTextStyle]} >Cертификат защиты PCI DSS</Text>
                         </View>
                         <View style={styles.row_center}>
                             <Text style={[styles.subtext, themeSubTextStyle]} >Добавить</Text>
@@ -193,6 +234,8 @@ function Profile({ navigation }) {
                 </View>
             </View>
         </ScrollView>
+        <Loading/>
+        </View>
     )
 };
 
@@ -202,6 +245,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: '3%',
+        marginBottom:'5%'
         // backgroundColor: '#F9F9FA',
     },
     row_center: {
@@ -220,7 +264,8 @@ const styles = StyleSheet.create({
     },
     panel: {
         // backgroundColor: '#23232A14', 
-        borderRadius: 16, padding: '4%', marginBottom: '3%',
+        borderRadius: 16, padding: '4%',
+        marginBottom: '3%',
     },
     title: {
         fontFamily: 'Inter_500Medium',

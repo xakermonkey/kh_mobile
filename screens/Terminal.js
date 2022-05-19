@@ -42,7 +42,7 @@ const Terminal = ({navigation}) => {
             headerRight: () => {
                 return (
                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                        <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('Profile')} >
+                        <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                             <Image
                                 source={require("../assets/images/profile.png")}
                                 style={{width:24, height:30}}

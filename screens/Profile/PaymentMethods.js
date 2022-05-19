@@ -1,5 +1,5 @@
 import React, { useLayoutEffect } from 'react';
-import { Image, StyleSheet, Text, View, ScrollView, Appearance, useColorScheme } from 'react-native';
+import { Image, StyleSheet, Text, View, ScrollView, Appearance, useColorScheme, TouchableOpacity } from 'react-native';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 function PaymentMethods({ navigation }) {
@@ -75,6 +75,9 @@ function PaymentMethods({ navigation }) {
                     />
                 </View>
             </View>
+            <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('profile')}>
+                <Text style={styles.btn_text}>Сохранить</Text>
+            </TouchableOpacity>
         </ScrollView>
     )
 };
@@ -120,6 +123,18 @@ const styles = StyleSheet.create({
         fontFamily: 'Inter_500Medium',
         // color: '#0C0C0D7A',
         fontSize: 12,
+    },
+    btn_text: {
+        fontFamily: 'Inter_700Bold',
+        fontSize: 14,
+        color: '#000',
+    },
+    btn: {
+        // marginTop:'10%',
+        padding: '4%',
+        borderRadius: 12,
+        alignItems: 'center',
+        backgroundColor: '#F5CB57',
     },
 
 

@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         marginTop: 24,
-        width: 262
+        width: 300
     },
     row_circle: {
         flexDirection: 'row',

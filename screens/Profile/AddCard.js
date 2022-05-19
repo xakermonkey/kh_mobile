@@ -44,7 +44,7 @@ function AddCard({ navigation }) {
                     <TextInput style={[styles.inline_input, themeContainerSelectStyle]} />
                 </View>
             </View>
-            <TouchableOpacity style={styles.btn}>
+            <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('profile')}>
                 <Text style={styles.btn_text}>Привязать карту</Text>
             </TouchableOpacity>
         </ScrollView>
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     btn: {
-        marginTop:'10%',
+        // marginTop:'10%',
         padding: '4%',
         borderRadius: 12,
         alignItems: 'center',
