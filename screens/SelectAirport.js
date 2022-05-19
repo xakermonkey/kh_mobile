@@ -4,6 +4,7 @@ import RadioForm, { RadioButton, RadioButtonInput } from 'react-native-simple-ra
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
 import { domain } from '../domain';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SelectAirport = ({ navigation }) => {
     const colorScheme = useColorScheme();
@@ -11,6 +12,10 @@ const SelectAirport = ({ navigation }) => {
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
+
+    const [selectAirport, setSelectAirport] = useState(0);
+    const [airport, setAirport] = useState([]);
+
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -23,20 +28,27 @@ const SelectAirport = ({ navigation }) => {
                 backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C'
             },
         })
+        AsyncStorage.getItem("token")
+        .then(token => {
+            axios.get(domain + "/get_airport", {headers: {"Authorization": "Token " + token }})
+            .then(res => {
+                setAirport(res.data);
+            })
+        })
+        AsyncStorage.getItem("airport_iata")
+        .then(iata => {
+            if (iata != null){
+                setSelectAirport(iata);
+            }
+        })
     }, [navigation])
 
-    useEffect(()=> {
-        axios.get(domain + '/ports').then((res) => {
-            // setAirport(res.data.value);
-        })
-    }, [])
 
-    const [selectAirport, setSelectAirport] = useState(0);
-    const [airport, setAirport] = useState([{id: 1, name: "Шереметьево"}]);
-
-    const customSelectAirport = (ind) => {
-        setSelectAirport(ind)
-        navigation.replace("select_terminal", { "title": airport.filter((obj) => obj.id == ind)[0].name, 'id': ind })
+    
+    const customSelectAirport = async (iata) => {
+        await AsyncStorage.setItem("airport", airport.filter((obj) => obj.iata == iata)[0].name);
+        await AsyncStorage.setItem("airport_iata", iata);
+        navigation.replace("select_terminal", { "title": airport.filter((obj) => obj.iata == iata)[0].name, 'iata': iata })
     }
 
 
@@ -63,8 +75,8 @@ const SelectAirport = ({ navigation }) => {
                                 <RadioButtonInput
                                     obj={{}}
                                     index={0}
-                                    isSelected={selectAirport === obj.id}
-                                    onPress={() => customSelectAirport(obj.id)}
+                                    isSelected={selectAirport === obj.iata}
+                                    onPress={() => customSelectAirport(obj.iata)}
                                     buttonInnerColor='#F5CB57'
                                     buttonOuterColor={colorScheme === 'light' ? '#e8e8e9' : '#F2F2F31F'}
                                     buttonSize={24}

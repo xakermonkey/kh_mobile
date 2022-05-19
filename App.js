@@ -77,7 +77,7 @@ function App() {
         <Stack.Screen name='first_name' component={InputFirstNameScreen} />
         <Stack.Screen name='patronymic' component={InputPatronymicScreen} />
         <Stack.Screen name='birthday' component={BirthDayScreen} />
-        <Stack.Screen name='select_document' component={SelectDocument} />
+        <Stack.Screen name='type_doc' component={SelectDocument} />
         <Stack.Screen name='document' component={DocumentScreen} />
         <Stack.Screen name='how_get' component={HowGetScreen} />
         <Stack.Screen name='date_get' component={DateGetScreen} />

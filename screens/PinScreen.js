@@ -75,7 +75,7 @@ const PinScreen = ({navigation}) => {
                 alignItems:'center'
             }}>
                 <TouchableOpacity onPress={() => navigation.navigate('license')}>
-                    <Text style={[{ color: '#000', fontFamily: 'Inter_700Bold', size: 14, textAlign: 'center' }]} >Забыли пароль?</Text>
+                    <Text style={[{ color: '#000', fontFamily: 'Inter_700Bold', fontSize: 14, textAlign: 'center' }]} >Забыли пароль?</Text>
                 </TouchableOpacity>
                 <View style={styles.keyboard}>
                     <View style={styles.row} >

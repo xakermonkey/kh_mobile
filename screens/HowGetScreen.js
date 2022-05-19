@@ -1,35 +1,35 @@
 import React, { useLayoutEffect, useState } from 'react'
 import { Appearance, useColorScheme, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native'
 import { Button } from 'react-native-elements'
-import { AntDesign } from '@expo/vector-icons'; 
+import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const HowGetScreen = ({navigation}) => {
+const HowGetScreen = ({ navigation }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
 
-    useLayoutEffect(() =>{
+    useLayoutEffect(() => {
         navigation.setOptions({
             title: '',
             headerShadowVisible: false,
-            headerStyle:{
+            headerStyle: {
                 backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C'
             },
             headerBackTitleVisible: false,
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
-            headerRight:() =>{
-                return(<TouchableOpacity activeOpacity={0.5} onPress={Pass} ><Text style={[{fontSize: 16, fontFamily: "Inter_800ExtraBold" }, themeTextStyle]} >Пропустить</Text></TouchableOpacity>)
+            headerRight: () => {
+                return (<TouchableOpacity activeOpacity={0.5} onPress={Pass} ><Text style={[{ fontSize: 16, fontFamily: "Inter_800ExtraBold" }, themeTextStyle]} >Пропустить</Text></TouchableOpacity>)
             }
         })
         AsyncStorage.getItem("how_get")
-        .then((hg) => {
-            if (hg != null){
-                navigation.replace("date_get")
-            }
-        })
+            .then((hg) => {
+                if (hg != null) {
+                    navigation.replace("date_get")
+                }
+            })
     }, [navigation])
 
     const [text, setText] = useState('')
@@ -61,17 +61,23 @@ const HowGetScreen = ({navigation}) => {
             });
         const res_json = await res.json();
         if (res_json.ok == "ok") {
-            await AsyncStorage.setItem("first_join", "true");
-            navigation.navigate("select_airport");
+            const fj = await AsyncStorage.getItem("first_join");
+            if (fj == null) {
+                await AsyncStorage.setItem("first_join", "true");
+                navigation.navigate("select_airport");
+            } else {
+                navigation.navigate("license_luggage");
+            }
+
         }
     }
 
 
     const setDoc = () => {
-        AsyncStorage.setItem("how_get",text)
-        .then(() => {
-            navigation.navigate("date_get")
-        })
+        AsyncStorage.setItem("how_get", text)
+            .then(() => {
+                navigation.navigate("date_get")
+            })
     }
 
     return (
@@ -80,12 +86,12 @@ const HowGetScreen = ({navigation}) => {
             <Text style={[styles.subtext, themeSubTextStyle]}>для ускорения обслуживания и получения</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>дополнительных привилегий</Text>
             <Text style={[styles.label, themeTextStyle]} >Кем выдан</Text>
-            <TextInput autoFocus value={text} style={[styles.inputtext, themeTextStyle]} onChangeText={(text) => setText(text)}   />
+            <TextInput autoFocus value={text} style={[styles.inputtext, themeTextStyle]} onChangeText={(text) => setText(text)} />
             <KeyboardAvoidingView behavior='padding' style={styles.row}>
                 <TouchableOpacity activeOpacity={0.5}>
                     <Text style={[styles.subtext, themeSubTextStyle]} >Зачем нам ваши </Text>
                     <Text style={[styles.subtext, themeSubTextStyle]}>паспортные данные?</Text>
-                    </TouchableOpacity>
+                </TouchableOpacity>
                 <Button buttonStyle={styles.btn} onPress={setDoc} containerStyle={styles.cont_btn} icon={<AntDesign name="arrowright" size={24} color="#000" />} />
             </KeyboardAvoidingView>
         </SafeAreaView>
@@ -95,51 +101,51 @@ const HowGetScreen = ({navigation}) => {
 export default HowGetScreen
 
 const styles = StyleSheet.create({
-    container:{
+    container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start',
     },
-    title:{
+    title: {
         fontSize: 20,
         fontFamily: "Inter_800ExtraBold",
         marginBottom: 8,
     },
-    subtext:{
+    subtext: {
         fontSize: 14,
         fontFamily: "Inter_500Medium",
         marginBottom: 4
     },
-    label:{
+    label: {
         fontSize: 14,
         fontFamily: "Inter_500Medium",
         marginTop: '20%'
     },
-    inputtext:{
+    inputtext: {
         fontSize: 32,
         fontFamily: "Inter_800ExtraBold",
         marginBottom: '35%'
     },
-    row:{
+    row: {
         flexDirection: 'row',
         width: '85%',
         justifyContent: 'space-between',
         alignItems: 'center',
         textAlign: 'left',
     },
-    btn:{
+    btn: {
         backgroundColor: '#F5CB58',
         width: 64,
         height: 64,
         borderRadius: 64
     },
-    cont_btn:{
+    cont_btn: {
         alignItems: 'center',
         justifyContent: 'center'
     },
 
 
-    
+
     lightContainer: {
         color: "#0C0C0D7A",
     },

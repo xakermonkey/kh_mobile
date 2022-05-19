@@ -60,8 +60,14 @@ const DocumentScreen = ({navigation}) => {
             });
         const res_json = await res.json();
         if (res_json.ok == "ok") {
-            await AsyncStorage.setItem("first_join", "true");
-            navigation.navigate("select_airport");
+            const fj = await AsyncStorage.getItem("first_join");
+            if (fj == null){
+                await AsyncStorage.setItem("first_join", "true");
+                navigation.navigate("select_airport");
+            }else{
+                navigation.navigate("license_luggage");
+            }
+            
         }
     }
 

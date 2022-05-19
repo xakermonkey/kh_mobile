@@ -1,9 +1,12 @@
-import { Appearance, useColorScheme, StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, ScrollView, Switch, TextInput, KeyboardAvoidingView, Platform } from 'react-native'
+import { Appearance, useColorScheme, StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, ScrollView, Switch, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native'
 import React, { useLayoutEffect, useState, useEffect } from 'react'
 import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
 import { EvilIcons, Feather } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { domain } from '../domain';
 
 
 const AddLuggage = ({ navigation, route }) => {
@@ -13,6 +16,10 @@ const AddLuggage = ({ navigation, route }) => {
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
 
+    const [terminal, setTerminal] = useState();
+    const [kind, setKind] = useState([]);
+    const [selectTerminal, setSelectTerminal] = useState(null);
+    const [selectKind, setSelectKind] = useState(0);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -23,8 +30,17 @@ const AddLuggage = ({ navigation, route }) => {
             },
             headerBackTitleVisible: false,
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
-        })
-    }, [navigation])
+        });
+        ( async () => {
+            const iata = await AsyncStorage.getItem("airport_iata");
+            const token = await AsyncStorage.getItem("token");
+            const term_id = await AsyncStorage.getItem("terminal_id");
+            const res = await axios.get(domain + "/add_luggage/" + iata, {headers: {"Authorization": "Token " + token}});
+            setKind(res.data.kind);
+            setTerminal(res.data.ls);
+            setSelectTerminal(res.data.ls.filter(item => item.id == term_id)[0]);
+        })();
+    }, [navigation, colorScheme])
 
 
     const [images, setImages] = useState([]);
@@ -79,18 +95,24 @@ const AddLuggage = ({ navigation, route }) => {
         })
     }
 
+    if (selectTerminal == null) {
+        return (<View>
+            <ActivityIndicator />
+        </View>)
+    }
+
     return (
         <KeyboardAvoidingView style={[styles.container, themeContainerStyle]} keyboardVerticalOffset={100} behavior={Platform.OS === "ios" ? "padding" : "height"} >
             <StatusBar />
             <View style={[styles.container_price, themeContainerSelectStyle]} >
                 <View style={styles.price_line}>
                     <Text style={[styles.price_line_text, themeTextStyle]} >Хранение багажа</Text>
-                    <Text style={[styles.price_line_price, themeTextStyle]} >500 ₽</Text>
+                    <Text style={[styles.price_line_price, themeTextStyle]} >{selectTerminal.price_storage} ₽</Text>
                 </View>
                 <View style={[styles.line, themeContainerStyle]} ></View>
                 <View style={styles.price_line}>
                     <Text style={[styles.price_line_text, themeTextStyle]} >Продление хранения</Text>
-                    <Text style={[styles.price_line_price, themeTextStyle]} >250 ₽</Text>
+                    <Text style={[styles.price_line_price, themeTextStyle]} >{selectTerminal.extension_storage} ₽</Text>
                 </View>
             </View>
             <View style={styles.container_select} >
@@ -99,7 +121,7 @@ const AddLuggage = ({ navigation, route }) => {
                 <Feather name="info" size={24} color="black" />
                 </View>
                 <View style={[styles.select, themeContainerSelectStyle]} >
-                    <Text style={[styles.value, themeTextStyle]} >Терминал A, 2 этаж</Text>
+                    <Text style={[styles.value, themeTextStyle]} >Терминал {selectTerminal.terminal}, {selectTerminal.floor} этаж</Text>
                     <Icon
                         name="chevron-down-outline"
                         type="ionicon"
@@ -110,7 +132,7 @@ const AddLuggage = ({ navigation, route }) => {
             <View style={styles.container_select} >
                 <Text style={[styles.label, themeSubTextStyle]} >Вид багажа</Text>
                 <View style={[styles.select, themeContainerSelectStyle]} >
-                    <Text style={[styles.value, themeTextStyle]} >Чемодан</Text>
+                    <Text style={[styles.value, themeTextStyle]} >{kind[selectKind]}</Text>
                     <Icon
                         name="chevron-down-outline"
                         type="ionicon"
