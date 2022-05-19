@@ -104,7 +104,7 @@ export default SelectTerminal
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: '3%',
+        padding:'3%',
     },
     container_select: {
         borderRadius: 12,

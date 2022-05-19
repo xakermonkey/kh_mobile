@@ -31,7 +31,7 @@ const QRCode = ({ navigation }) => {
             <Text style={[styles.qr_text, themeTextStyle]}>QR-код</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>Покажите QR код сотруднику камеры хранения, чтобы забрать багаж</Text>
             
-            <TouchableOpacity activeOpacity={.9} style={[styles.btn, themeButtonStyle]} onPress={() => navigation.navigate('orders')} >
+            <TouchableOpacity activeOpacity={.9} style={[styles.btn, themeButtonStyle]} onPress={() => navigation.navigate('select_terminal')} >
                 <Text style={[{ fontFamily: 'Inter_700Bold' }, themeTextStyle]}>Перейти к заказу</Text>
             </TouchableOpacity>
         </View>

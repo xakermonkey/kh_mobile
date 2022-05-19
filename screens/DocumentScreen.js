@@ -91,7 +91,7 @@ const DocumentScreen = ({navigation}) => {
                     <Text style={[styles.subtext, themeSubTextStyle]} >Зачем нам ваши </Text>
                     <Text style={[styles.subtext, themeSubTextStyle]}>паспортные данные?</Text>
                     </TouchableOpacity>
-                <Button buttonStyle={styles.btn} onPress={setDoc} containerStyle={styles.cont_btn} icon={<AntDesign name="arrowright" size={24} color="#000000" />} />
+                <Button buttonStyle={styles.btn} onPress={() => navigation.navigate('how_get')} containerStyle={styles.cont_btn} icon={<AntDesign name="arrowright" size={24} color="#000000" />} />
             </KeyboardAvoidingView>
         </SafeAreaView>
     )

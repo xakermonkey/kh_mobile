@@ -72,7 +72,7 @@ const Terminal = ({navigation, route}) => {
             />
         </View>
           <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('license_luggage')} >
-            <Text style={{ fontFamily: 'Inter_700Bold', color: '#F2F2F3' }}>Сдать багаж</Text>
+            <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Сдать багаж</Text>
           </TouchableOpacity>
     </SafeAreaView>
   )
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     },
     btn: {
         position: 'absolute',
-        backgroundColor: '#3333FF',
+        backgroundColor: '#F5CB57',
         width: '90%',
         borderRadius: 12,
         fontSize: 14,

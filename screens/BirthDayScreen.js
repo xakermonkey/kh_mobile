@@ -81,8 +81,8 @@ const BirthDayScreen = ({navigation}) => {
             <TextInput autoFocus value={date} style={[styles.inputtext, themeTextStyle]} onChangeText={(text) => setDate(text)} />
             <KeyboardAvoidingView behavior='padding' style={styles.row}>
                 <TouchableOpacity activeOpacity={0.5}>
-                    <Text style={[styles.subtext, themeTextStyle]} >Зачем нам ваши </Text>
-                    <Text style={[styles.subtext, themeTextStyle]}>паспортные данные?</Text>
+                    <Text style={[styles.subtext, themeSubTextStyle]} >Зачем нам ваши </Text>
+                    <Text style={[styles.subtext, themeSubTextStyle]}>паспортные данные?</Text>
                     </TouchableOpacity>
                 <Button buttonStyle={styles.btn} onPress={setDoc} containerStyle={styles.cont_btn} icon={<AntDesign name="arrowright" size={24} color="#000" />} />
             </KeyboardAvoidingView>
@@ -113,10 +113,10 @@ const styles = StyleSheet.create({
         fontFamily: "Inter_500Medium",
         marginTop: '20%'
     },
-    picker:{
-        height: '40%',
-        width: '80%',
-        marginBottom: '50%',
+    inputtext:{
+        fontSize: 32,
+        fontFamily: "Inter_800ExtraBold",
+        marginBottom: '35%'
     },
     row:{
         flexDirection: 'row',
@@ -124,11 +124,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         textAlign: 'left',
-    },
-    inputtext: {
-        fontSize: 32,
-        fontFamily: "Inter_800ExtraBold",
-        marginBottom: '35%'
     },
     btn:{
         backgroundColor: '#F5CB58',
