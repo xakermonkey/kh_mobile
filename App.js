@@ -63,7 +63,7 @@ function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='profile' >
+      <Stack.Navigator initialRouteName='select_country_code' >
         <Stack.Screen name='select_country_code' component={SelectCountryCode} />
 
         <Stack.Screen options={{ headerShown: false }} name='login' component={LoginScreen} />

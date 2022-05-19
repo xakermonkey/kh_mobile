@@ -33,20 +33,20 @@ const SelectCountryCode = ({ navigation }) => {
         })
         axios.get(domain + "/get_code_city").then((res) => setCity(res.data));
         (async () => {
-            // await AsyncStorage.removeItem("token");
-            // await AsyncStorage.removeItem("pin");
-            // await AsyncStorage.removeItem("airport");
-            // await AsyncStorage.removeItem("airport_iata");
-            // await AsyncStorage.removeItem("first_join");
-            // await AsyncStorage.removeItem("first_name");
-            // await AsyncStorage.removeItem("last_name");
-            // await AsyncStorage.removeItem("patronymic");
-            // await AsyncStorage.removeItem("type_doc");
-            // await AsyncStorage.removeItem("avatar");
-            // await AsyncStorage.removeItem("number_doc");
-            // await AsyncStorage.removeItem("how_get");
-            // await AsyncStorage.removeItem("date_get");
-            // await AsyncStorage.removeItem("birthday");
+            await AsyncStorage.removeItem("token");
+            await AsyncStorage.removeItem("pin");
+            await AsyncStorage.removeItem("airport");
+            await AsyncStorage.removeItem("airport_iata");
+            await AsyncStorage.removeItem("first_join");
+            await AsyncStorage.removeItem("first_name");
+            await AsyncStorage.removeItem("last_name");
+            await AsyncStorage.removeItem("patronymic");
+            await AsyncStorage.removeItem("type_doc");
+            await AsyncStorage.removeItem("avatar");
+            await AsyncStorage.removeItem("number_doc");
+            await AsyncStorage.removeItem("how_get");
+            await AsyncStorage.removeItem("date_get");
+            await AsyncStorage.removeItem("birthday");
             const pin = await AsyncStorage.getItem("pin");
             const token = await AsyncStorage.getItem("token");
             if (token != null && pin != null){
