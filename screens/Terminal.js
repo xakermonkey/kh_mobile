@@ -1,14 +1,29 @@
-import { Appearance, useColorScheme, StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image } from 'react-native'
+import { Appearance, useColorScheme, StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, Alert } from 'react-native'
 import React, { useLayoutEffect } from 'react'
 import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 
-const Terminal = ({navigation, route}) => {
+const Terminal = ({navigation}) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
+
+    const dateAlert = () =>
+    Alert.alert(
+      "Заполнить данные о себе",
+      "При сдаче багажа необходимо подтверждение личности. Вы можете ускорить процесс оформления, заполнив данные самостоятельно.",
+      [
+        {
+          text: "Заполнить",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "Пропустить", onPress: () => navigation.navigate('license_luggage') }
+      ]
+    );
+
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -20,28 +35,20 @@ const Terminal = ({navigation, route}) => {
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
             headerTitle: () => {
                 return(<View style={{ alignItems: 'center'}} >
-                            <Text style={[styles.title, themeTextStyle]} >{route.params.terminal}</Text>
-                            <Text style={[styles.subtext, themeSubTextStyle]} >{route.params.airport}</Text>
+                            <Text style={[styles.title, themeTextStyle]} >Терминал А, 2 этаж</Text>
+                            <Text style={[styles.subtext, themeSubTextStyle]} >Шереметьево</Text>
                         </View>)
             },
-            headerRight:() =>{
-                return(
-                <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                    <TouchableOpacity style={{marginRight: 5}} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
-                    <Icon 
-                            name="location-outline"
-                            type="ionicon"
-                            color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+            headerRight: () => {
+                return (
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                        <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('Profile')} >
+                            <Image
+                                source={require("../assets/images/profile.png")}
+                                style={{width:24, height:30}}
                             />
-                    </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Profile')} >
-                        <Icon 
-                            name="person-circle-outline"
-                            type="ionicon"
-                            color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                            /> 
                         </TouchableOpacity>
-                </View>)
+                    </View>)
             }
         })
     }, [navigation])
@@ -63,7 +70,7 @@ const Terminal = ({navigation, route}) => {
         </View>
         <View style={[styles.container_location, themeContainerSelectStyle]}>
             <Text style={[styles.subtext, themeSubTextStyle]} >Местоположение</Text>
-            <Text style={[styles.title, {marginTop: "3%"}, themeTextStyle]} >{route.params.terminal}.{"\n"}Возле стойки информации.</Text>
+            <Text style={[styles.title, {marginTop: "3%"}, themeTextStyle]} >Терминал А, 2 этаж.{"\n"}Возле стойки информации.</Text>
             <Image 
                 source={{"uri": "https://print.packandfly.ru/media/pos/c.jpg"}}
                 style={styles.map}
@@ -71,7 +78,7 @@ const Terminal = ({navigation, route}) => {
                 height={240}
             />
         </View>
-          <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('license_luggage')} >
+          <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={dateAlert} >
             <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Сдать багаж</Text>
           </TouchableOpacity>
     </SafeAreaView>

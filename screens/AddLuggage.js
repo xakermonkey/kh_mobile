@@ -3,7 +3,8 @@ import React, { useLayoutEffect, useState, useEffect } from 'react'
 import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
-import { EvilIcons } from '@expo/vector-icons';
+import { EvilIcons, Feather } from '@expo/vector-icons';
+
 
 const AddLuggage = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
@@ -93,7 +94,10 @@ const AddLuggage = ({ navigation, route }) => {
                 </View>
             </View>
             <View style={styles.container_select} >
+                <View style={{flexDirection:'row'}}>
                 <Text style={[styles.label, themeSubTextStyle]} >Камера хранения</Text>
+                <Feather name="info" size={24} color="black" />
+                </View>
                 <View style={[styles.select, themeContainerSelectStyle]} >
                     <Text style={[styles.value, themeTextStyle]} >Терминал A, 2 этаж</Text>
                     <Icon

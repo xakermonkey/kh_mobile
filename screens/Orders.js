@@ -48,18 +48,10 @@ const Orders = ({ navigation, route }) => {
             headerRight: () => {
                 return (
                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                        <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
-                            <Icon
-                                name="location-outline"
-                                type="ionicon"
-                                color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Profile')} >
-                            <Icon
-                                name="person-circle-outline"
-                                type="ionicon"
-                                color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                        <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('Profile')} >
+                            <Image
+                                source={require("../assets/images/profile.png")}
+                                style={{width:24, height:30}}
                             />
                         </TouchableOpacity>
                     </View>)
@@ -75,7 +67,7 @@ const Orders = ({ navigation, route }) => {
         <View style={[styles.container, themeContainerStyle]} >
 
             <StatusBar />
-            <View style={styles.row_center_between}>
+            {/* <View style={styles.row_center_between}>
                 <Text style={[styles.text, themeTextStyle]} >Показать закрытые заказы</Text>
                 <Switch
                     trackColor={{ false: '#767577', true: '#23232A14' }}
@@ -84,7 +76,7 @@ const Orders = ({ navigation, route }) => {
                     onValueChange={toggleSwitch}
                     value={isEnabled}
                 />
-            </View>
+            </View> */}
 
 
             <View style={[styles.container_location, themeContainerSelectStyle]}>
@@ -165,7 +157,7 @@ const Orders = ({ navigation, route }) => {
 
                         <View style={{ padding: '5%' }}>
                             <View style={[styles.row_center_between, { marginBottom: '5%' }]}>
-                                <Text style={[styles.tex, themeTextStyle]} >Чек за хранение</Text>
+                                <Text style={[styles.text, themeTextStyle]} >Чек за хранение</Text>
                                 <Text style={[styles.text_description, { color: '#0C0C0D7A' }, themeSubTextStyle]} >21 сентября 2022</Text>
                             </View>
                             <View style={[styles.row_center_between, { marginBottom: '5%' }]}>
