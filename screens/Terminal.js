@@ -15,6 +15,7 @@ const Terminal = ({ navigation }) => {
 
     const dateAlert = async () => {
         const full_doc = await AsyncStorage.getItem("full_document");
+        console.log(full_doc);
         if (full_doc == null) {
             Alert.alert(
                 "Заполнить данные о себе",

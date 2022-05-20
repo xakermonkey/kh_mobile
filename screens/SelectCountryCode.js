@@ -6,6 +6,8 @@ import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
 import { domain, domain_domain } from '../domain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Loading from './Loading';
+
 
 const SelectCountryCode = ({ navigation }) => {
     const colorScheme = useColorScheme();
@@ -49,17 +51,17 @@ const SelectCountryCode = ({ navigation }) => {
             await AsyncStorage.removeItem("birthday");
             const pin = await AsyncStorage.getItem("pin");
             const token = await AsyncStorage.getItem("token");
-            if (token != null && pin != null){
+            if (token != null && pin != null) {
                 navigation.replace("pin");
             }
-            if (token != null && pin == null){
+            if (token != null && pin == null) {
                 navigation.replace("changepin")
             }
         })();
     }, [navigation])
 
 
-    const renderItem = ({item}) => {
+    const renderItem = ({ item }) => {
         return (
             <View>
                 <View style={[styles.container_select]}>
@@ -71,7 +73,7 @@ const SelectCountryCode = ({ navigation }) => {
                         >
                             <RadioButton labelHorizontal={true} style={{ justifyContent: 'space-between', alignItems: 'center', marginBottom: "2%" }} >
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Image source={{uri: domain_domain + item.flag}} width={30} height={30} style={{ marginRight: 10, width: 30, height: 30 }} />
+                                    <Image source={{ uri: domain_domain + item.flag }} width={30} height={30} style={{ marginRight: 10, width: 30, height: 30, borderRadius:50 }} />
                                     <Text style={[styles.title, themeTextStyle]}>{item.city}</Text>
                                     <Text style={[styles.title, themeSubTextStyle]}>{item.code}</Text>
                                 </View>
@@ -80,7 +82,7 @@ const SelectCountryCode = ({ navigation }) => {
                                         obj={{}}
                                         index={0}
                                         // isSelected={selectAirport === obj.id}
-                                        onPress={() => navigation.navigate('login', {'code': item.code})}
+                                        onPress={() => navigation.navigate('login', { 'code': item.code })}
                                         buttonInnerColor='#F5CB57'
                                         buttonOuterColor={colorScheme === 'light' ? '#e8e8e9' : '#F2F2F31F'}
                                         buttonSize={24}
@@ -101,11 +103,11 @@ const SelectCountryCode = ({ navigation }) => {
     }
 
     const EmptyComponent = () => {
-        return(
-            <View style={{ justifyContent: 'center', alignItems: 'center' }} >
-                <Image style={{ width: "50%" }}resizeMode="contain" source={require("../assets/images/Lounge.png")} />
-                <Text style={styles.subtext} >Ничего не найдено</Text>
-            </View>
+        return (
+                <View style={{ justifyContent: 'center', alignItems: 'center' }} >
+                    <Image style={{ width: "50%" }} resizeMode="contain" source={require("../assets/images/Lounge.png")} />
+                    <Text style={styles.subtext} >Ничего не найдено</Text>
+                </View>
         )
     }
 
@@ -141,6 +143,7 @@ const SelectCountryCode = ({ navigation }) => {
                 renderItem={renderItem}
                 ListEmptyComponent={<EmptyComponent />}
             />
+                {/* <Loading /> */}
         </View>
     )
 }

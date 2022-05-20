@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         marginTop: 24,
         // paddingHorizontal:'15%'
-        width: 262
+        width: 300
     },
     btn: {
         width: 72,

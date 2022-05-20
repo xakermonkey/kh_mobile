@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View, TouchableOpacity, ScrollView, Switch, Appearance, useColorScheme  } from 'react-native';
+import { Image, StyleSheet, Text, View, TouchableOpacity, ScrollView, Switch, Appearance, useColorScheme } from 'react-native';
 
 
 const Loading = () => {
@@ -10,8 +10,11 @@ const Loading = () => {
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
 
     return (
-        <View style={{position:'absolute', bottom:0, backgroundColor:'#0C0C0D5C'}}>
-            <Text>Ожидание подключения</Text>
+        <View style={{ position: 'absolute', bottom: 0, backgroundColor: '#A3A2A5', width: '100%', height: 78 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: '5%' }}>
+                <Image source={require('../assets/images/loading.gif')} style={{ width: 24, height: 24 }} />
+                <Text style={{ color: '#fff', fontFamily: 'Inter_500Medium', fontSize: 14, marginLeft: '2%' }}>Ожидание подключения</Text>
+            </View>
         </View>
     )
 };
@@ -22,7 +25,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: '3%',
-        marginBottom:'5%'
+        marginBottom: '5%'
         // backgroundColor: '#F9F9FA',
     },
 

@@ -42,7 +42,7 @@ function Profile({ navigation }) {
 
     return (
         <View style={[styles.container, themeContainerStyle]}>
-        <ScrollView >
+        <ScrollView style={{padding:'3%', marginBottom:'5%'}}>
             <View style={[styles.panel, themeContainerSelectStyle]}>
                 <Text style={[styles.title, themeTextStyle]} >Персональные данные</Text>
                 <View style={{ marginTop: '5%' }}>
@@ -244,8 +244,6 @@ export default Profile
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: '3%',
-        marginBottom:'5%'
         // backgroundColor: '#F9F9FA',
     },
     row_center: {
