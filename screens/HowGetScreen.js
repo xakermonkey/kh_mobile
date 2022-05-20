@@ -3,7 +3,7 @@ import { Appearance, useColorScheme, KeyboardAvoidingView, SafeAreaView, StyleSh
 import { Button } from 'react-native-elements'
 import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { domain } from '../domain';
 const HowGetScreen = ({ navigation }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
@@ -66,7 +66,7 @@ const HowGetScreen = ({ navigation }) => {
                 await AsyncStorage.setItem("first_join", "true");
                 navigation.navigate("select_airport");
             } else {
-                navigation.navigate("license_luggage");
+                navigation.replace("license_luggage");
             }
 
         }

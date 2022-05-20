@@ -5,6 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaskInput from 'react-native-mask-input';
+import { domain } from '../domain';
 
 const BirthDayScreen = ({navigation}) => {
     const colorScheme = useColorScheme();

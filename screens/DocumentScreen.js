@@ -3,7 +3,7 @@ import { Appearance, useColorScheme, KeyboardAvoidingView, SafeAreaView, StyleSh
 import { Button } from 'react-native-elements'
 import { AntDesign } from '@expo/vector-icons'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { domain } from '../domain';
 
 const DocumentScreen = ({navigation}) => {
     const colorScheme = useColorScheme();

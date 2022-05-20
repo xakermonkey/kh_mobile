@@ -15,11 +15,28 @@ const Terminal = ({ navigation }) => {
 
     const dateAlert = async () => {
         const full_doc = await AsyncStorage.getItem("full_document");
-        console.log(full_doc);
+        const last_name = await AsyncStorage.getItem("last_name");
+        const first_name = await AsyncStorage.getItem("first_name");
+        const patronymic = await AsyncStorage.getItem("patronymic");
+        const birthday = await AsyncStorage.getItem("birthday");
+        const how_get = await AsyncStorage.getItem("how_get");
+        const date_get = await AsyncStorage.getItem("date_get");
+        const type_doc = await AsyncStorage.getItem("type_doc");
+        const photo = await AsyncStorage.getItem("avatar");
+        let text = "При сдаче багажа необходимо подтверждение личности. Вы можете ускорить процесс оформления, заполнив данные самостоятельно:\n";
+        text += last_name == null ? "Фамилия\n" : ""
+        text += first_name == null ? "Имя\n" : ""
+        text += patronymic == null ? "Отчество\n" : ""
+        text += birthday == null ?  "Дата рождения\n" : ""
+        text +=how_get == null ? "Кем выдан\n" : ""
+        text +=date_get == null ? "Дата выдачи\n" : ""
+        text +=type_doc == null ? "Тип документа\n" : ""
+        text +=photo == null ? "Фотография" : ""
+        console.log(text);
         if (full_doc == null) {
             Alert.alert(
                 "Заполнить данные о себе",
-                "При сдаче багажа необходимо подтверждение личности. Вы можете ускорить процесс оформления, заполнив данные самостоятельно.",
+                text,
                 [
                     {
                         text: "Заполнить",
