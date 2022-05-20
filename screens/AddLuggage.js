@@ -36,6 +36,7 @@ const AddLuggage = ({ navigation, route }) => {
             const token = await AsyncStorage.getItem("token");
             const term_id = await AsyncStorage.getItem("terminal_id");
             const res = await axios.get(domain + "/add_luggage/" + iata, {headers: {"Authorization": "Token " + token}});
+            console.log(res.data);
             setKind(res.data.kind);
             setTerminal(res.data.ls);
             setSelectTerminal(res.data.ls.filter(item => item.id == term_id)[0]);

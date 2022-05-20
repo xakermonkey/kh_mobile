@@ -3,7 +3,7 @@ import { Appearance, useColorScheme, KeyboardAvoidingView, SafeAreaView, StyleSh
 import { Button } from 'react-native-elements'
 import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { domain } from '../domain';
 
 const InputFirstNameScreen = ({ navigation }) => {
     const colorScheme = useColorScheme();
@@ -65,7 +65,7 @@ const InputFirstNameScreen = ({ navigation }) => {
 
     const setDoc = async () => {
         if (/[^А-Яа-я]/.test(text)) {
-            console.log("Error!");2
+            console.log("Error!");
             setBad(true);
         } else {
             await AsyncStorage.setItem("first_name", text);

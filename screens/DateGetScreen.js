@@ -4,7 +4,7 @@ import { Button } from 'react-native-elements'
 import { AntDesign } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { domain } from '../domain';
 
 const DateGetScreen = ({ navigation }) => {
     const colorScheme = useColorScheme();

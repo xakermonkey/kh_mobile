@@ -33,20 +33,21 @@ const SelectCountryCode = ({ navigation }) => {
         })
         axios.get(domain + "/get_code_city").then((res) => setCity(res.data));
         (async () => {
-            await AsyncStorage.removeItem("token");
-            await AsyncStorage.removeItem("pin");
-            await AsyncStorage.removeItem("airport");
-            await AsyncStorage.removeItem("airport_iata");
-            await AsyncStorage.removeItem("first_join");
-            await AsyncStorage.removeItem("first_name");
-            await AsyncStorage.removeItem("last_name");
-            await AsyncStorage.removeItem("patronymic");
-            await AsyncStorage.removeItem("type_doc");
-            await AsyncStorage.removeItem("avatar");
-            await AsyncStorage.removeItem("number_doc");
-            await AsyncStorage.removeItem("how_get");
-            await AsyncStorage.removeItem("date_get");
-            await AsyncStorage.removeItem("birthday");
+            // await AsyncStorage.removeItem("token");
+            // await AsyncStorage.removeItem("full_document")
+            // await AsyncStorage.removeItem("pin");
+            // await AsyncStorage.removeItem("airport");
+            // await AsyncStorage.removeItem("airport_iata");
+            // await AsyncStorage.removeItem("first_join");
+            // await AsyncStorage.removeItem("first_name");
+            // await AsyncStorage.removeItem("last_name");
+            // await AsyncStorage.removeItem("patronymic");
+            // await AsyncStorage.removeItem("type_doc");
+            // await AsyncStorage.removeItem("avatar");
+            // await AsyncStorage.removeItem("number_doc");
+            // await AsyncStorage.removeItem("how_get");
+            // await AsyncStorage.removeItem("date_get");
+            // await AsyncStorage.removeItem("birthday");
             const pin = await AsyncStorage.getItem("pin");
             const token = await AsyncStorage.getItem("token");
             if (token != null && pin != null){
@@ -71,7 +72,7 @@ const SelectCountryCode = ({ navigation }) => {
                         >
                             <RadioButton labelHorizontal={true} style={{ justifyContent: 'space-between', alignItems: 'center', marginBottom: "2%" }} >
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Image source={{uri: domain_domain + item.flag}} width={30} height={30} style={{ marginRight: 10, width: 30, height: 30 }} />
+                                    <Image source={{uri: domain_domain + item.flag}} width={30} height={30} style={{ marginRight: 10, width: 30, height: 30, borderRadius: 50 }} />
                                     <Text style={[styles.title, themeTextStyle]}>{item.city}</Text>
                                     <Text style={[styles.title, themeSubTextStyle]}>{item.code}</Text>
                                 </View>
