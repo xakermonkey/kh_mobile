@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View, TouchableOpacity, Appearance, Image, useColorScheme } from 'react-native'
-import React, { useLayoutEffect, useState } from 'react'
+import { StyleSheet, Text, View, TouchableOpacity, Appearance, Image, useColorScheme, RefreshControl } from 'react-native'
+import React, { useLayoutEffect, useState, useCallback } from 'react'
 import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
 import { domain } from '../domain';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SelectTerminal = ({ navigation, route }) => {
@@ -16,6 +16,7 @@ const SelectTerminal = ({ navigation, route }) => {
 
     const [terminals, setTerminals] = useState([]);
     const [airport, setAirport] = useState("");
+    const [refreshing, setRefreshing] = useState(false);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -53,6 +54,16 @@ const SelectTerminal = ({ navigation, route }) => {
     }, [navigation, colorScheme, airport])
 
 
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        const token = await AsyncStorage.getItem("token");
+        const iata = await AsyncStorage.getItem("airport_iata");
+        const res = await axios.get(domain + "/get_terminals", { params: { "iata": iata }, headers: { "Authorization": "Token " + token } })
+        setTerminals(res.data);
+        setRefreshing(false);
+      }, []);
+
+
 
     const customSelectTerinal = async (item) => {
         await AsyncStorage.setItem("terminal_id", item.id.toString());
@@ -71,7 +82,11 @@ const SelectTerminal = ({ navigation, route }) => {
         <View style={[styles.container, themeContainerStyle]} >
             <StatusBar />
             <View style={styles.subtitle}><Text style={[styles.subtext, themeSubTextStyle]}></Text></View>
-            <View style={[styles.container_select, themeContainerSelectStyle]}>
+            <ScrollView contentContainerStyle={[styles.container_select, themeContainerSelectStyle]}>
+            <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                />
                 <View><Text style={[styles.text_holder, themeTextStyle]} >Камеры хранения</Text></View>
                 <View style={styles.radiobutton_container}>
                     {terminals.map((obj) => {
@@ -95,7 +110,7 @@ const SelectTerminal = ({ navigation, route }) => {
                         )
                     })}
                 </View>
-            </View>
+            </ScrollView>
         </View >
     )
 }

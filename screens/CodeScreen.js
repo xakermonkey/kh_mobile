@@ -34,9 +34,38 @@ const CodeScreen = ({ navigation, route }) => {
     useEffect(() => {
         if (code.length === 4) {
             (async () => {
-                try{
+                try {
                     const res = await axios.post(domain + "/set_code", { 'number': route.params.login, 'code': code })
+                    // console.warn(res.data);
                     await AsyncStorage.setItem("token", res.data.token);
+                    if (res.data.doc.last_name != null) {
+                        await AsyncStorage.setItem("last_name", res.data.doc.last_name);
+                    }
+                    if(res.data.doc.first_name != null){
+                        await AsyncStorage.setItem("first_name", res.data.doc.first_name);
+                    }
+                    if(res.data.doc.petronymic != null) {
+                        await AsyncStorage.setItem("patronymic", res.data.doc.patronymic);
+                    }
+                    if (res.data.doc.how_get != null) {
+                        await AsyncStorage.setItem("how_get", res.data.doc.how_get);
+                    }
+                    if (res.data.doc.type_doc != null) {
+                        await AsyncStorage.setItem("type_doc", res.data.doc.type_doc);
+                    }
+                    if (res.data.doc.avatar != null) {
+                        await AsyncStorage.setItem("avatar", res.data.doc.first_scan);
+                    }
+                    if (res.data.doc.series_number != null) {
+                        await AsyncStorage.setItem("number_doc", res.data.doc.series_number);
+                    }
+                    
+                    if (res.data.doc.birthday != null) {
+                        await AsyncStorage.setItem("birthday", new Date(res.data.doc.birthday).getTime().toString());
+                    }
+                    if (res.data.doc.date_get != null) {
+                        await AsyncStorage.setItem("date_get", new Date(res.data.doc.date_get).getTime().toString());
+                    }
                     const pin = await AsyncStorage.getItem('pin');
                     const biometric = await AsyncStorage.getItem("biometric");
                     if (pin == null) {
@@ -51,7 +80,7 @@ const CodeScreen = ({ navigation, route }) => {
                     return 0;
                 }
                 catch (err) {
-                    console.log(err);
+                    console.warn(err);
                     setVerify(false);
                     return 0;
                 }
@@ -75,7 +104,7 @@ const CodeScreen = ({ navigation, route }) => {
             <View style={{
                 bottom: 48,
                 position: 'absolute',
-                alignItems:'center'
+                alignItems: 'center'
             }}>
                 <TouchableOpacity onPress={() => navigation.navigate('license')}>
                     <Text style={[{ color: '#000', fontFamily: 'Inter_700Bold', fontSize: 14, textAlign: 'center' }]} >Отправить код повторно</Text>

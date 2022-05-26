@@ -8,7 +8,7 @@ import axios from 'axios';
 import { domain } from '../domain';
 import { lessThan } from 'react-native-reanimated';
 
-const ImageScreen = ({navigation}) => {
+const ImageScreen = ({ navigation }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
@@ -16,28 +16,38 @@ const ImageScreen = ({navigation}) => {
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
     const [img, setImg] = useState();
 
-    useLayoutEffect(() =>{
+    useLayoutEffect(() => {
         navigation.setOptions({
             title: '',
             headerShadowVisible: false,
-            headerStyle:{
+            headerStyle: {
                 backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C'
             },
             headerBackTitleVisible: false,
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
-            headerRight:() =>{
-                return(<TouchableOpacity activeOpacity={0.5} onPress={Pass} ><Text style={[{fontSize: 16, fontFamily: "Inter_800ExtraBold" }, themeTextStyle]} >Пропустить</Text></TouchableOpacity>)
+            headerRight: () => {
+                return (<TouchableOpacity activeOpacity={0.5} onPress={Pass} ><Text style={[{ fontSize: 16, fontFamily: "Inter_800ExtraBold" }, themeTextStyle]} >Пропустить</Text></TouchableOpacity>)
+            }
+        })
+        AsyncStorage.getItem("avatar").then(av => {
+            if (av != null) {
+                (async () => {
+                    await AsyncStorage.setItem("full_document", "true");
+                    await AsyncStorage.setItem("first_join", "true");
+                    navigation.replace("select_airport");
+                })();
+
             }
         })
     }, [navigation])
 
-    
+
 
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          quality: 1,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 1,
         });
         if (!result.cancelled) {
             let shir = result.uri.split(".")
@@ -46,7 +56,7 @@ const ImageScreen = ({navigation}) => {
                 uri: result.uri,
                 type: 'image/' + shir,
                 name: `img.${shir}`
-              }
+            }
             setImg(obj);
         }
     }
@@ -83,18 +93,17 @@ const ImageScreen = ({navigation}) => {
         const res_json = await res.json();
         if (res_json.ok == "ok") {
             const fj = await AsyncStorage.getItem("first_join");
-            if (fj == null){
+            if (fj == null) {
                 await AsyncStorage.setItem("first_join", "true");
                 navigation.navigate("select_airport");
-            }else{
+            } else {
                 navigation.navigate("license_luggage");
             }
-            
+
         }
     }
 
     const setDoc = async () => {
-        await AsyncStorage.setItem("avatar", img.uri);
         const token = await AsyncStorage.getItem("token");
         const first_name = await AsyncStorage.getItem("first_name");
         const last_name = await AsyncStorage.getItem("last_name");
@@ -126,15 +135,16 @@ const ImageScreen = ({navigation}) => {
             });
         const res_json = await res.json();
         if (res_json.ok == "ok") {
+            await AsyncStorage.setItem("avatar", res_json.avatar);
             const fj = await AsyncStorage.getItem("first_join");
-            if (fj == null){
+            if (fj == null) {
                 await AsyncStorage.setItem("full_document", "true");
                 await AsyncStorage.setItem("first_join", "true");
                 navigation.navigate("select_airport");
-            }else{
+            } else {
                 navigation.navigate("license_luggage");
             }
-            
+
         }
     }
 
@@ -144,8 +154,8 @@ const ImageScreen = ({navigation}) => {
             <Text style={[styles.title, themeTextStyle]} >Загрузите фото паспорта</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>для подтверждения вашей личности</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>загрузите, пожалуйста, фотографию паспорта</Text>
-            {img ? <Image source={{ uri: img.uri}} style={styles.add} /> :
-            <TouchableOpacity onPress={pickImage} activeOpacity={0.5} style={[styles.add, themeContainerSelectStyle]}><AntDesign name="pluscircleo" size={24} color={colorScheme === 'light' ? '#17171C' : '#f2f2f2'} /></TouchableOpacity>
+            {img ? <Image source={{ uri: img.uri }} style={styles.add} /> :
+                <TouchableOpacity onPress={pickImage} activeOpacity={0.5} style={[styles.add, themeContainerSelectStyle]}><AntDesign name="pluscircleo" size={24} color={colorScheme === 'light' ? '#17171C' : '#f2f2f2'} /></TouchableOpacity>
             }
             <Text style={[styles.label, themeSubTextStyle]} >Первый разворот с ФИО и фото лица</Text>
             {img && <Button titleStyle={styles.textbtn} onPress={setDoc} containerStyle={styles.cntbtn} buttonStyle={styles.btn} title="Завершить" />}
@@ -156,51 +166,51 @@ const ImageScreen = ({navigation}) => {
 export default ImageScreen
 
 const styles = StyleSheet.create({
-    container:{
+    container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start',
     },
-    title:{
+    title: {
         fontSize: 20,
         fontFamily: "Inter_800ExtraBold",
         marginBottom: 8,
     },
-    subtext:{
+    subtext: {
         fontSize: 14,
         fontFamily: "Inter_500Medium",
         marginBottom: 4
     },
-    label:{
+    label: {
         fontSize: 14,
         fontFamily: "Inter_500Medium",
         marginTop: '5%',
         marginBottom: '65%'
     },
-    add:{
+    add: {
         width: '85%',
         alignItems: 'center',
         justifyContent: 'center',
         height: '30%',
         borderRadius: 16,
-        marginTop:'20%'
+        marginTop: '20%'
     },
-    btn:{
+    btn: {
         paddingVertical: 15,
         backgroundColor: '#F5CB57'
     },
-    cntbtn:{
+    cntbtn: {
         width: '80%',
         borderRadius: 12,
     },
-    textbtn:{
-        fontSize: 14, 
+    textbtn: {
+        fontSize: 14,
         fontFamily: "Inter_700Bold",
         color: '#000'
     },
 
 
-    
+
     lightContainer: {
         color: "#0C0C0D7A",
     },

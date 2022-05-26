@@ -1,4 +1,4 @@
-import { Appearance, useColorScheme, StyleSheet, Text, View, TouchableOpacity, Image, Switch } from 'react-native'
+import { Appearance, useColorScheme, StyleSheet, Text, View, TouchableOpacity, Image, Switch, Alert, FlatList, ScrollView, RefreshControl } from 'react-native'
 import React, { useLayoutEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { Icon } from 'react-native-elements'; import { StatusBar } from 'expo-status-bar';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
@@ -6,7 +6,10 @@ import {
     BottomSheetModal,
     BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { domain, domain_domain } from '../domain';
+import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 
 
 
@@ -21,6 +24,13 @@ const Orders = ({ navigation, route }) => {
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
     const themeButtonStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
     const themeBtn = colorScheme === 'light' ? styles.lightBtn : styles.darkBtn;
+
+
+    const [orders, setOrders] = useState();
+    const [terminal, setTerminal] = useState("");
+    const [selectOrder, setSelectOrder] = useState();
+    const [totalPrice, settotalPrice] = useState(0);
+    const [refreshing, setRefreshing] = useState(false);
 
     const bottomSheetModalRef = useRef(null);
     const snapPoints = useMemo(() => ['30%', '30%'], []);
@@ -39,25 +49,187 @@ const Orders = ({ navigation, route }) => {
             },
             headerBackTitleVisible: false,
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
-            headerTitle: () => {
-                return (<View style={{ alignItems: 'center' }} >
-                    <Text style={[styles.title, themeTextStyle]} >Терминал A, 2 этаж</Text>
-                    <Text style={[styles.subtext, themeSubTextStyle]} >Шепеметьево</Text>
-                </View>)
-            },
             headerRight: () => {
                 return (
                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                         <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                             <Image
                                 source={require("../assets/images/profile.png")}
-                                style={{width:24, height:30}}
+                                style={{ width: 24, height: 30 }}
                             />
                         </TouchableOpacity>
                     </View>)
             }
-        })
+        });
+        (async () => {
+            const airport = await AsyncStorage.getItem("airport");
+            const title = await AsyncStorage.getItem("terminal");
+            setTerminal(title);
+            navigation.setOptions({
+                headerTitle: () => {
+                    return (<View style={{ alignItems: 'center' }} >
+                        <Text style={[styles.title, themeTextStyle]} >{title}</Text>
+                        <Text style={[styles.subtext, themeSubTextStyle]} >{airport}</Text>
+                    </View>)
+                }
+            })
+            const id = await AsyncStorage.getItem("terminal_id")
+            const token = await AsyncStorage.getItem("token");
+            const res = await axios.get(domain + `/get_orders/${id}`, { headers: { "Authorization": "Token " + token } });
+            setOrders(res.data);
+        })();
     }, [navigation])
+
+    const dateAlert = async () => {
+        const full_doc = await AsyncStorage.getItem("full_document");
+        const last_name = await AsyncStorage.getItem("last_name");
+        const first_name = await AsyncStorage.getItem("first_name");
+        const patronymic = await AsyncStorage.getItem("patronymic");
+        const birthday = await AsyncStorage.getItem("birthday");
+        const how_get = await AsyncStorage.getItem("how_get");
+        const date_get = await AsyncStorage.getItem("date_get");
+        const type_doc = await AsyncStorage.getItem("type_doc");
+        const photo = await AsyncStorage.getItem("avatar");
+        let text = "При сдаче багажа необходимо подтверждение личности. Вы можете ускорить процесс оформления, заполнив данные самостоятельно:\n";
+        text += last_name == null ? "Фамилия\n" : ""
+        text += first_name == null ? "Имя\n" : ""
+        text += patronymic == null ? "Отчество\n" : ""
+        text += birthday == null ? "Дата рождения\n" : ""
+        text += how_get == null ? "Кем выдан\n" : ""
+        text += date_get == null ? "Дата выдачи\n" : ""
+        text += type_doc == null ? "Тип документа\n" : ""
+        text += photo == null ? "Фотография" : ""
+        // console.warn(text);
+        if (full_doc == null) {
+            Alert.alert(
+                "Заполнить данные о себе",
+                text,
+                [
+                    {
+                        text: "Заполнить",
+                        onPress: () => {
+                            navigation.navigate('last_name');
+                        },
+                        style: "cancel"
+                    },
+                    { text: "Пропустить", onPress: () => navigation.navigate('license_luggage') }
+                ]
+            );
+            return 0;
+        } else {
+            navigation.navigate('license_luggage');
+            return 0;
+        }
+
+    }
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        const id = await AsyncStorage.getItem("terminal_id")
+        const token = await AsyncStorage.getItem("token");
+        const res = await axios.get(domain + `/get_orders/${id}`, { headers: { "Authorization": "Token " + token } });
+        setOrders(res.data);
+        setRefreshing(false);
+    }, []);
+
+    const takeItems = () => {
+        if (totalPrice > 0) {
+            navigation.navigate('accept_luggage_mileonair', { "total_price": totalPrice });
+        } else {
+            navigation.navigate('qr_code');
+        }
+
+    }
+
+
+    const renderCard = ({ item }) => {
+
+        const clickCheckBox = () => {
+            if (selectOrder == item.id){
+                setSelectOrder(null);
+            }else{
+                setSelectOrder(item.id)
+            }
+        }
+
+
+        return (
+            <View style={[styles.container_location, themeContainerSelectStyle]}>
+                <ScrollView contentContainerStyle={styles.row_center} horizontal={true}>
+                    {item.photo.map((obj, ind) => {
+                        return (<Image key={ind} height={60} width={60} resizeMode="contain" source={{ uri: domain_domain + obj.photo }} style={styles.img} />)
+                    })}
+                </ScrollView>
+                <View style={{ marginTop: '4%' }}>
+                    <View style={styles.row_center_between}>
+                        <Text style={[styles.description, themeSubTextStyle]} >Багаж</Text>
+                        <Text style={[styles.text_description, themeTextStyle]} >{item.kind_luggage}</Text>
+                    </View>
+                    <View style={styles.row_center_between}>
+                        <Text style={[styles.description, themeSubTextStyle]} >Камера хранения</Text>
+                        <Text style={[styles.text_description, themeTextStyle]} >{terminal}</Text>
+                    </View>
+                    <View style={styles.row_center_between}>
+                        <Text style={[styles.description, themeSubTextStyle]} >Принят</Text>
+                        <Text style={[styles.text_description, themeTextStyle]} >{item.date_send}</Text>
+                    </View>
+                    <View style={styles.row_center_between}>
+                        <Text style={[styles.description, themeSubTextStyle]} >Стоимость</Text>
+                        <Text style={[styles.text_description, themeTextStyle]} >{item.len_day > 0 ? item.len_day * item.price_per_day + " ₽" : "доплата не требуется"} </Text>
+                    </View>
+                    {item.len_day > 0 &&
+                        <View style={styles.row_center_between}>
+                            <Text style={[styles.description, themeSubTextStyle]} >Хранение </Text>
+                            <Text style={[styles.text_description, themeTextStyle]} >{item.len_day} дня</Text>
+                        </View>
+                    }
+                    {item.len_day > 0 &&
+                        <View style={styles.row_center_between}>
+                            <Text style={[styles.description, themeSubTextStyle]} >Продление хранения </Text>
+                            <Text style={[styles.text_description, themeTextStyle]} >{item.price_per_day} ₽</Text>
+                        </View>
+                    }
+
+                </View>
+                <View style={[styles.row_center_between, { marginTop: '4%' }]}>
+                    <View style={styles.row_center}>
+                    <RadioButton labelHorizontal={true} style={{ justifyContent: 'space-between', alignItems: 'center', marginBottom: "2%" }}>
+                        <RadioButtonInput
+                          obj={item}
+                          index={item.id}
+                          isSelected={selectOrder == item.id}
+                          onPress={clickCheckBox}
+                          buttonInnerColor='#F5CB57'
+                          buttonOuterColor="#F2F2F31F"
+                          buttonSize={24}
+                          buttonOuterSize={31}
+                          buttonStyle={themeContainerSelectStyle}
+
+                        />
+                        <View style={{}}>
+                        <Text style={[styles.text_select, themeSubTextStyle]} >{selectOrder != item.id ? "Выбрать для возврата" : "Выбрано"}</Text>
+                        </View>
+                      </RadioButton>
+                        {/* <BouncyCheckbox
+                            size={24}
+                            fillColor='#F5CB57'
+                            onPress={clickCheckBox}
+                            unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
+                            iconStyle={{
+                                borderWidth: 0
+                            }}
+                            disableText={false}
+                            checkIconImageSource={null}
+                        /> */}
+                        {/* <Text style={[styles.text_select, themeSubTextStyle]} >{selectOrder.indexOf(item.id) == -1 ? "Выбрать для возврата" : "Выбрано"}</Text> */}
+                    </View>
+                    <TouchableOpacity activeOpacity={.9} style={[styles.btn_check, themeContainerSelectStyle]} onPress={handlePresentModalPress} >
+                        <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14 }, themeTextStyle]}>Чеки</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
 
 
     const [isEnabled, setIsEnabled] = useState(false);
@@ -77,72 +249,31 @@ const Orders = ({ navigation, route }) => {
                     value={isEnabled}
                 />
             </View> */}
-
-
-            <View style={[styles.container_location, themeContainerSelectStyle]}>
-                <View style={styles.row_center}>
-                    <Image source={require('../assets/images/Orders/img1.png')} style={styles.img} />
-                    <Image source={require('../assets/images/Orders/img2.png')} style={styles.img} />
-                    <Image source={require('../assets/images/Orders/img3.png')} style={styles.img} />
-                    <Image source={require('../assets/images/Orders/img4.png')} style={styles.img} />
-                </View>
-                <View style={{ marginTop: '4%' }}>
-                    <View style={styles.row_center_between}>
-                        <Text style={[styles.description, themeSubTextStyle]} >Багаж</Text>
-                        <Text style={[styles.text_description, themeTextStyle]} >Чемодан</Text>
-                    </View>
-                    <View style={styles.row_center_between}>
-                        <Text style={[styles.description, themeSubTextStyle]} >Камера хранения</Text>
-                        <Text style={[styles.text_description, themeTextStyle]} >Терминал A, 2 этаж</Text>
-                    </View>
-                    <View style={styles.row_center_between}>
-                        <Text style={[styles.description, themeSubTextStyle]} >Принят</Text>
-                        <Text style={[styles.text_description, themeTextStyle]} >21 сентября 2022</Text>
-                    </View>
-                    <View style={styles.row_center_between}>
-                        <Text style={[styles.description, themeSubTextStyle]} >Стоимость</Text>
-                        <Text style={[styles.text_description, themeTextStyle]} >500 ₽</Text>
-                    </View>
-                    <View style={styles.row_center_between}>
-                        <Text style={[styles.description, themeSubTextStyle]} >Хранение </Text>
-                        <Text style={[styles.text_description, themeTextStyle]} >2 дня</Text>
-                    </View>
-                    <View style={styles.row_center_between}>
-                        <Text style={[styles.description, themeSubTextStyle]} >Продление хранения </Text>
-                        <Text style={[styles.text_description, themeTextStyle]} >250 ₽</Text>
-                    </View>
-                </View>
-                <View style={[styles.row_center_between, { marginTop: '4%' }]}>
-                    <View style={styles.row_center}>
-                        <BouncyCheckbox
-                            size={24}
-                            fillColor='#F5CB57'
-                            unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
-                            iconStyle={{
-                                borderWidth: 0
-                            }}
-                            disableText={false}
-                            checkIconImageSource={null}
-                        />
-                        <Text style={[styles.text_select, themeSubTextStyle]} >Выбрать для возврата</Text>
-                    </View>
-                    <TouchableOpacity activeOpacity={.9} style={[styles.btn_check, themeContainerSelectStyle]} onPress={handlePresentModalPress} >
-                        <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14 }, themeTextStyle]}>Чеки</Text>
+            <FlatList
+                style={{ width: "100%" }}
+                data={orders}
+                keyExtractor={item => item.id}
+                renderItem={renderCard}
+                onRefresh={onRefresh}
+                refreshing={refreshing}
+            />
+            {selectOrder == null ?
+                <View style={{ position: 'absolute', bottom: '5%', width: '100%' }}>
+                    <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={dateAlert} >
+                        <Text style={{ fontFamily: 'Inter_700Bold', color: '#000', paddingVertical: '2%', fontSize: 14 }}>Сдать багаж</Text>
+                    </TouchableOpacity>
+                </View> :
+                <View style={{ position: 'absolute', bottom: '5%', width: '100%' }}>
+                    <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={takeItems} >
+                        <Text style={{ fontFamily: 'Inter_700Bold', color: '#000', fontSize: 14 }}>Забрать сейчас</Text>
+                        <Text style={styles.subtext_btn}>{totalPrice > 0 ? `1 единицы на сумму ${totalPrice} ₽` : "Доплата не требуется"}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={.9} style={[styles.btn_2, themeBtn]} onPress={() => navigation.navigate('deliver_home')} >
+                        <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14 }, themeBtnSubText]}>Доставить домой</Text>
+                        <Text style={[styles.subtext_btn, themeBtnSubText2]}>{totalPrice > 0 ? `1 единицы на сумму ${totalPrice} ₽ + доставка` : "Оплата доставки"}</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
-
-
-            <View style={{ position: 'absolute', bottom: '5%', width: '100%' }}>
-                <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('accept_luggage_mileonair')} >
-                    <Text style={{ fontFamily: 'Inter_700Bold', color: '#000', fontSize: 14 }}>Забрать сейчас</Text>
-                    <Text style={styles.subtext_btn}>2 единицы на сумму 3 000 ₽</Text>
-                </TouchableOpacity>
-                <TouchableOpacity activeOpacity={.9} style={[styles.btn_2, themeBtn]} onPress={() => navigation.navigate('deliver_home')} >
-                    <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14 }, themeBtnSubText]}>Доставить домой</Text>
-                    <Text style={[styles.subtext_btn, themeBtnSubText2]}>2 единицы на сумму 3 000 ₽ + доставка</Text>
-                </TouchableOpacity>
-            </View>
+            }
 
             <BottomSheetModalProvider>
                 <View>
@@ -201,7 +332,7 @@ const styles = StyleSheet.create({
     subtext_btn: {
         fontSize: 12,
         fontFamily: "Inter_500Medium",
-        color:"#0C0C0D7A",
+        color: "#0C0C0D7A",
     },
     description: {
         fontSize: 12,
@@ -295,7 +426,9 @@ const styles = StyleSheet.create({
     },
 
     img: {
-        marginRight: 8
+        marginRight: 8,
+        height: 60,
+        width: 60
     },
 
 

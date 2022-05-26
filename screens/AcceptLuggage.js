@@ -2,8 +2,11 @@ import { Appearance, useColorScheme, StyleSheet, Text, View, SafeAreaView, Touch
 import React, { useLayoutEffect } from 'react'
 import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { domain } from '../domain';
 
-const AcceptLuggage = ({ navigation }) => {
+
+const AcceptLuggage = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
@@ -24,22 +27,66 @@ const AcceptLuggage = ({ navigation }) => {
     }, [navigation])
 
 
+    const PayLuggage = async () => {
+        const token = await AsyncStorage.getItem("token");
+        const data = new FormData();
+        data.append("ls", parseInt(await AsyncStorage.getItem("luggage_ls")));
+        data.append("kind", parseInt(await AsyncStorage.getItem("luggage_kind")));
+        if (route.params.sale == "") {
+            data.append("sale", 0);
+        } else {
+            data.append("sale", parseInt(route.params.sale));
+        }
+        const keys =  (await AsyncStorage.getAllKeys()).filter((obj) => obj.startsWith("luggage_file"));
+        for (let i = 0; i < keys.length; i++) {
+            let uri = await AsyncStorage.getItem(keys[i]);
+            let shir = uri.split(".")
+            shir = shir[shir.length - 1]
+            data.append(`file${i + 1}`, {
+                uri: uri,
+                type: 'image/' + shir,
+                name: `img${i + 1}.${shir}`
+            });
+        }
+        const res = await fetch(domain + "/add_luggage", {
+            method: "POST",
+            body: data,
+            headers: {
+                "Authorization": "Token " + token,
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data',
+            }
+        });
+        const ret = await res.json();
+        console.log(ret);
+        if (ret.status == true){
+            await AsyncStorage.setItem("lastLuggage", ret.id.toString());
+            await AsyncStorage.removeItem("luggage_ls");
+            await AsyncStorage.removeItem("luggage_kind");
+            for (let i = 0; i < keys.length; i++) {
+                await AsyncStorage.removeItem(keys[i]);
+            }
+            navigation.replace('qr_code');
+        }
+    }
+
+
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]}  >
             <StatusBar/>
             <View style={[styles.container_price, themeContainerSelectStyle]} >
                 <View style={styles.price_line}>
                     <Text style={[styles.price_line_text, themeTextStyle]} >Хранение багажа</Text>
-                    <Text style={[styles.price_line_price, themeTextStyle]} >500 ₽</Text>
+                    <Text style={[styles.price_line_price, themeTextStyle]} >{route.params.price} ₽</Text>
                 </View>
                 <View style={styles.price_line}>
                     <Text style={[styles.price_line_text, themeTextStyle]} >Списание миль</Text>
-                    <Text style={[styles.price_line_price, themeTextStyle]} >-250 миль</Text>
+                    <Text style={[styles.price_line_price, themeTextStyle]} >-{route.params.sale == "" ? 0 : route.params.sale} миль</Text>
                 </View>
                 <View style={[styles.line, themeContainerStyle]} ></View>
                 <View style={styles.price_line}>
                     <Text style={[styles.price_line_text, themeTextStyle]} >Итоговая стоимость</Text>
-                    <Text style={[styles.price_line_price, themeTextStyle]} >250 ₽</Text>
+                    <Text style={[styles.price_line_price, themeTextStyle]} >{route.params.sale == "" ? route.params.price : parseInt(route.params.price) - parseInt(route.params.sale)} ₽</Text>
                 </View>
             </View>
             <View style={styles.type_pay} >
@@ -64,7 +111,7 @@ const AcceptLuggage = ({ navigation }) => {
                         />
                 </View>
             </View>
-            <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('qr_code')} >
+            <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={PayLuggage} >
                 <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Оплатить</Text>
             </TouchableOpacity>
         </SafeAreaView>

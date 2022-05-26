@@ -1,10 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { Appearance, useColorScheme, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import * as LocalAuthentication from 'expo-local-authentication';
 
-const PinScreen = ({navigation}) => {
+
+const PinScreen = ({ navigation }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
@@ -16,43 +18,95 @@ const PinScreen = ({navigation}) => {
 
     const [pin, setPin] = useState("");
     const [bad, setBad] = useState(false);
-    const Click = (num) => {
-        if (num === 'del'){
-            if (pin.length > 0){
-                setPin(pin.slice(0,-1));
+    const [biometric, setBiomentric] = useState(false);
+
+
+    useLayoutEffect(() => {
+        (async () => {
+            const biometric = await AsyncStorage.getItem("biometric");
+            if (biometric == "true") {
+                setBiomentric(true);
+                const result = await LocalAuthentication.authenticateAsync();
+                if (result.success == true) {
+                    const doc = await AsyncStorage.getItem("first_join");
+                    if (doc == "true") {
+                        const airport = await AsyncStorage.getItem("airport");
+                        if (airport != null) {
+                            navigation.replace("select_terminal", { "title": airport });
+                            return 0;
+                        } else {
+                            navigation.replace("select_airport");
+                            return 0;
+                        }
+                    } else {
+                        navigation.replace("last_name");
+                        return 0;
+                    }
+                }
             }
-        }else{
-            if (pin.length < 4){
+        })();
+    }, [navigation])
+
+
+    const clickBiomentric = async () => {
+        if (biometric){
+            const result = await LocalAuthentication.authenticateAsync();
+                if (result.success == true) {
+                    const doc = await AsyncStorage.getItem("first_join");
+                    if (doc == "true") {
+                        const airport = await AsyncStorage.getItem("airport");
+                        if (airport != null) {
+                            navigation.replace("select_terminal", { "title": airport });
+                            return 0;
+                        } else {
+                            navigation.replace("select_airport");
+                            return 0;
+                        }
+                    } else {
+                        navigation.replace("last_name");
+                        return 0;
+                    }
+                }
+        }
+    }
+
+    const Click = (num) => {
+        if (num === 'del') {
+            if (pin.length > 0) {
+                setPin(pin.slice(0, -1));
+            }
+        } else {
+            if (pin.length < 4) {
                 setPin(pin + num);
             }
         }
     }
 
-    useEffect(() =>{
-        if (pin.length == 4){
+    useEffect(() => {
+        if (pin.length == 4) {
             (async () => {
                 const verify = await AsyncStorage.getItem("pin");
-                if (pin == verify){
+                if (pin == verify) {
                     const doc = await AsyncStorage.getItem("first_join");
-                    if (doc == "true"){
+                    if (doc == "true") {
                         const airport = await AsyncStorage.getItem("airport");
-                        if (airport != null){
-                            navigation.replace("select_terminal", {"title":airport});
+                        if (airport != null) {
+                            navigation.replace("select_terminal", { "title": airport });
                             return 0;
-                        }else{
+                        } else {
                             navigation.replace("select_airport");
                             return 0;
                         }
-                    }else{
+                    } else {
                         navigation.replace("last_name");
                         return 0;
                     }
-                }else{
+                } else {
                     setBad(true);
                     return 0;
                 }
             })();
-        }else{
+        } else {
             setBad(false);
         }
     })
@@ -63,16 +117,16 @@ const PinScreen = ({navigation}) => {
             <StatusBar />
             <Text style={[styles.title, themeTextStyle]}>Введите ПИН-код</Text>
             <Text style={[styles.subtext, themeTextStyle]}>для входа</Text>
-            <View style={[styles.row_circle,{marginTop: '25%'} ]} >
-                <View style={[styles.circle, pin.length < 1 ? themeDot: themeKeyboardStyle ]} ></View>
-                <View style={[styles.circle, pin.length < 2 ? themeDot: themeKeyboardStyle ]} ></View>
-                <View style={[styles.circle, pin.length < 3 ? themeDot: themeKeyboardStyle ]} ></View>
-                <View style={[styles.circle, pin.length < 4 ? themeDot: themeKeyboardStyle ]} ></View>
+            <View style={[styles.row_circle, { marginTop: '25%' }]} >
+                <View style={[styles.circle, pin.length < 1 ? themeDot : themeKeyboardStyle]} ></View>
+                <View style={[styles.circle, pin.length < 2 ? themeDot : themeKeyboardStyle]} ></View>
+                <View style={[styles.circle, pin.length < 3 ? themeDot : themeKeyboardStyle]} ></View>
+                <View style={[styles.circle, pin.length < 4 ? themeDot : themeKeyboardStyle]} ></View>
             </View>
             <View style={{
                 bottom: 48,
                 position: 'absolute',
-                alignItems:'center'
+                alignItems: 'center'
             }}>
                 <TouchableOpacity onPress={() => navigation.navigate('license')}>
                     <Text style={[{ color: '#000', fontFamily: 'Inter_700Bold', fontSize: 14, textAlign: 'center' }]} >Забыли пароль?</Text>
@@ -94,7 +148,7 @@ const PinScreen = ({navigation}) => {
                         <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('9')}><Text style={[styles.num, themeTextStyle]}>9</Text></TouchableOpacity>
                     </View>
                     <View style={styles.row}>
-                        <TouchableOpacity style={[styles.btn, themeContainerStyle]} ><Text></Text></TouchableOpacity>
+                        <TouchableOpacity onPress={clickBiomentric} style={[styles.btn, themeContainerStyle]} >{biometric && <Ionicons name="finger-print-outline" size={28} color={colorScheme === 'light' ? '#F5CB57' : '#F2F2F3'} />}</TouchableOpacity>
                         <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('0')}><Text style={[styles.num, themeTextStyle]}>0</Text></TouchableOpacity>
                         <TouchableOpacity style={[styles.btn, themeContainerStyle]} activeOpacity={0.5} onPress={() => Click('del')}><Ionicons name="backspace-outline" size={28} color={colorScheme === 'light' ? '#F5CB57' : '#F2F2F3'} /></TouchableOpacity>
                     </View>
@@ -107,63 +161,63 @@ const PinScreen = ({navigation}) => {
 export default PinScreen
 
 const styles = StyleSheet.create({
-    container:{
+    container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start',
     },
-    title:{
+    title: {
         marginTop: 24,
         fontSize: 24,
         fontFamily: "Inter_800ExtraBold",
     },
-    subtext:{
+    subtext: {
         fontSize: 16,
         fontFamily: "Inter_500Medium",
         lineHeight: 24,
     },
-    keyboard:{
+    keyboard: {
         // width: '85%',
         // marginTop: '10%'
     },
-    row:{
+    row: {
         flexDirection: 'row',
         justifyContent: 'space-around',
         marginTop: 24,
         width: 300
     },
-    row_circle:{
+    row_circle: {
         flexDirection: 'row',
         width: '30%',
         justifyContent: 'space-between',
         marginTop: '25%'
     },
-    row_circle_second:{
+    row_circle_second: {
         flexDirection: 'row',
         marginTop: 12,
         width: '30%',
         justifyContent: 'space-between',
     },
-    circle:{
+    circle: {
         height: 20,
         width: 20,
-        
+
         borderRadius: 20
     },
-    repeat:{
+    repeat: {
         fontSize: 14,
         fontFamily: "Inter_700Bold",
         marginTop: '25%'
     },
-    btn:{
+    btn: {
         width: 72,
         height: 72,
         borderRadius: 72,
         alignItems: 'center',
         justifyContent: 'center'
-        
+
     },
-    num:{
+    num: {
         fontSize: 20,
         fontFamily: "Inter_800ExtraBold",
     },

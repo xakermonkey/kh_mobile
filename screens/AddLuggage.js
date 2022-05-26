@@ -1,5 +1,5 @@
 import { Appearance, useColorScheme, StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, ScrollView, Switch, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native'
-import React, { useLayoutEffect, useState, useEffect } from 'react'
+import React, { useLayoutEffect, useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
@@ -7,6 +7,11 @@ import { EvilIcons, Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { domain } from '../domain';
+import {
+    BottomSheetModal,
+    BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
+import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 
 const AddLuggage = ({ navigation, route }) => {
@@ -16,10 +21,29 @@ const AddLuggage = ({ navigation, route }) => {
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
 
-    const [terminal, setTerminal] = useState();
-    const [kind, setKind] = useState([]);
+    const [terminal, setTerminal] = useState(null);
+    const [kind, setKind] = useState(null);
     const [selectTerminal, setSelectTerminal] = useState(null);
     const [selectKind, setSelectKind] = useState(0);
+
+    const bottomSheetterminalRef = useRef(null);
+    const snapPointsterminal = useMemo(() => ['50%'], []);
+    const handlePresentModalTerminalPress = useCallback(() => {
+        bottomSheetterminalRef.current?.present();
+    }, []);
+
+    const bottomSheetKindRef = useRef(null);
+    const snapPointsKind = useMemo(() => ['50%'], []);
+    const handlePresentModalKindPress = useCallback(() => {
+        bottomSheetKindRef.current?.present();
+    }, []);
+
+    const bottomSheetInfoRef = useRef(null);
+    const snapPointsInfo = useMemo(() => ['50%'], []);
+    const handlePresentModalInfoPress = useCallback(() => {
+        bottomSheetInfoRef.current?.present();
+    }, []);
+
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -31,15 +55,14 @@ const AddLuggage = ({ navigation, route }) => {
             headerBackTitleVisible: false,
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
         });
-        ( async () => {
+        (async () => {
             const iata = await AsyncStorage.getItem("airport_iata");
             const token = await AsyncStorage.getItem("token");
             const term_id = await AsyncStorage.getItem("terminal_id");
-            const res = await axios.get(domain + "/add_luggage/" + iata, {headers: {"Authorization": "Token " + token}});
-            console.log(res.data);
+            const res = await axios.get(domain + "/add_luggage", { params: { iata: iata }, headers: { "Authorization": "Token " + token } });
             setKind(res.data.kind);
             setTerminal(res.data.ls);
-            setSelectTerminal(res.data.ls.filter(item => item.id == term_id)[0]);
+            setSelectTerminal(res.data.ls.filter((item) => item.id == term_id)[0]);
         })();
     }, [navigation, colorScheme])
 
@@ -80,11 +103,20 @@ const AddLuggage = ({ navigation, route }) => {
                 type: 'image/' + shir,
                 name: `img${images.length + 1}.${shir}`
             }
-            console.log(obj)
+            // console.log(obj)
             setImages([...images, obj]);
         }
     };
 
+    const ClickTerminal = (obj) => {
+        setSelectTerminal(obj);
+        bottomSheetterminalRef.current.close();
+    }
+
+    const ClickKind = (ind) => {
+        setSelectKind(ind);
+        bottomSheetKindRef.current.close();
+    }
 
 
     const Remove = (id) => {
@@ -94,6 +126,68 @@ const AddLuggage = ({ navigation, route }) => {
             }
             return [...img.slice(0, id), ...img.slice(id + 1)];
         })
+    }
+
+    const createLuggage = async () => {
+        await AsyncStorage.setItem("luggage_ls", selectTerminal.id.toString());
+        await AsyncStorage.setItem("luggage_kind", kind[selectKind].id.toString());
+        for (let i = 0; i < images.length; i++) {
+            await AsyncStorage.setItem(`luggage_file${i+1}`, images[i].uri);
+        }
+        navigation.navigate("accept_luggage", {"price": selectTerminal.price_storage, "sale": mile} )
+    }
+
+    const renderTerminal = (obj) => {
+        return (
+            <TouchableOpacity key={obj.id} activeOpacity={0.5} onPress={() => ClickTerminal(obj)} >
+                <View style={styles.terminal_line}>
+                    <View style={styles.name_terminal}>
+                        <Text style={[styles.title, themeTextStyle]} >Терминал {obj.terminal}, {obj.floor} этаж</Text>
+                        <Text style={[styles.subtext, themeSubTextStyle]} >{obj.location}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <BouncyCheckbox
+                            size={24}
+                            fillColor='#F5CB57'
+                            isChecked={selectTerminal.id == obj.id}
+                            unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
+                            iconStyle={{
+                                borderWidth: 0
+                            }}
+                            onPress={() => ClickTerminal(obj)}
+                            disableText={true}
+                            checkIconImageSource={null}
+                        />
+                    </View>
+                </View>
+            </TouchableOpacity>
+        )
+    }
+
+    const rendKind = (obj, ind) => {
+        return (
+            <TouchableOpacity key={obj.id} activeOpacity={0.5} onPress={() => ClickKind(obj)} >
+                <View style={styles.terminal_line}>
+                    <View style={styles.name_terminal}>
+                        <Text style={[styles.title, themeTextStyle]} >{obj.name}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <BouncyCheckbox
+                            size={24}
+                            fillColor='#F5CB57'
+                            isChecked={selectKind == ind}
+                            unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
+                            iconStyle={{
+                                borderWidth: 0
+                            }}
+                            onPress={() => ClickKind(ind)}
+                            disableText={true}
+                            checkIconImageSource={null}
+                        />
+                    </View>
+                </View>
+            </TouchableOpacity>
+        )
     }
 
     if (selectTerminal == null) {
@@ -117,31 +211,31 @@ const AddLuggage = ({ navigation, route }) => {
                 </View>
             </View>
             <View style={styles.container_select} >
-                <View style={{flexDirection:'row'}}>
-                <Text style={[styles.label, themeSubTextStyle]} >Камера хранения</Text>
-                <Feather name="info" size={24} color="black" />
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={[styles.label, themeSubTextStyle]} >Камера хранения</Text>
+                    <Feather name="info" size={24} color="black" />
                 </View>
-                <View style={[styles.select, themeContainerSelectStyle]} >
+                <TouchableOpacity onPress={() => handlePresentModalTerminalPress()} style={[styles.select, themeContainerSelectStyle]} >
                     <Text style={[styles.value, themeTextStyle]} >Терминал {selectTerminal.terminal}, {selectTerminal.floor} этаж</Text>
                     <Icon
                         name="chevron-down-outline"
                         type="ionicon"
                         color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
                     />
-                </View>
+                </TouchableOpacity>
             </View>
-            <View style={styles.container_select} >
+            <TouchableOpacity style={styles.container_select} onPress={handlePresentModalKindPress}>
                 <Text style={[styles.label, themeSubTextStyle]} >Вид багажа</Text>
                 <View style={[styles.select, themeContainerSelectStyle]} >
-                    <Text style={[styles.value, themeTextStyle]} >{kind[selectKind]}</Text>
+                    <Text style={[styles.value, themeTextStyle]} >{kind[selectKind].name}</Text>
                     <Icon
                         name="chevron-down-outline"
                         type="ionicon"
                         color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
                     />
                 </View>
-            </View>
-            <View style={{  }} >
+            </TouchableOpacity>
+            <View style={{}} >
                 <Text style={[styles.textimage, themeTextStyle]}>Прикрепить фото багажа</Text>
                 <Text style={[styles.subtext, themeSubTextStyle]}>Сфотографируйте багаж со всех сторон</Text>
                 {images.length === 0 ?
@@ -161,50 +255,96 @@ const AddLuggage = ({ navigation, route }) => {
                     </ScrollView>
                 }
             </View>
-            <View style={{ height: 150, marginTop:'8%' }}>
-                    <View style={styles.container_mileonair} >
-                        <View  >
-                            <Text style={[styles.value, themeTextStyle]} >Оплатить милями MILEONAIR</Text>
-                            <Text style={[styles.label_mile, themeSubTextStyle]} >3 600 миль</Text>
-                        </View>
-                        <Switch
-                            trackColor={{ false: "#23232A14", true: "#23232A14" }}
-                            thumbColor={isEnabled ? "#F5CB57" : "#F2F2F3"}
-                            ios_backgroundColor="#23232A14"
-                            onValueChange={toggleSwitch}
-                            value={isEnabled}
-                        />
+            <View style={{ height: 150, marginTop: '8%' }}>
+                <View style={styles.container_mileonair} >
+                    <View  >
+                        <Text style={[styles.value, themeTextStyle]} >Оплатить милями MILEONAIR</Text>
+                        <Text style={[styles.label_mile, themeSubTextStyle]} >3 600 миль</Text>
                     </View>
-                    {isEnabled &&
-                        <View style={[{ borderRadius: 12, flexDirection: 'row', justifyContent: 'space-between', marginTop: '5%' }, themeContainerSelectStyle]}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{ alignItems: 'center', alignContent: 'center', paddingHorizontal: 20, paddingVertical: 6 }}>
-                                    <Icon
-                                        name="airplane"
-                                        type="ionicon"
-                                        color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                                    />
-                                    <Text style={themeSubTextStyle} >миль</Text>
-                                </View>
-                                <View style={[{ width: 2 }, themeContainerStyle]}></View>
-                            </View>
-
-                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1, paddingHorizontal: 20 }}>
-                                <TextInput
-                                    value={mile}
-                                    placeholder="40"
-                                    style={[styles.text_input, themeTextStyle]}
-                                    keyboardType="number-pad"
-                                />
-                                <Text style={[{ textAlign: 'right', fontSize: 12, fontFamily: "Inter_400Regular" }, themeSubTextStyle]} >Мининимальное {"\n"}списание 40 миль</Text>
-                            </View>
-                        </View>
-                    }
+                    <Switch
+                        trackColor={{ false: "#23232A14", true: "#23232A14" }}
+                        thumbColor={isEnabled ? "#F5CB57" : "#F2F2F3"}
+                        ios_backgroundColor="#23232A14"
+                        onValueChange={toggleSwitch}
+                        value={isEnabled}
+                    />
                 </View>
-            <View style={{ }} ></View>
-            <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('accept_luggage')} >
+                {isEnabled &&
+                    <View style={[{ borderRadius: 12, flexDirection: 'row', justifyContent: 'space-between', marginTop: '5%' }, themeContainerSelectStyle]}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={{ alignItems: 'center', alignContent: 'center', paddingHorizontal: 20, paddingVertical: 6 }}>
+                                <Icon
+                                    name="airplane"
+                                    type="ionicon"
+                                    color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                                />
+                                <Text style={themeSubTextStyle} >миль</Text>
+                            </View>
+                            <View style={[{ width: 2 }, themeContainerStyle]}></View>
+                        </View>
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1, paddingHorizontal: 20 }}>
+                            <TextInput
+                                value={mile}
+                                placeholder="40"
+                                style={[styles.text_input, themeTextStyle]}
+                                keyboardType="number-pad"
+                                onChangeText={text => setMile(text)}
+                            />
+                            <Text style={[{ textAlign: 'right', fontSize: 12, fontFamily: "Inter_400Regular" }, themeSubTextStyle]} >Мининимальное {"\n"}списание 40 миль</Text>
+                        </View>
+                    </View>
+                }
+            </View>
+            <View style={{}} ></View>
+            <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={createLuggage} >
                 <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Перейти к оплате</Text>
             </TouchableOpacity>
+            <BottomSheetModalProvider>
+                <View>
+                    <BottomSheetModal
+                        ref={bottomSheetterminalRef}
+                        index={0}
+                        snapPoints={snapPointsterminal}
+                        backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
+                    >
+                        <Text style={[styles.bottom_title, themeTextStyle]} >Камера хранения</Text>
+                        <View style={{ padding: '4%' }}>
+                            {terminal.map((obj) => renderTerminal(obj))}
+                        </View>
+                    </BottomSheetModal>
+                </View>
+            </BottomSheetModalProvider>
+            <BottomSheetModalProvider>
+                <View>
+                    <BottomSheetModal
+                        ref={bottomSheetKindRef}
+                        index={0}
+                        snapPoints={snapPointsKind}
+                        backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
+                    >
+                        <Text style={[styles.bottom_title, themeTextStyle]} >Вид вещи</Text>
+                        <View style={{ padding: '4%' }}>
+                            {kind.map((obj, ind) => rendKind(obj, ind))}
+                        </View>
+                    </BottomSheetModal>
+                </View>
+            </BottomSheetModalProvider>
+            <BottomSheetModalProvider>
+                <View>
+                    <BottomSheetModal
+                        ref={bottomSheetInfoRef}
+                        index={0}
+                        snapPoints={snapPointsInfo}
+                        backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
+                    >
+                        <Text style={[styles.bottom_title, themeTextStyle]} >Информация о камере хранения</Text>
+                        <View style={{ padding: '4%' }}>
+
+                        </View>
+                    </BottomSheetModal>
+                </View>
+            </BottomSheetModalProvider>
         </KeyboardAvoidingView>
 
     )
@@ -215,7 +355,7 @@ export default AddLuggage
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding:'4%'
+        padding: '4%'
     },
     title: {
         fontSize: 16,
@@ -309,6 +449,21 @@ const styles = StyleSheet.create({
     text_input: {
         fontSize: 32,
         fontFamily: 'Inter_800ExtraBold',
+    },
+    terminal_line: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: '4%'
+    },
+    subtext: {
+        fontSize: 14,
+        fontFamily: "Inter_500Medium"
+    },
+    bottom_title: {
+        fontSize: 14,
+        fontFamily: "Inter_600SemiBold",
+        textAlign: 'center',
     },
 
 

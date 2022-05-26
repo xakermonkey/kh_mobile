@@ -7,7 +7,7 @@ import {
     BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
 
-const AcceptLuggageMileonAir = ({ navigation }) => {
+const AcceptLuggageMileonAir = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
@@ -50,18 +50,18 @@ const AcceptLuggageMileonAir = ({ navigation }) => {
             <View style={[styles.container_price, themeContainerSelectStyle]} >
                 <View style={styles.price_line}>
                     <Text style={[styles.price_line_text, themeSubTextStyle]} >Хранение багажа</Text>
-                    <Text style={[styles.price_line_price, themeTextStyle]} >500 ₽</Text>
+                    <Text style={[styles.price_line_price, themeTextStyle]} >{route.params.total_price} ₽</Text>
                 </View>
                 <View style={{height:1, backgroundColor:'#fff'}}></View>
                 <View style={styles.price_line}>
                     <Text style={[styles.price_line_text, themeSubTextStyle]} >Списание миль</Text>
-                    <Text style={[styles.price_line_price, themeTextStyle]} >-250 миль</Text>
+                    <Text style={[styles.price_line_price, themeTextStyle]} >-{mile == "" ? "0" : mile} миль</Text>
                 </View>
                 <View style={{height:1, backgroundColor:'#fff'}}></View>
                 <View style={[styles.line, themeContainerStyle]} ></View>
                 <View style={styles.price_line}>
                     <Text style={[styles.price_line_text, themeSubTextStyle]} >Итоговая стоимость</Text>
-                    <Text style={[styles.price_line_price, themeTextStyle]} >250 ₽</Text>
+                    <Text style={[styles.price_line_price, themeTextStyle]} >{mile == "" ? route.params.total_price : route.params.total_price - parseInt(mile)} ₽</Text>
                 </View>
             </View>
 

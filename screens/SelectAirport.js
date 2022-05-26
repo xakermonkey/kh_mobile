@@ -1,10 +1,14 @@
-import { Appearance, useColorScheme, StyleSheet, Text, View } from 'react-native'
-import React, { useLayoutEffect, useState, useEffect } from 'react'
+import { Appearance, useColorScheme, StyleSheet, Text, View, ScrollView, RefreshControl } from 'react-native'
+import React, { useLayoutEffect, useState, useEffect, useCallback } from 'react'
 import RadioForm, { RadioButton, RadioButtonInput } from 'react-native-simple-radio-button';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
 import { domain } from '../domain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
 
 const SelectAirport = ({ navigation }) => {
     const colorScheme = useColorScheme();
@@ -15,6 +19,7 @@ const SelectAirport = ({ navigation }) => {
 
     const [selectAirport, setSelectAirport] = useState(0);
     const [airport, setAirport] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
 
 
     useLayoutEffect(() => {
@@ -29,22 +34,30 @@ const SelectAirport = ({ navigation }) => {
             },
         })
         AsyncStorage.getItem("token")
-        .then(token => {
-            axios.get(domain + "/get_airport", {headers: {"Authorization": "Token " + token }})
-            .then(res => {
-                setAirport(res.data);
+            .then(token => {
+                axios.get(domain + "/get_airport", { headers: { "Authorization": "Token " + token } })
+                    .then(res => {
+                        setAirport(res.data);
+                    })
             })
-        })
         AsyncStorage.getItem("airport_iata")
-        .then(iata => {
-            if (iata != null){
-                setSelectAirport(iata);
-            }
-        })
+            .then(iata => {
+                if (iata != null) {
+                    setSelectAirport(iata);
+                }
+            })
     }, [navigation])
 
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        const token = await AsyncStorage.getItem("token");
+        const res = await axios.get(domain + "/get_airport", { headers: { "Authorization": "Token " + token } })
+        setAirport(res.data);
+        setRefreshing(false);
+      }, []);
 
-    
+
+
     const customSelectAirport = async (iata) => {
         await AsyncStorage.setItem("airport", airport.filter((obj) => obj.iata == iata)[0].name);
         await AsyncStorage.setItem("airport_iata", iata);
@@ -55,7 +68,11 @@ const SelectAirport = ({ navigation }) => {
     return (
         <View style={[styles.container, themeContainerStyle]} >
             <StatusBar />
-            <View style={[styles.container_select, themeContainerSelectStyle]}>
+            <ScrollView contentContainerStyle={[styles.container_select, themeContainerSelectStyle]}>
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                />
                 <View style={styles.holder}>
                     <Text style={[styles.text_holder, themeSubTextStyle]} >Выберите аэропорт</Text>
                 </View>
@@ -68,28 +85,28 @@ const SelectAirport = ({ navigation }) => {
                         {airport.map((obj) => {
                             return (<RadioButton labelHorizontal={true} style={{ justifyContent: 'space-between', alignItems: 'center', marginBottom: "2%" }} key={obj.iata}>
                                 <View style={{}}>
-                                <Text style={[styles.title, themeTextStyle]}>{obj.name}</Text>
-                            </View>
-                            <View style={styles.selected} >
-                                {selectAirport == obj.id && <Text style={[styles.we_this, themeSubTextStyle]} >Вы здесь</Text>}
-                                <RadioButtonInput
-                                    obj={{}}
-                                    index={0}
-                                    isSelected={selectAirport === obj.iata}
-                                    onPress={() => customSelectAirport(obj.iata)}
-                                    buttonInnerColor='#F5CB57'
-                                    buttonOuterColor={colorScheme === 'light' ? '#e8e8e9' : '#F2F2F31F'}
-                                    buttonSize={24}
-                                    buttonOuterSize={31}
-                                    buttonStyle={{ backgroundColor: colorScheme === 'light' ? '#e8e8e9' : '#F2F2F31F' }}
+                                    <Text style={[styles.title, themeTextStyle]}>{obj.name}</Text>
+                                </View>
+                                <View style={styles.selected} >
+                                    {selectAirport == obj.id && <Text style={[styles.we_this, themeSubTextStyle]} >Вы здесь</Text>}
+                                    <RadioButtonInput
+                                        obj={{}}
+                                        index={0}
+                                        isSelected={selectAirport === obj.iata}
+                                        onPress={() => customSelectAirport(obj.iata)}
+                                        buttonInnerColor='#F5CB57'
+                                        buttonOuterColor={colorScheme === 'light' ? '#e8e8e9' : '#F2F2F31F'}
+                                        buttonSize={24}
+                                        buttonOuterSize={31}
+                                        buttonStyle={{ backgroundColor: colorScheme === 'light' ? '#e8e8e9' : '#F2F2F31F' }}
 
-                                />
-                            </View>
-                        </RadioButton>)
+                                    />
+                                </View>
+                            </RadioButton>)
                         })}
                     </RadioForm>
                 </View>
-            </View>
+            </ScrollView>
         </View>
     )
 }

@@ -32,7 +32,7 @@ const Terminal = ({ navigation }) => {
         text +=date_get == null ? "Дата выдачи\n" : ""
         text +=type_doc == null ? "Тип документа\n" : ""
         text +=photo == null ? "Фотография" : ""
-        console.log(text);
+        // console.log(text);
         if (full_doc == null) {
             Alert.alert(
                 "Заполнить данные о себе",

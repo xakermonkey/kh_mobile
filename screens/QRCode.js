@@ -1,8 +1,11 @@
 import { Appearance, useColorScheme, StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
-import React, { useLayoutEffect } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar';
-
-const QRCode = ({ navigation }) => {
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { domain } from '../domain';
+import QRCode from 'react-native-qrcode-svg';
+const QRCodeScreen = ({ navigation }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
@@ -10,6 +13,8 @@ const QRCode = ({ navigation }) => {
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
     const themeButtonStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
 
+    const [type, setType] = useState("send");
+    const [id, setID] = useState("");
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -20,14 +25,22 @@ const QRCode = ({ navigation }) => {
             },
             headerBackTitleVisible: false,
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
-        })
+        });
+        (async () => {
+            const token = await AsyncStorage.getItem("token");
+            const luggageId = await AsyncStorage.getItem("lastLuggage");
+            setID(luggageId);
+            axios.get(domain + '/send_luggage/'+ luggageId, {headers: {"Authorization": "Token " + token}});
+
+        })();
     }, [navigation])
 
 
     return (
         <View style={[styles.container, themeContainerStyle]}  >
             <StatusBar/>
-            <Image style={{marginTop:'20%'}} source={colorScheme === 'light' ? require("../assets/images/qr_black.png") : require("../assets/images/qr_white.png")} />
+            <View style={{marginTop:'20%'}} ><QRCode size={225} style={{ marginTop:'20%' }} solor={colorScheme === 'light' ? "black" : "white"}  value={`?type=${type}&id=${id}`}  /></View>
+            {/* <Image style={{marginTop:'20%'}} source={colorScheme === 'light' ? require("../assets/images/qr_black.png") : require("../assets/images/qr_white.png")} /> */}
             <Text style={[styles.qr_text, themeTextStyle]}>QR-код</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>Покажите QR код сотруднику камеры хранения, чтобы забрать багаж</Text>
             
@@ -38,7 +51,7 @@ const QRCode = ({ navigation }) => {
     )
 }
 
-export default QRCode
+export default QRCodeScreen
 
 const styles = StyleSheet.create({
     subtext: {

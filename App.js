@@ -30,7 +30,7 @@ import LicenseLuggage from './screens/LicenseLuggage';
 import AddLuggage from './screens/AddLuggage';
 import DeliverHome from './screens/DeliverHome';
 import AcceptLuggage from './screens/AcceptLuggage';
-import QRCode from './screens/QRCode';
+import QRCodeScreen from './screens/QRCode';
 
 import AcceptLuggageMileonAir from './screens/GetLuggage';
 import SelectTransportCompany from './screens/SelectTransportCompany';
@@ -89,7 +89,7 @@ function App() {
         <Stack.Screen name='license_luggage' component={LicenseLuggage} />
         <Stack.Screen name='add_luggage' component={AddLuggage} />
         <Stack.Screen name='accept_luggage' component={AcceptLuggage} />
-        <Stack.Screen name='qr_code' component={QRCode} />
+        <Stack.Screen name='qr_code' component={QRCodeScreen} />
 
         <Stack.Screen name='orders' component={Orders} />
         <Stack.Screen name='accept_luggage_mileonair' component={AcceptLuggageMileonAir} />

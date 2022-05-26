@@ -1,5 +1,8 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import React, { useEffect, useState, useLayoutEffect, useCallback } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Appearance, useColorScheme } from 'react-native';
+import { domain } from '../../domain';
 
 
 
@@ -10,8 +13,11 @@ function AddEmail({ navigation }) {
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
 
-    const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+    const [email, setEmail] = useState("");
+    const [repeat, setRepeat] = useState(60);
+    const [timer, setTimer] = useState();
+    const [send, setSend] = useState(false);
+    const [firstSend, setFirstSend] = useState(false);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -26,19 +32,30 @@ function AddEmail({ navigation }) {
         })
     }, [navigation, colorScheme])
 
+    const sendEmail = useCallback(async () => {
+        setFirstSend(true);
+        if (!send){
+            const token = await AsyncStorage.getItem("token");
+        await AsyncStorage.setItem("email", email);
+        const res = await axios.post(domain + "/send_email", {email: email}, {headers:{"Authorization": "Token " + token}});
+        
+        }
+    }, [repeat])
+
     return (
         <View style={[styles.container, themeContainerStyle]}>
             <Text style={[styles.subtext, themeSubTextStyle]} >Эл. почта</Text>
-            <TextInput style={[styles.input, themeContainerSelectStyle]} />
-            <Text style={[styles.subtext, { textAlign: 'center' }, themeSubTextStyle]} >На указанный адрес не пришло письмо?</Text>
-            <Text style={[styles.subtext, { textAlign: 'center' }, themeSubTextStyle]} >Повторная отправка возможна через 59 секунд</Text>
-            <TouchableOpacity style={{ alignItems: 'center' }} onPress={() => navigation.navigate('profile')}>
+            <TextInput autoCapitalize='none' style={[styles.input, themeContainerSelectStyle]} value={email} onChangeText={setEmail} />
+            {firstSend && <Text style={[styles.subtext, { textAlign: 'center' }, themeSubTextStyle]} >На указанный адрес не пришло письмо?</Text>}
+            {firstSend &&<Text style={[styles.subtext, { textAlign: 'center' }, themeSubTextStyle]} >Повторная отправка возможна через {repeat} секунд</Text>}
+            {firstSend &&<TouchableOpacity style={{ alignItems: 'center' }} onPress={() => navigation.navigate('profile')}>
                 <Text style={styles.btn_text}>Отправить еще раз</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>}
+            
 
             <View>
                 <Text style={[styles.subtext, { textAlign: 'center' }, themeSubTextStyle]} >Вам на почту придет письмо с подтверждением</Text>
-                <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('profile')}>
+                <TouchableOpacity style={styles.btn} onPress={sendEmail}>
                     <Text style={styles.btn_text}>Сохранить</Text>
                 </TouchableOpacity>
             </View>

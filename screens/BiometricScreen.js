@@ -57,8 +57,8 @@ const BiometricScreen = ({ navigation }) => {
             <Text style={[styles.title, themeTextStyle]} >{title}</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>для быстрого входа в приложение</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>без ввода ПИН-кода?</Text>
-            <Button title={textBtn} onPress={() => Biomentric(false)} titleStyle={styles.text_primary} containerStyle={styles.primary_btn} buttonStyle={styles.primary} />
-            <Button title="Пропустить" onPress={() => navigation.navigate('document')} titleStyle={[styles.text_secondary, themeBtn]} containerStyle={styles.secondary_btn} buttonStyle={[styles.secondary, themeContainerSelectStyle]} />
+            <Button title={textBtn} onPress={() => Biomentric(true)} titleStyle={styles.text_primary} containerStyle={styles.primary_btn} buttonStyle={styles.primary} />
+            <Button title="Пропустить" onPress={() => Biomentric(false)} titleStyle={[styles.text_secondary, themeBtn]} containerStyle={styles.secondary_btn} buttonStyle={[styles.secondary, themeContainerSelectStyle]} />
         </SafeAreaView>
     )
 };
