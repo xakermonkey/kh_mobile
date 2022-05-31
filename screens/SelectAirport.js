@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
 import { domain } from '../domain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Loading from './Loading';
 
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
@@ -65,6 +66,15 @@ const SelectAirport = ({ navigation }) => {
     }
 
 
+    if (airport.length == 0){
+        return(
+            <View style={{ width: "100%", height: "100%" }} >
+                <Loading title={"Загрузка"} />
+            </View>
+        )
+    }
+
+
     return (
         <View style={[styles.container, themeContainerStyle]} >
             <StatusBar />
@@ -95,7 +105,7 @@ const SelectAirport = ({ navigation }) => {
                                         isSelected={selectAirport === obj.iata}
                                         onPress={() => customSelectAirport(obj.iata)}
                                         buttonInnerColor='#F5CB57'
-                                        buttonOuterColor={colorScheme === 'light' ? '#e8e8e9' : '#F2F2F31F'}
+                                        buttonOuterColor={colorScheme === 'light' ? '#23232A07' : '#F2F2F31F'}
                                         buttonSize={24}
                                         buttonOuterSize={31}
                                         buttonStyle={{ backgroundColor: colorScheme === 'light' ? '#e8e8e9' : '#F2F2F31F' }}

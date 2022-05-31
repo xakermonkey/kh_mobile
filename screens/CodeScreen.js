@@ -35,8 +35,7 @@ const CodeScreen = ({ navigation, route }) => {
         if (code.length === 4) {
             (async () => {
                 try {
-                    const res = await axios.post(domain + "/set_code", { 'number': route.params.login, 'code': code })
-                    // console.warn(res.data);
+                    const res = await axios.post(domain + "/set_code", { 'number': route.params.number, 'code': code })
                     await AsyncStorage.setItem("token", res.data.token);
                     if (res.data.doc.last_name != null) {
                         await AsyncStorage.setItem("last_name", res.data.doc.last_name);
@@ -69,7 +68,7 @@ const CodeScreen = ({ navigation, route }) => {
                     const pin = await AsyncStorage.getItem('pin');
                     const biometric = await AsyncStorage.getItem("biometric");
                     if (pin == null) {
-                        navigation.replace('changepin');
+                        navigation.replace('changepin', {from: "code"});
                         return 0;
                     }
                     if (biometric == null) {

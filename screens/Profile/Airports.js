@@ -1,13 +1,18 @@
-import React, { useLayoutEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useLayoutEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View, ScrollView, Appearance, useColorScheme, TouchableOpacity } from 'react-native';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-
+import axios from 'axios';
+import {domain} from "../../domain"
 function Airport({ navigation }) {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
+
+
+    const [airport, setAirport] = useState([]);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -19,7 +24,12 @@ function Airport({ navigation }) {
             headerStyle: {
                 backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C'
             },
-        })
+        });
+        (async () => {
+            const token = await AsyncStorage.getItem("token");
+            const res = await axios.get(domain + "/get_airport", { headers: { "Authorization": "Token " + token } })
+            setAirport(res.data);
+        })();
     }, [navigation, colorScheme])
 
     return (
@@ -43,38 +53,24 @@ function Airport({ navigation }) {
                         onPress={() => navigation.navigate('terminals')}
                     />
                 </View>
-                <View style={styles.inline}>
-                    <View style={styles.row}>
-                        {/* <Image source={require('../../assets/images/Profile/Mastercard.png')} style={{ marginRight: 10 }} /> */}
-                        <Text style={[styles.text, themeTextStyle]} >Шереметьево</Text>
-                    </View>
-                    <BouncyCheckbox
-                        size={24}
-                        fillColor='#F5CB57'
-                        unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
-                        iconStyle={{
-                            borderWidth: 0
-                        }}
-                        disableText={false}
-                        checkIconImageSource={null}
-                    />
-                </View>
-                <View style={styles.inline}>
-                    <View style={styles.row}>
-                        {/* <Image source={require('../../assets/images/Profile/Visa.png')} style={{ marginRight: 10 }} /> */}
-                        <Text style={[styles.text, themeTextStyle]} >Домодедово</Text>
-                    </View>
-                    <BouncyCheckbox
-                        size={24}
-                        fillColor='#F5CB57'
-                        unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
-                        iconStyle={{
-                            borderWidth: 0
-                        }}
-                        disableText={false}
-                        checkIconImageSource={null}
-                    />
-                </View>
+                {airport.map((obj) => {
+                    return (<View style={styles.inline} key={obj.iata}>
+                            <View style={styles.row}>
+                                {/* <Image source={require('../../assets/images/Profile/Mastercard.png')} style={{ marginRight: 10 }} /> */}
+                                <Text style={[styles.text, themeTextStyle]} >{obj.name}</Text>
+                            </View>
+                            <BouncyCheckbox
+                                size={24}
+                                fillColor='#F5CB57'
+                                unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
+                                iconStyle={{
+                                    borderWidth: 0
+                                }}
+                                disableText={false}
+                                checkIconImageSource={null}
+                            />
+                    </View>)
+                })}
             </View>
         </ScrollView>
     )

@@ -43,29 +43,15 @@ const ChangePin = ({ navigation }) => {
 
     useEffect(() => {
         if (pin.length == 4) {
-            (async () => {
-                const verify = await AsyncStorage.getItem("pin");
-                if (pin == verify) {
-                    const doc = await AsyncStorage.getItem("first_join");
-                    if (doc == "true") {
-                        const airport = await AsyncStorage.getItem("airport");
-                        if (airport != null) {
-                            navigation.replace("select_terminal", { "title": airport });
-                            return 0;
-                        } else {
-                            navigation.replace("select_airport");
-                            return 0;
-                        }
-                    } else {
-                        navigation.replace("last_name");
-                        return 0;
-                    }
-                } else {
+            AsyncStorage.getItem("pin").then((pn) => {
+                if (pn == pin){
+                    navigation.replace("changepin", {from: "profile"});
+                }else {
                     setBad(true);
-                    return 0;
                 }
-            })();
-        } else {
+            })
+        }
+        if (pin.length < 4){
             setBad(false);
         }
     })
@@ -77,11 +63,12 @@ const ChangePin = ({ navigation }) => {
             <View style={{alignItems:'center', marginTop:'15%'}}>
                 <Text style={[styles.subtext, themeTextStyle]}>Введите старый ПИН-код</Text>
                 <View style={[styles.row_circle]} >
-                    <View style={[styles.circle, pin.length < 1 ? themeDot : themeKeyboardStyle]} ></View>
-                    <View style={[styles.circle, pin.length < 2 ? themeDot : themeKeyboardStyle]} ></View>
-                    <View style={[styles.circle, pin.length < 3 ? themeDot : themeKeyboardStyle]} ></View>
-                    <View style={[styles.circle, pin.length < 4 ? themeDot : themeKeyboardStyle]} ></View>
+                    <View style={[styles.circle, bad ? {backgroundColor: '#FF3956'} : pin.length < 1 ? themeDot : themeKeyboardStyle]} ></View>
+                    <View style={[styles.circle, bad ? {backgroundColor: '#FF3956'} : pin.length < 2 ? themeDot : themeKeyboardStyle]} ></View>
+                    <View style={[styles.circle, bad ? {backgroundColor: '#FF3956'} : pin.length < 3 ? themeDot : themeKeyboardStyle]} ></View>
+                    <View style={[styles.circle, bad ? {backgroundColor: '#FF3956'} : pin.length < 4 ? themeDot : themeKeyboardStyle]} ></View>
                 </View>
+                { bad && <Text style={[{ color: '#FF3956', fontFamily: 'Inter_400Regular', fontSize: 12, textAlign: 'center', marginTop: 20 }]} >Неверный ПИН-код</Text>}
             </View>
             <View style={{
                 bottom: 48,
