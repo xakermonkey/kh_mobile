@@ -105,49 +105,51 @@ const SelectDocument = ({ navigation, route }) => {
 
 
     return (
-        <View style={[styles.container, themeContainerStyle]}  >
-            <StatusBar />
-            <View style={{ alignItems: 'center' }}>
-                <Text style={[styles.title, themeTextStyle]} >Введите паспортные данные</Text>
-                <Text style={[styles.text14, themeSubTextStyle]}>для ускорения обслуживания и получения{"\n"}дополнительных привилегий</Text>
-            </View>
-            <View style={{ marginTop: '30%' }} >
-                <Text style={[styles.text14, themeSubTextStyle]} >Выберите тип документа</Text>
-                <TouchableOpacity activeOpacity={.9} onPress={handlePresentModalPress}>
-                    <View style={[styles.select, themeContainerSelectStyle]} >
-                        <Text style={[styles.value, themeTextStyle]} >{type}</Text>
+        <View style={{flex:1}}>
+            <View style={[styles.container, themeContainerStyle]}  >
+                <StatusBar />
+                <View style={{ alignItems: 'center' }}>
+                    <Text style={[styles.title, themeTextStyle]} >Введите паспортные данные</Text>
+                    <Text style={[styles.text14, themeSubTextStyle]}>для ускорения обслуживания и получения{"\n"}дополнительных привилегий</Text>
+                </View>
+                <View style={{ marginTop: '30%' }} >
+                    <Text style={[styles.text14, themeSubTextStyle]} >Выберите тип документа</Text>
+                    <TouchableOpacity activeOpacity={.9} onPress={handlePresentModalPress}>
+                        <View style={[styles.select, themeContainerSelectStyle]} >
+                            <Text style={[styles.value, themeTextStyle]} >{type}</Text>
+                            <Icon
+                                name="chevron-down-outline"
+                                type="ionicon"
+                                color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                            />
+                        </View>
+                    </TouchableOpacity>
+                </View>
+                {mile != "" && <Text style={[{ fontFamily: 'Inter_500Medium', fontSize: 12, lineHeight: 18, marginTop: 32 }, themeSubTextStyle]}>Мы зарегистрировали Вас в MILEONAIR. Для того, чтобы начать пользоваться милями Вам необходимо скачать мобильное приложение MILEONAIR</Text>}
+                <View style={{ marginTop: '30%', }}>
+                    <View style={{ marginBottom: "10%" }}>
+                        <View style={styles.container_mileonair} >
+                            <Text style={[styles.value, themeTextStyle]} >Я являюсь участником MILEONAIR{"\n"}и хочу копить/тратить мили</Text>
+                            <Switch
+                                trackColor={{ false: "#23232A14", true: "#23232A14" }}
+                                thumbColor={isEnabled ? "#F5CB57" : "#F2F2F3"}
+                                ios_backgroundColor="#23232A14"
+                                onValueChange={toggleSwitch}
+                                value={isEnabled}
+                            />
+                        </View>
+                    </View>
+                    <View style={styles.container_mileonair} >
+                        <Text style={[styles.value, themeTextStyle]} >Хочу стать участником MILEONAIR</Text>
                         <Icon
-                            name="chevron-down-outline"
+                            name="chevron-forward-outline"
                             type="ionicon"
                             color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
                         />
                     </View>
-                </TouchableOpacity>
-            </View>
-            {mile != "" && <Text style={[{fontFamily:'Inter_500Medium', fontSize:12, lineHeight:18, marginTop:32}, themeSubTextStyle]}>Мы зарегистрировали Вас в MILEONAIR. Для того, чтобы начать пользоваться милями Вам необходимо скачать мобильное приложение MILEONAIR</Text>}
-            <View style={{ marginTop: '30%',  }}>
-                <View style={{marginBottom: "10%"}}>
-                    <View style={styles.container_mileonair} >
-                        <Text style={[styles.value, themeTextStyle]} >Я являюсь участником MILEONAIR{"\n"}и хочу копить/тратить мили</Text>
-                        <Switch
-                            trackColor={{ false: "#23232A14", true: "#23232A14" }}
-                            thumbColor={isEnabled ? "#F5CB57" : "#F2F2F3"}
-                            ios_backgroundColor="#23232A14"
-                            onValueChange={toggleSwitch}
-                            value={isEnabled}
-                        />
-                    </View>
-                </View>
-                <View style={styles.container_mileonair} >
-                    <Text style={[styles.value, themeTextStyle]} >Хочу стать участником MILEONAIR</Text>
-                    <Icon
-                        name="chevron-forward-outline"
-                        type="ionicon"
-                        color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                    />
-                </View>
 
 
+                </View>
             </View>
             <View style={styles.row}>
                 <TouchableOpacity activeOpacity={0.5}>
@@ -294,7 +296,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        textAlign: 'left',
+        padding: '4%',
         position: 'absolute',
         bottom: 24,
         width: '100%',

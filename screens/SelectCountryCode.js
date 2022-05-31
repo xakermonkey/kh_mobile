@@ -135,7 +135,7 @@ const SelectCountryCode = ({ navigation }) => {
                 onChangeText={setSearch}
                 value={search}
                 containerStyle={{ backgroundColor: null, padding: '3%' }}
-                inputContainerStyle={{ backgroundColor: "#E8E8E9" }}
+                inputContainerStyle={themeContainerSelectStyle}
                 platform='ios'
             />
             <FlatList

@@ -53,7 +53,7 @@ const LoginScreen = ({navigation, route}) => {
                 alignItems:'center'
             }}>
                 <TouchableOpacity onPress={() => navigation.navigate('license')}>
-                    <Text style={[{ color: '#0C0C0D7A', fontFamily: 'Inter_400Regular', fontSize: 14, paddingHorizontal: 99, textAlign: 'center' }]} >Вводя свой номер телефона вы соглашаетесь с <Text style={[{ color: '#000', fontFamily: 'Inter_700Bold' }]} >Правилами</Text></Text>
+                    <Text style={[{ fontFamily: 'Inter_400Regular', fontSize: 14, paddingHorizontal: 99, textAlign: 'center' }, themeSubTextStyle]} >Вводя свой номер телефона вы соглашаетесь с <Text style={[{ fontFamily: 'Inter_700Bold' }, themeSubTextStyle]} >Правилами</Text></Text>
                 </TouchableOpacity>
                 <View style={styles.keyboard}>
                     <View style={styles.row} >

@@ -47,7 +47,7 @@ const LicenseScreen = ({ navigation }) => {
         <SafeAreaView style={[styles.container, themeContainerStyle]}>
             <StatusBar />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.textContainer}>
-                <View style={{ alignItems: 'center' }}>
+                <View style={{ alignItems: 'center', marginTop:26 }}>
 
                 </View>
                 <View style={styles.abzath}>
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start',
-        marginTop:26,
+        // marginTop:26,
     },
     title: {
         fontSize: 18,

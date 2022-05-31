@@ -107,7 +107,7 @@ const CodeScreen = ({ navigation, route }) => {
                 alignItems: 'center'
             }}>
                 <TouchableOpacity onPress={() => navigation.navigate('license')}>
-                    <Text style={[{ color: '#000', fontFamily: 'Inter_700Bold', fontSize: 14, textAlign: 'center' }]} >Отправить код повторно</Text>
+                    <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14, textAlign: 'center' }, themeSubTextStyle]} >Отправить код повторно</Text>
                 </TouchableOpacity>
                 <View style={styles.keyboard}>
                     <View style={styles.row} >

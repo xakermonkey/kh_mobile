@@ -63,7 +63,7 @@ const ChangePinScreen = ({ navigation }) => {
                 <View style={[styles.circle, firstPin.length < 3 ? themeDot : themeKeyboardStyle]} ></View>
                 <View style={[styles.circle, firstPin.length < 4 ? themeDot : themeKeyboardStyle]} ></View>
             </View>
-            {bFirst && <Text style={[{ color: '#000', fontFamily: 'Inter_400Regular', fontSize: 12, marginVertical: "5%", textAlign: 'center' }]} >Повторите ПИН-код</Text>}
+            {bFirst && <Text style={[{ fontFamily: 'Inter_400Regular', fontSize: 12, marginVertical: "5%", textAlign: 'center' }, themeTextStyle]} >Повторите ПИН-код</Text>}
             {bFirst &&
                 <View style={styles.row_circle_second} >
                     <View style={[styles.circle, bad ? {backgroundColor: '#FF3956'} : secondPin.length < 1 ? themeDot : themeKeyboardStyle]} ></View>
@@ -79,7 +79,7 @@ const ChangePinScreen = ({ navigation }) => {
     alignItems: 'center'
 }}>
     <TouchableOpacity onPress={() => navigation.navigate('license')}>
-        <Text style={[{ color: '#000', fontFamily: 'Inter_700Bold', fontSize: 14, textAlign: 'center' }]} >Забыли пароль?</Text>
+        <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14, textAlign: 'center' }, themeSubTextStyle]} >Забыли пароль?</Text>
     </TouchableOpacity>
     <View style={styles.keyboard}>
         <View style={styles.row} >
