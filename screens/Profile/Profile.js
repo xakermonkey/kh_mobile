@@ -31,8 +31,8 @@ function Profile({ navigation }) {
     const [refreshing, setRefreshing] = useState(false);
 
     const toggleSwitch = async () => {
-        setIsEnabled(previousState => !previousState);
-        await AsyncStorage.setItem("biometric", (!previousState).toString());
+        setIsEnabled(!isEnabled);
+        await AsyncStorage.setItem("biometric", (!isEnabled).toString());
     }
 
     const Update = useCallback(async () => {
@@ -263,7 +263,7 @@ function Profile({ navigation }) {
                             </View>
                             <Switch
                                 trackColor={{ false: '#767577', true: '#23232A14' }}
-                                thumbColor={isEnabled ? '#F5CB57' : '#f4f3f4'}
+                                thumbColor={isMile ? '#F5CB57' : '#f4f3f4'}
                                 ios_backgroundColor="#23232A14"
                                 onValueChange={setisMile}
                                 value={isMile}

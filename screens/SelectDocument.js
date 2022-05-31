@@ -4,12 +4,10 @@ import { Icon, Button } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
 import { AntDesign } from '@expo/vector-icons';
-import {
-    BottomSheetModal,
-    BottomSheetModalProvider,
-} from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 
 
 const SelectDocument = ({ navigation, route }) => {
@@ -19,14 +17,32 @@ const SelectDocument = ({ navigation, route }) => {
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
 
-    const bottomSheetModalRef = useRef(null);
+
+    /////////////////////////////// BottomSheet Oprions ////////////////////////////
+    const bottomSheetRef = useRef(null);
     const snapPoints = useMemo(() => ['25%'], []);
     const handlePresentModalPress = useCallback(() => {
-        bottomSheetModalRef.current?.present();
+        bottomSheetRef.current?.snapToIndex(0);
     }, []);
     const handleSheetChanges = useCallback((index) => {
         console.log('handleSheetChanges', index);
     }, []);
+
+    const CustomBackDrop = (props) => {
+        return (
+            <BottomSheetBackdrop
+                {...props}
+                disappearsOnIndex={-1}
+                opacity='0.9'
+                closeOnPress={false}
+                enableTouchThrough={false}
+                pressBehavior='none'
+            />
+        );
+    };
+
+
+    //////////////////////// END BOTTOMSHEET /////////////////////////////////
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -58,7 +74,7 @@ const SelectDocument = ({ navigation, route }) => {
 
     const ClickType = (text) => {
         setType(text);
-        bottomSheetModalRef.current.close();
+        bottomSheetRef.current.close();
 
     }
 
@@ -92,7 +108,7 @@ const SelectDocument = ({ navigation, route }) => {
 
     const setDoc = async () => {
         await AsyncStorage.setItem("type_doc", type);
-        navigation.navigate("document")
+        navigation.navigate("document");
 
     }
 
@@ -124,9 +140,9 @@ const SelectDocument = ({ navigation, route }) => {
                     </View>
                 </TouchableOpacity>
             </View>
-            {mile != "" && <Text style={[{fontFamily:'Inter_500Medium', fontSize:12, lineHeight:18, marginTop:32}, themeSubTextStyle]}>Мы зарегистрировали Вас в MILEONAIR. Для того, чтобы начать пользоваться милями Вам необходимо скачать мобильное приложение MILEONAIR</Text>}
-            <View style={{ marginTop: '30%',  }}>
-                <View style={{marginBottom: "10%"}}>
+            {mile != "" && <Text style={[{ fontFamily: 'Inter_500Medium', fontSize: 12, lineHeight: 18, marginTop: 32 }, themeSubTextStyle]}>Мы зарегистрировали Вас в MILEONAIR. Для того, чтобы начать пользоваться милями Вам необходимо скачать мобильное приложение MILEONAIR</Text>}
+            <View style={{ marginTop: '30%', }}>
+                <View style={{ marginBottom: "10%" }}>
                     <View style={styles.container_mileonair} >
                         <Text style={[styles.value, themeTextStyle]} >Я являюсь участником MILEONAIR{"\n"}и хочу копить/тратить мили</Text>
                         <Switch
@@ -157,52 +173,47 @@ const SelectDocument = ({ navigation, route }) => {
                 <Button buttonStyle={styles.btn} onPress={() => { navigation.navigate('document') }} containerStyle={styles.cont_btn} icon={<AntDesign name="arrowright" size={24} color="#000" />} />
             </View>
 
+            <BottomSheet
+                ref={bottomSheetRef}
+                index={-1}
+                snapPoints={snapPoints}
+                enablePanDownToClose={true}
+                backdropComponent={CustomBackDrop}
+            >
+                <Text style={[styles.bottom_title, themeTextStyle]} >Тип документа</Text>
+                <View style={{ padding: '4%' }}>
+                    <View style={styles.inline}>
+                        <Text style={[styles.bottom_title, themeTextStyle]} >Паспорт РФ</Text>
+                        <RadioButtonInput
+                            obj={{ name: "Паспорт РФ" }}
+                            index={0}
+                            isSelected={type === "Паспорт РФ"}
+                            onPress={() => ClickType("Паспорт РФ")}
+                            buttonInnerColor='#F5CB57'
+                            buttonOuterColor="#fff"
+                            buttonSize={24}
+                            buttonOuterSize={31}
+                            buttonStyle={{ backgroundColor: '#23232A14' }}
 
-            <BottomSheetModalProvider>
-                <View>
-                    <BottomSheetModal
-                        ref={bottomSheetModalRef}
-                        index={0}
-                        snapPoints={snapPoints}
-                        onChange={handleSheetChanges}
-                        backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
-                    >
-                        <Text style={[styles.bottom_title, themeTextStyle]} >Тип документа</Text>
-                        <View style={{ padding: '4%' }}>
-                            <View style={styles.inline}>
-                                <Text style={[styles.bottom_title, themeTextStyle]} >Паспорт РФ</Text>
-                                <BouncyCheckbox
-                                    size={24}
-                                    fillColor='#F5CB57'
-                                    value={type == "Паспорт РФ"}
-                                    unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
-                                    iconStyle={{
-                                        borderWidth: 0
-                                    }}
-                                    onPress={() => ClickType("Паспорт РФ")}
-                                    disableText={true}
-                                    checkIconImageSource={null}
-                                />
-                            </View>
-                            <View style={styles.inline}>
-                                <Text style={[styles.bottom_title, themeTextStyle]} >Заграничный паспорт</Text>
-                                <BouncyCheckbox
-                                    size={24}
-                                    fillColor='#F5CB57'
-                                    value={type == "Заграничный паспорт"}
-                                    unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
-                                    iconStyle={{
-                                        borderWidth: 0
-                                    }}
-                                    onPress={() => ClickType("Заграничный паспорт")}
-                                    disableText={true}
-                                    checkIconImageSource={null}
-                                />
-                            </View>
-                        </View>
-                    </BottomSheetModal>
+                        />
+                    </View>
+                    <View style={styles.inline}>
+                        <Text style={[styles.bottom_title, themeTextStyle]} >Заграничный паспорт</Text>
+                        <RadioButtonInput
+                            obj={{ name: "Заграничный паспорт" }}
+                            index={1}
+                            isSelected={type === "Заграничный паспорт"}
+                            onPress={() => ClickType("Заграничный паспорт")}
+                            buttonInnerColor='#F5CB57'
+                            buttonOuterColor="#fff"
+                            buttonSize={24}
+                            buttonOuterSize={31}
+                            buttonStyle={{ backgroundColor: '#23232A14' }}
+
+                        />
+                    </View>
                 </View>
-            </BottomSheetModalProvider>
+            </BottomSheet>
         </View>
     )
 }

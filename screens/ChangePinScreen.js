@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { color } from 'react-native-reanimated';
 
-const ChangePinScreen = ({ navigation }) => {
+const ChangePinScreen = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
@@ -26,7 +26,13 @@ const ChangePinScreen = ({ navigation }) => {
             setFirst(false);
         }
         if (firstPin.length === 4 && secondPin.length === 4 && firstPin == secondPin) {
-            AsyncStorage.setItem("pin", firstPin).then(() => navigation.replace('biometric'))
+            AsyncStorage.setItem("pin", firstPin).then(() => {
+                if (route.params.from == "code"){
+                    navigation.replace('biometric');
+                }else{
+                    navigation.replace("profile");
+                }
+            })
         } else if (firstPin.length === 4 && secondPin.length == 4 && firstPin != secondPin) {
             setBad(true);
         }

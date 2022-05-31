@@ -16,6 +16,7 @@ const LoginScreen = ({navigation, route}) => {
 
     const [number, setNumber] = useState(route.params.code);
     const [mask, setMask] = useState([...route.params.code.split(""), " ", '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/ ]);
+    const [maskNumber, setMaskNumber] = useState(route.params.code);
 
 
     const Click = (num) => {
@@ -30,9 +31,13 @@ const LoginScreen = ({navigation, route}) => {
 
     useEffect(() => {
         if (number.length === route.params.code.length + 10) {
+            const { masked, unmasked, obfuscated } = formatWithMask({
+                text: number,
+                mask: mask,
+              });
             axios.post(domain + "/login", {"number": number})
             .then((res) => {
-                navigation.navigate('code', { 'login': number})
+                navigation.navigate('code', { 'login': masked, 'number': number})
             })
 
         }

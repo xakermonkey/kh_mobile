@@ -4,8 +4,8 @@ import { Button } from 'react-native-elements'
 import { AntDesign } from '@expo/vector-icons'; 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import MaskInput from 'react-native-mask-input';
 import { domain } from '../domain';
+import MaskInput, {formatWithMask} from 'react-native-mask-input';
 
 const BirthDayScreen = ({navigation}) => {
     const colorScheme = useColorScheme();
@@ -13,6 +13,9 @@ const BirthDayScreen = ({navigation}) => {
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
+
+
+    const [mask, setMask] = useState([ /\d/, /\d/, ".", /\d/, /\d/, ".", /\d/, /\d/, /\d/, /\d/]);
 
     useLayoutEffect(() =>{
         navigation.setOptions({
@@ -85,7 +88,7 @@ const BirthDayScreen = ({navigation}) => {
             <Text style={[styles.subtext, themeSubTextStyle]}>для ускорения обслуживания и получения</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>дополнительных привилегий</Text>
             <Text style={[styles.label, themeTextStyle]} >Дата рождения (в формате ДД.ММ.ГГГГ)</Text>
-            <TextInput autoFocus value={date} style={[styles.inputtext, themeTextStyle]} onChangeText={(text) => setDate(text)} />
+            <MaskInput autoFocus value={date} style={[styles.inputtext, themeTextStyle]} maxLength={10} mask={mask} onChangeText={(masked, unmasked) => setDate(masked)} />
             <KeyboardAvoidingView behavior='padding' style={styles.row}>
                 <TouchableOpacity activeOpacity={0.5}>
                     <Text style={[styles.subtext, themeSubTextStyle]} >Зачем нам ваши </Text>

@@ -7,11 +7,10 @@ import { EvilIcons, Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { domain } from '../domain';
-import {
-    BottomSheetModal,
-    BottomSheetModalProvider,
-} from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
+import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 
 
 const AddLuggage = ({ navigation, route }) => {
@@ -25,24 +24,36 @@ const AddLuggage = ({ navigation, route }) => {
     const [kind, setKind] = useState(null);
     const [selectTerminal, setSelectTerminal] = useState(null);
     const [selectKind, setSelectKind] = useState(0);
-
     const bottomSheetterminalRef = useRef(null);
     const snapPointsterminal = useMemo(() => ['50%'], []);
     const handlePresentModalTerminalPress = useCallback(() => {
-        bottomSheetterminalRef.current?.present();
+        bottomSheetterminalRef.current?.snapToIndex(0);
     }, []);
 
     const bottomSheetKindRef = useRef(null);
     const snapPointsKind = useMemo(() => ['50%'], []);
     const handlePresentModalKindPress = useCallback(() => {
-        bottomSheetKindRef.current?.present();
+        bottomSheetKindRef.current?.snapToIndex(0);
     }, []);
 
     const bottomSheetInfoRef = useRef(null);
     const snapPointsInfo = useMemo(() => ['50%'], []);
     const handlePresentModalInfoPress = useCallback(() => {
-        bottomSheetInfoRef.current?.present();
+        bottomSheetInfoRef.current?.snapToIndex(0);
     }, []);
+
+    const CustomBackDrop = (props) => {
+        return (
+            <BottomSheetBackdrop
+                {...props}
+                disappearsOnIndex={-1}
+                opacity='0.9'
+                closeOnPress={false}
+                enableTouchThrough={false}
+                pressBehavior='none'
+            />
+        );
+    };
 
 
     useLayoutEffect(() => {
@@ -63,6 +74,7 @@ const AddLuggage = ({ navigation, route }) => {
             setKind(res.data.kind);
             setTerminal(res.data.ls);
             setSelectTerminal(res.data.ls.filter((item) => item.id == term_id)[0]);
+            console.log(res.data.ls.filter((item) => item.id == term_id)[0]);
         })();
     }, [navigation, colorScheme])
 
@@ -132,9 +144,9 @@ const AddLuggage = ({ navigation, route }) => {
         await AsyncStorage.setItem("luggage_ls", selectTerminal.id.toString());
         await AsyncStorage.setItem("luggage_kind", kind[selectKind].id.toString());
         for (let i = 0; i < images.length; i++) {
-            await AsyncStorage.setItem(`luggage_file${i+1}`, images[i].uri);
+            await AsyncStorage.setItem(`luggage_file${i + 1}`, images[i].uri);
         }
-        navigation.navigate("accept_luggage", {"price": selectTerminal.price_storage, "sale": mile} )
+        navigation.navigate("accept_luggage", { "price": selectTerminal.price_storage, "sale": mile })
     }
 
     const renderTerminal = (obj) => {
@@ -146,17 +158,17 @@ const AddLuggage = ({ navigation, route }) => {
                         <Text style={[styles.subtext, themeSubTextStyle]} >{obj.location}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <BouncyCheckbox
-                            size={24}
-                            fillColor='#F5CB57'
-                            isChecked={selectTerminal.id == obj.id}
-                            unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
-                            iconStyle={{
-                                borderWidth: 0
-                            }}
+                    <RadioButtonInput
+                            obj={obj}
+                            index={obj.id}
+                            isSelected={selectTerminal.id == obj.id}
                             onPress={() => ClickTerminal(obj)}
-                            disableText={true}
-                            checkIconImageSource={null}
+                            buttonInnerColor='#F5CB57'
+                            buttonOuterColor="#f2f2f2"
+                            buttonSize={24}
+                            buttonOuterSize={31}
+                            buttonStyle={{ backgroundColor: '#23232A14' }}
+
                         />
                     </View>
                 </View>
@@ -172,17 +184,17 @@ const AddLuggage = ({ navigation, route }) => {
                         <Text style={[styles.title, themeTextStyle]} >{obj.name}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <BouncyCheckbox
-                            size={24}
-                            fillColor='#F5CB57'
-                            isChecked={selectKind == ind}
-                            unfillColor={colorScheme === 'light' ? '#23232A14' : '#F2F2F31F'}
-                            iconStyle={{
-                                borderWidth: 0
-                            }}
+                    <RadioButtonInput
+                            obj={obj}
+                            index={ind}
+                            isSelected={selectKind == ind}
                             onPress={() => ClickKind(ind)}
-                            disableText={true}
-                            checkIconImageSource={null}
+                            buttonInnerColor='#F5CB57'
+                            buttonOuterColor="#f2f2f2"
+                            buttonSize={24}
+                            buttonOuterSize={31}
+                            buttonStyle={{ backgroundColor: '#23232A14' }}
+
                         />
                     </View>
                 </View>
@@ -211,9 +223,9 @@ const AddLuggage = ({ navigation, route }) => {
                 </View>
             </View>
             <View style={styles.container_select} >
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={[styles.label, themeSubTextStyle]} >Камера хранения</Text>
-                    <Feather name="info" size={24} color="black" />
+                    <TouchableOpacity onPress={handlePresentModalInfoPress} ><Feather name="info" size={18} color="#0C0C0D7A" style={{marginLeft: "10%"}} /></TouchableOpacity>
                 </View>
                 <TouchableOpacity onPress={() => handlePresentModalTerminalPress()} style={[styles.select, themeContainerSelectStyle]} >
                     <Text style={[styles.value, themeTextStyle]} >Терминал {selectTerminal.terminal}, {selectTerminal.floor} этаж</Text>
@@ -300,51 +312,63 @@ const AddLuggage = ({ navigation, route }) => {
             <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={createLuggage} >
                 <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Перейти к оплате</Text>
             </TouchableOpacity>
-            <BottomSheetModalProvider>
-                <View>
-                    <BottomSheetModal
-                        ref={bottomSheetterminalRef}
-                        index={0}
-                        snapPoints={snapPointsterminal}
-                        backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
-                    >
-                        <Text style={[styles.bottom_title, themeTextStyle]} >Камера хранения</Text>
-                        <View style={{ padding: '4%' }}>
-                            {terminal.map((obj) => renderTerminal(obj))}
-                        </View>
-                    </BottomSheetModal>
+            <BottomSheet
+                ref={bottomSheetterminalRef}
+                index={-1}
+                backdropComponent={CustomBackDrop}
+                snapPoints={snapPointsterminal}
+                enablePanDownToClose={true}
+                backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
+            >
+                <Text style={[styles.bottom_title, themeTextStyle]} >Камера хранения</Text>
+                <View style={{ padding: '4%' }}>
+                    {terminal.map((obj) => renderTerminal(obj))}
                 </View>
-            </BottomSheetModalProvider>
-            <BottomSheetModalProvider>
-                <View>
-                    <BottomSheetModal
-                        ref={bottomSheetKindRef}
-                        index={0}
-                        snapPoints={snapPointsKind}
-                        backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
-                    >
-                        <Text style={[styles.bottom_title, themeTextStyle]} >Вид вещи</Text>
-                        <View style={{ padding: '4%' }}>
-                            {kind.map((obj, ind) => rendKind(obj, ind))}
-                        </View>
-                    </BottomSheetModal>
+            </BottomSheet>
+            <BottomSheet
+                ref={bottomSheetKindRef}
+                index={-1}
+                enablePanDownToClose={true}
+                snapPoints={snapPointsKind}
+                backdropComponent={CustomBackDrop}
+                backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
+            >
+                <Text style={[styles.bottom_title, themeTextStyle]} >Вид вещи</Text>
+                <View style={{ padding: '4%' }}>
+                    {kind.map((obj, ind) => rendKind(obj, ind))}
                 </View>
-            </BottomSheetModalProvider>
-            <BottomSheetModalProvider>
-                <View>
-                    <BottomSheetModal
-                        ref={bottomSheetInfoRef}
-                        index={0}
-                        snapPoints={snapPointsInfo}
-                        backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
-                    >
-                        <Text style={[styles.bottom_title, themeTextStyle]} >Информация о камере хранения</Text>
-                        <View style={{ padding: '4%' }}>
+            </BottomSheet>
+            <BottomSheet
+                ref={bottomSheetInfoRef}
+                index={-1}
+                snapPoints={snapPointsInfo}
+                enablePanDownToClose={true}
+                backdropComponent={CustomBackDrop}
+                backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
+            >
+                <Text style={[styles.bottom_title, themeTextStyle]} >Информация о камере хранения</Text>
+                <View style={{ padding: '4%' }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: "5%" }} >
+                        <Text style={{ fontSize: 14, color: "#000000", fontFamily: "Inter_600SemiBold" }} >Расположение</Text>
+                        <View style={{}}>
+                            <Text style={{ textAlign: "right", fontSize: 12, fontFamily: "Inter_500Medium", color: "#0C0C0D7A" }} >Терминал {selectTerminal.terminal}, {selectTerminal.floor} этаж</Text>
+                            <Text style={{ textAlign: "right", fontSize: 12, fontFamily: "Inter_500Medium", color: "#0C0C0D7A" }} >{selectTerminal.location}</Text>
+                        </View>
 
-                        </View>
-                    </BottomSheetModal>
+                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: "5%" }} >
+                        <Text style={{ fontSize: 14, color: "#000000", fontFamily: "Inter_600SemiBold" }} >Время работы</Text>
+                        <Text style={{ textAlign: "right", fontSize: 12, fontFamily: "Inter_500Medium", color: "#0C0C0D7A" }} >{selectTerminal.work_time}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: "5%" }} >
+                        <Text style={{ fontSize: 14, color: "#000000", fontFamily: "Inter_600SemiBold" }} >Условия</Text>
+                        <Text style={{ textAlign: "right", fontSize: 12, fontFamily: "Inter_500Medium", color: "#0C0C0D7A" }} >{selectTerminal.conditions}</Text>
+                    </View>
                 </View>
-            </BottomSheetModalProvider>
+                <TouchableOpacity activeOpacity={.9} style={[styles.btn, { width: "90%", alignSelf: 'center', marginTop: "10%"}]} onPress={() => bottomSheetInfoRef.current.close()} >
+                    <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Понятно</Text>
+                </TouchableOpacity>
+            </BottomSheet>
         </KeyboardAvoidingView>
 
     )
