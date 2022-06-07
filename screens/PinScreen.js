@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { Appearance, useColorScheme, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import * as LocalAuthentication from 'expo-local-authentication';
-
+import { CommonActions } from '@react-navigation/native';
 
 const PinScreen = ({ navigation }) => {
     const colorScheme = useColorScheme();
@@ -26,7 +26,7 @@ const PinScreen = ({ navigation }) => {
             const biometric = await AsyncStorage.getItem("biometric");
             if (biometric == "true") {
                 setBiomentric(true);
-                try{
+                try {
                     const result = await LocalAuthentication.authenticateAsync();
                     if (result.success == true) {
                         const doc = await AsyncStorage.getItem("first_join");
@@ -40,22 +40,31 @@ const PinScreen = ({ navigation }) => {
                                 return 0;
                             }
                         } else {
-                            navigation.replace("last_name");
+                            const patr = await AsyncStorage.getItem("patronymic");
+                            if (patr != null) {
+                                navigation.dispatch(
+                                    CommonActions.reset({
+                                        index: 0,
+                                        routes: [{ name: "select_airport" }]
+                                    }));
+                            } else {
+                                navigation.replace('last_name');
+                            }
                             return 0;
                         }
                     }
                 }
-                catch(err){
+                catch (err) {
                     console.log(err);
-                } 
+                }
             }
         })();
     }, [navigation])
 
 
     const clickBiomentric = async () => {
-        if (biometric){
-            try{
+        if (biometric) {
+            try {
                 const result = await LocalAuthentication.authenticateAsync();
                 if (result.success == true) {
                     const doc = await AsyncStorage.getItem("first_join");
@@ -69,12 +78,21 @@ const PinScreen = ({ navigation }) => {
                             return 0;
                         }
                     } else {
-                        navigation.replace("last_name");
+                        const patr = await AsyncStorage.getItem("patronymic");
+                        if (patr != null) {
+                            navigation.dispatch(
+                                CommonActions.reset({
+                                    index: 0,
+                                    routes: [{ name: "select_airport" }]
+                                }));
+                        } else {
+                            navigation.replace('last_name');
+                        }
                         return 0;
                     }
                 }
             }
-            catch(err){
+            catch (err) {
                 console.log(err);
             }
         }
@@ -97,6 +115,7 @@ const PinScreen = ({ navigation }) => {
             (async () => {
                 const verify = await AsyncStorage.getItem("pin");
                 if (pin == verify) {
+
                     const doc = await AsyncStorage.getItem("first_join");
                     if (doc == "true") {
                         const airport = await AsyncStorage.getItem("airport");
@@ -108,7 +127,16 @@ const PinScreen = ({ navigation }) => {
                             return 0;
                         }
                     } else {
-                        navigation.replace("input_image"); //last_name
+                        const patr = await AsyncStorage.getItem("patronymic");
+                        if (patr != null) {
+                            navigation.dispatch(
+                                CommonActions.reset({
+                                    index: 0,
+                                    routes: [{ name: "select_airport" }]
+                                }));
+                        } else {
+                            navigation.replace('last_name');
+                        }
                         return 0;
                     }
                 } else {
@@ -128,12 +156,12 @@ const PinScreen = ({ navigation }) => {
             <Text style={[styles.title, themeTextStyle]}>Введите ПИН-код</Text>
             <Text style={[styles.subtext, themeTextStyle]}>для входа</Text>
             <View style={[styles.row_circle, { marginTop: '25%' }]} >
-                <View style={[styles.circle, bad ? {backgroundColor: '#FF3956'} : pin.length < 1 ? themeDot : themeKeyboardStyle]} ></View>
-                <View style={[styles.circle, bad ? {backgroundColor: '#FF3956'} : pin.length < 2 ? themeDot : themeKeyboardStyle]} ></View>
-                <View style={[styles.circle, bad ? {backgroundColor: '#FF3956'} : pin.length < 3 ? themeDot : themeKeyboardStyle]} ></View>
-                <View style={[styles.circle, bad ? {backgroundColor: '#FF3956'} : pin.length < 4 ? themeDot : themeKeyboardStyle]} ></View>
+                <View style={[styles.circle, bad ? { backgroundColor: '#FF3956' } : pin.length < 1 ? themeDot : themeKeyboardStyle]} ></View>
+                <View style={[styles.circle, bad ? { backgroundColor: '#FF3956' } : pin.length < 2 ? themeDot : themeKeyboardStyle]} ></View>
+                <View style={[styles.circle, bad ? { backgroundColor: '#FF3956' } : pin.length < 3 ? themeDot : themeKeyboardStyle]} ></View>
+                <View style={[styles.circle, bad ? { backgroundColor: '#FF3956' } : pin.length < 4 ? themeDot : themeKeyboardStyle]} ></View>
             </View>
-            { bad && <Text style={[{ color: '#FF3956', fontFamily: 'Inter_400Regular', fontSize: 12, textAlign: 'center', marginTop: 20 }]} >Неверный ПИН-код</Text>}
+            {bad && <Text style={[{ color: '#FF3956', fontFamily: 'Inter_400Regular', fontSize: 12, textAlign: 'center', marginTop: 20 }]} >Неверный ПИН-код</Text>}
             <View style={{
                 bottom: 48,
                 position: 'absolute',

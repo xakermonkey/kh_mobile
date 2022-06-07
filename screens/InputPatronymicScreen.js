@@ -54,12 +54,12 @@ const InputPatronymicScreen = ({ navigation }) => {
             });
         const res_json = await res.json();
         if (res_json.ok == "ok") {
-            const fj = await AsyncStorage.getItem("first_join");
-            if (fj == null) {
-                await AsyncStorage.setItem("first_join", "true");
-                navigation.navigate("select_airport");
-            }
-
+            await AsyncStorage.setItem("first_join", "true");
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: "select_airport" }]
+                }));
         }
     }
     const [text, setText] = useState('')
@@ -89,10 +89,7 @@ const InputPatronymicScreen = ({ navigation }) => {
                 const res_json = await res.json();
                 if (res_json.ok == "ok") {
                     await AsyncStorage.setItem("patronymic", text)
-                    const fj = await AsyncStorage.getItem("first_join");
-                    if (fj == null) {
-                        await AsyncStorage.setItem("first_join", "true");
-                    }
+                    await AsyncStorage.setItem("first_join", "true");
                     navigation.dispatch(
                         CommonActions.reset({
                             index: 0,

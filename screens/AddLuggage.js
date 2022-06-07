@@ -368,7 +368,6 @@ const AddLuggage = ({ navigation, route }) => {
             <BottomSheet
                 ref={bottomSheetKindRef}
                 index={-1}
-                
                 enablePanDownToClose={true}
                 snapPoints={snapPointsKind}
                 backdropComponent={CustomBackDrop}

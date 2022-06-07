@@ -4,7 +4,7 @@ import { Button } from 'react-native-elements'
 import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { domain } from '../domain';
-
+import { CommonActions } from '@react-navigation/native';
 const InputLastNameScreen = ({ navigation }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
@@ -36,11 +36,8 @@ const InputLastNameScreen = ({ navigation }) => {
 
     const Pass = async () => {
         await AsyncStorage.setItem("last_name", "")
-        const fj = await AsyncStorage.getItem("first_join");
-        if (fj == null) {
-            await AsyncStorage.setItem("first_join", "true");
-            navigation.replace("select_airport");
-        }
+        await AsyncStorage.setItem("first_join", "true");
+        navigation.replace("select_airport");
     }
     const [text, setText] = useState('');
     const [bad, setBad] = useState(false);

@@ -32,9 +32,11 @@ const SelectCountryCode = ({ navigation }) => {
                     <Text style={[styles.subtext, themeSubTextStyle]} >выберите страну</Text>
                 </View>)
             }
-        })
-        axios.get(domain + "/get_code_city").then((res) => setCity(res.data));
+        });
+        
         (async () => {
+            const res = await axios.get(domain + "/get_code_city")
+            setCity(res.data);
             // await AsyncStorage.removeItem("token");
             // await AsyncStorage.removeItem("full_document");
             // await AsyncStorage.removeItem("pin");

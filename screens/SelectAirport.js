@@ -1,4 +1,4 @@
-import { Appearance, useColorScheme, StyleSheet, Text, View, ScrollView, RefreshControl } from 'react-native'
+import { Appearance, useColorScheme, StyleSheet, Text, View, ScrollView, RefreshControl, TouchableOpacity, ImageBackground } from 'react-native'
 import React, { useLayoutEffect, useState, useEffect, useCallback } from 'react'
 import RadioForm, { RadioButton, RadioButtonInput } from 'react-native-simple-radio-button';
 import { StatusBar } from 'expo-status-bar';
@@ -9,7 +9,7 @@ import Loading from './Loading';
 
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
-  }
+}
 
 const SelectAirport = ({ navigation }) => {
     const colorScheme = useColorScheme();
@@ -39,14 +39,15 @@ const SelectAirport = ({ navigation }) => {
                 axios.get(domain + "/get_airport", { headers: { "Authorization": "Token " + token } })
                     .then(res => {
                         setAirport(res.data);
+                        AsyncStorage.getItem("airport_iata")
+                            .then(iata => {
+                                if (iata != null) {
+                                    setSelectAirport(res.data.filter(obj => obj.iata == iata)[0]);
+                                }
+                            });
                     })
-            })
-        AsyncStorage.getItem("airport_iata")
-            .then(iata => {
-                if (iata != null) {
-                    setSelectAirport(iata);
-                }
-            })
+            });
+
     }, [navigation])
 
     const onRefresh = useCallback(async () => {
@@ -55,19 +56,19 @@ const SelectAirport = ({ navigation }) => {
         const res = await axios.get(domain + "/get_airport", { headers: { "Authorization": "Token " + token } })
         setAirport(res.data);
         setRefreshing(false);
-      }, []);
+    }, []);
 
 
 
-    const customSelectAirport = async (iata) => {
-        await AsyncStorage.setItem("airport", airport.filter((obj) => obj.iata == iata)[0].name);
-        await AsyncStorage.setItem("airport_iata", iata);
-        navigation.replace("select_terminal", { "title": airport.filter((obj) => obj.iata == iata)[0].name, 'iata': iata })
+    const customSelectAirport = async (obj) => {
+        await AsyncStorage.setItem("airport", obj.name);
+        await AsyncStorage.setItem("airport_iata", obj.iata);
+        navigation.replace("select_terminal", { "title": obj.name, 'iata': obj.iata })
     }
 
 
-    if (airport.length == 0){
-        return(
+    if (airport.length == 0) {
+        return (
             <View style={{ width: "100%", height: "100%" }} >
                 <Loading title={"Загрузка"} />
             </View>
@@ -78,7 +79,65 @@ const SelectAirport = ({ navigation }) => {
     return (
         <View style={[styles.container, themeContainerStyle]} >
             <StatusBar />
-            <ScrollView contentContainerStyle={[styles.container_select, themeContainerSelectStyle]}>
+
+            <ScrollView style={{ height: '100%' }}>
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                />
+                <View style={styles.radiobutton_container}>
+                    {airport.map((obj) => {
+                        return (
+                            <TouchableOpacity key={obj.iata} activeOpacity={0.5} onPress={() => customSelectAirport(obj)}>
+                                <View style={{
+                                    height: 100, marginBottom: "5%", shadowOffset: {
+                                        width: 0,
+                                        height: 6,
+                                    },
+                                    shadowOpacity: 0.3,
+                                    shadowRadius: 4,
+                                    elevation: 1,
+                                }}>
+                                    <ImageBackground source={{ uri: 'https://31tv.ru/wp-content/uploads/2020/09/rkyr.jpg' }} style={{ flex: 1 }} imageStyle={{ borderRadius: 16, }}>
+                                        <View style={{ backgroundColor: 'rgba(0,0,0,0.3)', flexDirection: 'row', flex: 1, borderRadius: 16 }}>
+                                            <View style={{ justifyContent: 'flex-end', flex: 1, bottom: 12, left: 12 }}>
+                                                {/* {selectAirport == obj.id && <Text style={[styles.subtext, { color: '#F2F2F3' }]} >Вы здесь</Text>} */}
+                                                <Text style={[styles.title, { color: '#F2F2F3' }]}>{obj.name}</Text>
+                                            </View>
+                                            <View style={{ alignItems: 'flex-end', justifyContent: 'flex-start', flex: 1, top: 12, right: 12 }}>
+                                                <RadioButtonInput
+                                                    obj={obj}
+                                                    index={0}
+                                                    isSelected={selectAirport === obj}
+                                                    onPress={() => customSelectAirport(obj)}
+                                                    buttonInnerColor='#F5CB57'
+                                                    buttonOuterColor={colorScheme === 'light' ? '#23232A07' : '#F2F2F31F'}
+                                                    buttonSize={24}
+                                                    buttonOuterSize={31}
+                                                    buttonStyle={{ backgroundColor: colorScheme === 'light' ? '#e8e8e9' : '#F2F2F31F' }}
+
+                                                /></View>
+                                        </View>
+                                    </ImageBackground>
+
+                                </View>
+                            </TouchableOpacity>
+                        )
+                    })}
+                </View>
+            </ScrollView>
+
+
+
+
+
+
+
+
+
+
+
+            {/* <ScrollView contentContainerStyle={[styles.container_select, themeContainerSelectStyle]}>
                 <RefreshControl
                     refreshing={refreshing}
                     onRefresh={onRefresh}
@@ -116,7 +175,7 @@ const SelectAirport = ({ navigation }) => {
                         })}
                     </RadioForm>
                 </View>
-            </ScrollView>
+            </ScrollView> */}
         </View>
     )
 }

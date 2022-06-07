@@ -32,6 +32,11 @@ import DeliverHome from './screens/DeliverHome';
 import AcceptLuggage from './screens/AcceptLuggage';
 import QRCodeScreen from './screens/QRCode';
 
+import Where from './screens/SearchItems/Where';
+import When from './screens/SearchItems/When';
+import What from './screens/SearchItems/What';
+import Info from './screens/SearchItems/Info';
+
 import AcceptLuggageMileonAir from './screens/GetLuggage';
 import SelectTransportCompany from './screens/SelectTransportCompany';
 
@@ -78,20 +83,25 @@ function App() {
         <Stack.Screen name='last_name' component={InputLastNameScreen} />
         <Stack.Screen name='first_name' component={InputFirstNameScreen} />
         <Stack.Screen name='patronymic' component={InputPatronymicScreen} />
-        <Stack.Screen name='birthday' component={BirthDayScreen} />
+        {/* <Stack.Screen name='birthday' component={BirthDayScreen} />
         <Stack.Screen name='type_doc' component={SelectDocument} />
         <Stack.Screen name='document' component={DocumentScreen} />
         <Stack.Screen name='how_get' component={HowGetScreen} />
         <Stack.Screen name='date_get' component={DateGetScreen} />
-        <Stack.Screen name='input_image' component={ImageScreen} />
+        <Stack.Screen name='input_image' component={ImageScreen} /> */}
 
-        <Stack.Screen name='select_airport' component={SelectAirport} />
         <Stack.Screen name='select_terminal' component={SelectTerminal} />
+        <Stack.Screen options={{presentation:'modal'}} name='select_airport' component={SelectAirport} />
         <Stack.Screen name='terminal' component={Terminal} />
         <Stack.Screen name='license_luggage' component={LicenseLuggage} />
         <Stack.Screen options={{ headerShown: false }} name='add_luggage' component={AddLuggage} />
         <Stack.Screen name='accept_luggage' component={AcceptLuggage} />
         <Stack.Screen name='qr_code' component={QRCodeScreen} />
+
+        <Stack.Screen name='where_forget' component={Where} />
+        <Stack.Screen name='when_forget' component={When} />
+        <Stack.Screen name='what_forget' component={What} />
+        <Stack.Screen name='info_forget' component={Info} />
 
         <Stack.Screen name='orders' component={Orders} />
         <Stack.Screen name='accept_luggage_mileonair' component={AcceptLuggageMileonAir} />
