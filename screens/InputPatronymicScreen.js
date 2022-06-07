@@ -4,6 +4,8 @@ import { Button } from 'react-native-elements'
 import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { domain } from '../domain';
+import { CommonActions } from '@react-navigation/native';
+
 
 const InputPatronymicScreen = ({ navigation }) => {
     const colorScheme = useColorScheme();
@@ -28,7 +30,7 @@ const InputPatronymicScreen = ({ navigation }) => {
         AsyncStorage.getItem("patronymic")
             .then((patr) => {
                 if (patr != null) {
-                    navigation.replace("birthday")
+                    navigation.replace("select_airport");
                 }
             })
     }, [navigation])
@@ -53,25 +55,52 @@ const InputPatronymicScreen = ({ navigation }) => {
         const res_json = await res.json();
         if (res_json.ok == "ok") {
             const fj = await AsyncStorage.getItem("first_join");
-            if (fj == null){
+            if (fj == null) {
                 await AsyncStorage.setItem("first_join", "true");
                 navigation.navigate("select_airport");
-            }else{
-                navigation.navigate("license_luggage");
             }
-            
+
         }
     }
     const [text, setText] = useState('')
 
-    const setDoc = () => {
-        if (/[0-9]/.test(text)) {
-            setBad(true);
-        } else {
-            AsyncStorage.setItem("patronymic", text)
-                .then(() => {
-                    navigation.navigate("birthday");
-                })
+    const setDoc = async () => {
+        if (text != "") {
+            if (/[0-9]/.test(text)) {
+                setBad(true);
+            } else {
+                const token = await AsyncStorage.getItem("token");
+                const first_name = await AsyncStorage.getItem("first_name");
+                const last_name = await AsyncStorage.getItem("last_name");
+                const data = new FormData();
+                data.append("last_name", last_name);
+                data.append("first_name", first_name);
+                data.append("patronymic", text);
+                const res = await fetch(domain + "/set_document",
+                    {
+                        method: "POST",
+                        body: data,
+                        headers: {
+                            "Authorization": "Token " + token,
+                            'Accept': 'application/json',
+                            'Content-Type': 'multipart/form-data',
+                        }
+                    });
+                const res_json = await res.json();
+                if (res_json.ok == "ok") {
+                    await AsyncStorage.setItem("patronymic", text)
+                    const fj = await AsyncStorage.getItem("first_join");
+                    if (fj == null) {
+                        await AsyncStorage.setItem("first_join", "true");
+                    }
+                    navigation.dispatch(
+                        CommonActions.reset({
+                            index: 0,
+                            routes: [{ name: "select_airport" }]
+                        }));
+
+                }
+            }
         }
     }
     return (

@@ -45,7 +45,7 @@ const BiometricScreen = ({ navigation }) => {
 
     const Biomentric = (press) => {
         AsyncStorage.setItem("biometric", press.toString()).then(() => {
-            navigation.replace('last_name')
+            navigation.replace('last_name');
         })
     }
 

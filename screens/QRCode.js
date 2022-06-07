@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { domain } from '../domain';
 import QRCode from 'react-native-qrcode-svg';
+import { CommonActions } from '@react-navigation/native';
 const QRCodeScreen = ({ navigation }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
@@ -30,7 +31,7 @@ const QRCodeScreen = ({ navigation }) => {
             const token = await AsyncStorage.getItem("token");
             const luggageId = await AsyncStorage.getItem("lastLuggage");
             setID(luggageId);
-            axios.get(domain + '/send_luggage/'+ luggageId, {headers: {"Authorization": "Token " + token}});
+            axios.get(domain + '/send_luggage/' + luggageId, { headers: { "Authorization": "Token " + token } });
 
         })();
     }, [navigation])
@@ -38,13 +39,17 @@ const QRCodeScreen = ({ navigation }) => {
 
     return (
         <View style={[styles.container, themeContainerStyle]}  >
-            <StatusBar/>
-            <View style={{marginTop:'20%'}} ><QRCode size={225} style={{ marginTop:'20%' }} solor={colorScheme === 'light' ? "black" : "white"}  value={`?type=${type}&id=${id}`}  /></View>
+            <StatusBar />
+            <View style={{ marginTop: '20%' }} ><QRCode size={225} style={{ marginTop: '20%' }} solor={colorScheme === 'light' ? "black" : "white"} value={`?type=${type}&id=${id}`} /></View>
             {/* <Image style={{marginTop:'20%'}} source={colorScheme === 'light' ? require("../assets/images/qr_black.png") : require("../assets/images/qr_white.png")} /> */}
             <Text style={[styles.qr_text, themeTextStyle]}>QR-код</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>Покажите QR код сотруднику камеры хранения, чтобы забрать багаж</Text>
-            
-            <TouchableOpacity activeOpacity={.9} style={[styles.btn, themeButtonStyle]} onPress={() => navigation.navigate('select_terminal')} >
+
+            <TouchableOpacity activeOpacity={.9} style={[styles.btn, themeButtonStyle]} onPress={() => navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: "select_terminal" }]
+                }))} >
                 <Text style={[{ fontFamily: 'Inter_700Bold' }, themeTextStyle]}>Перейти к заказу</Text>
             </TouchableOpacity>
         </View>
@@ -57,16 +62,16 @@ const styles = StyleSheet.create({
     subtext: {
         fontSize: 16,
         fontFamily: "Inter_500Medium",
-        textAlign:'center',
+        textAlign: 'center',
         lineHeight: 25
     },
     container: {
         flex: 1,
-        padding:'3%',
+        padding: '3%',
         alignItems: "center"
     },
     qr_text: {
-        marginTop:'30%',
+        marginTop: '30%',
         fontSize: 28,
         fontFamily: "Inter_800ExtraBold"
     },
@@ -89,7 +94,7 @@ const styles = StyleSheet.create({
         elevation: 12,
     },
 
-    
+
     lightContainer: {
         color: "#0C0C0D7A",
     },

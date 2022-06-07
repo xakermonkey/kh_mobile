@@ -108,7 +108,7 @@ const PinScreen = ({ navigation }) => {
                             return 0;
                         }
                     } else {
-                        navigation.replace("last_name");
+                        navigation.replace("input_image"); //last_name
                         return 0;
                     }
                 } else {

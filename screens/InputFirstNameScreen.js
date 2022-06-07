@@ -51,26 +51,27 @@ const InputFirstNameScreen = ({ navigation }) => {
         const res_json = await res.json();
         if (res_json.ok == "ok") {
             const fj = await AsyncStorage.getItem("first_join");
-            if (fj == null){
+            if (fj == null) {
                 await AsyncStorage.setItem("first_join", "true");
                 navigation.navigate("select_airport");
-            }else{
-                navigation.navigate("license_luggage");
             }
-            
+
         }
     }
     const [text, setText] = useState('')
     const [bad, setBad] = useState(false);
 
     const setDoc = async () => {
-        if (/[^А-Яа-я]/.test(text)) {
-            console.log("Error!");
-            setBad(true);
-        } else {
-            await AsyncStorage.setItem("first_name", text);
-            navigation.navigate("patronymic");
+        if (text != "") {
+            if (/[0-9]/.test(text)) {
+                console.log("Error!");
+                setBad(true);
+            } else {
+                await AsyncStorage.setItem("first_name", text);
+                navigation.navigate("patronymic");
+            }
         }
+
     }
 
     return (

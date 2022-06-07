@@ -45,6 +45,8 @@ import ClosedOrders from './screens/Profile/ClosedOrders';
 import PaymentMethods from './screens/Profile/PaymentMethods';
 import ChooseLanguage from './screens/Profile/ChooseLanguage';
 
+import BottomSheet, { BottomSheetBackdrop, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+
 
 const Stack = createNativeStackNavigator()
 
@@ -63,7 +65,7 @@ function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='select_airport' >
+      <Stack.Navigator initialRouteName='select_country_code' >
         <Stack.Screen name='select_country_code' component={SelectCountryCode} />
 
         <Stack.Screen options={{ headerShown: false }} name='login' component={LoginScreen} />
@@ -87,7 +89,7 @@ function App() {
         <Stack.Screen name='select_terminal' component={SelectTerminal} />
         <Stack.Screen name='terminal' component={Terminal} />
         <Stack.Screen name='license_luggage' component={LicenseLuggage} />
-        <Stack.Screen name='add_luggage' component={AddLuggage} />
+        <Stack.Screen options={{ headerShown: false }} name='add_luggage' component={AddLuggage} />
         <Stack.Screen name='accept_luggage' component={AcceptLuggage} />
         <Stack.Screen name='qr_code' component={QRCodeScreen} />
 

@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { domain } from '../domain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { CommonActions } from '@react-navigation/native';
 
 
 
@@ -37,6 +38,7 @@ const CodeScreen = ({ navigation, route }) => {
                 try {
                     const res = await axios.post(domain + "/set_code", { 'number': route.params.number, 'code': code })
                     await AsyncStorage.setItem("token", res.data.token);
+                    await AsyncStorage.setItem("phone", route.params.login);
                     if (res.data.doc.last_name != null) {
                         await AsyncStorage.setItem("last_name", res.data.doc.last_name);
                     }
@@ -46,36 +48,48 @@ const CodeScreen = ({ navigation, route }) => {
                     if(res.data.doc.petronymic != null) {
                         await AsyncStorage.setItem("patronymic", res.data.doc.patronymic);
                     }
-                    if (res.data.doc.how_get != null) {
-                        await AsyncStorage.setItem("how_get", res.data.doc.how_get);
-                    }
-                    if (res.data.doc.type_doc != null) {
-                        await AsyncStorage.setItem("type_doc", res.data.doc.type_doc);
-                    }
-                    if (res.data.doc.avatar != null) {
-                        await AsyncStorage.setItem("avatar", res.data.doc.first_scan);
-                    }
-                    if (res.data.doc.series_number != null) {
-                        await AsyncStorage.setItem("number_doc", res.data.doc.series_number);
-                    }
+                    // if (res.data.doc.how_get != null) {
+                    //     await AsyncStorage.setItem("how_get", res.data.doc.how_get);
+                    // }
+                    // if (res.data.doc.type_doc != null) {
+                    //     await AsyncStorage.setItem("type_doc", res.data.doc.type_doc);
+                    // }
+                    // if (res.data.doc.avatar != null) {
+                    //     await AsyncStorage.setItem("avatar", res.data.doc.first_scan);
+                    // }
+                    // if (res.data.doc.series_number != null) {
+                    //     await AsyncStorage.setItem("number_doc", res.data.doc.series_number);
+                    // }
                     
-                    if (res.data.doc.birthday != null) {
-                        await AsyncStorage.setItem("birthday", new Date(res.data.doc.birthday).getTime().toString());
-                    }
-                    if (res.data.doc.date_get != null) {
-                        await AsyncStorage.setItem("date_get", new Date(res.data.doc.date_get).getTime().toString());
-                    }
+                    // if (res.data.doc.birthday != null) {
+                    //     await AsyncStorage.setItem("birthday", new Date(res.data.doc.birthday).getTime().toString());
+                    // }
+                    // if (res.data.doc.date_get != null) {
+                    //     await AsyncStorage.setItem("date_get", new Date(res.data.doc.date_get).getTime().toString());
+                    // }
                     const pin = await AsyncStorage.getItem('pin');
                     const biometric = await AsyncStorage.getItem("biometric");
                     if (pin == null) {
-                        navigation.replace('changepin', {from: "code"});
+                        navigation.dispatch(
+                            CommonActions.reset({
+                              index: 0,
+                              routes: [{ name: "changepin", params:{from: "code"} }]
+                            }));
                         return 0;
                     }
                     if (biometric == null) {
-                        navigation.replace("biometric");
+                        navigation.dispatch(
+                            CommonActions.reset({
+                              index: 0,
+                              routes: [{ name: "biometric"}]
+                            }));
                         return 0;
                     }
-                    navigation.replace("pin");
+                    navigation.dispatch(
+                        CommonActions.reset({
+                          index: 0,
+                          routes: [{ name: "pin"}]
+                        }));
                     return 0;
                 }
                 catch (err) {

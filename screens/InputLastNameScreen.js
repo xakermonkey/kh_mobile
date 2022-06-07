@@ -39,22 +39,22 @@ const InputLastNameScreen = ({ navigation }) => {
         const fj = await AsyncStorage.getItem("first_join");
         if (fj == null) {
             await AsyncStorage.setItem("first_join", "true");
-            navigation.navigate("select_airport");
-        } else {
-            navigation.navigate("license_luggage");
+            navigation.replace("select_airport");
         }
     }
     const [text, setText] = useState('');
     const [bad, setBad] = useState(false);
 
     const setDoc = () => {
-        if (/[0-9]/.test(text)) {
-            setBad(true);
-        } else {
-            AsyncStorage.setItem("last_name", text)
-                .then(() => {
-                    navigation.navigate("first_name");
-                })
+        if (text != "") {
+            if (/[0-9]/.test(text)) {
+                setBad(true);
+            } else {
+                AsyncStorage.setItem("last_name", text)
+                    .then(() => {
+                        navigation.navigate("first_name");
+                    })
+            }
         }
 
     }

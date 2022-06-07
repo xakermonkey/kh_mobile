@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect, useCallback } from 'react';
+import { CommonActions } from '@react-navigation/native';
 import { Image, StyleSheet, Text, View, TouchableOpacity, ScrollView, Switch, Appearance, useColorScheme, RefreshControl } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { Icon } from 'react-native-elements';
@@ -29,6 +30,7 @@ function Profile({ navigation }) {
     const [email, setEmail] = useState("");
     const [verifyEmail, setVerifyEmail] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+    const [phone, setPhone] = useState("");
 
     const toggleSwitch = async () => {
         setIsEnabled(!isEnabled);
@@ -37,53 +39,55 @@ function Profile({ navigation }) {
 
     const Update = useCallback(async () => {
         const biometric = await AsyncStorage.getItem("biometric");
-            if (biometric == "true") {
-                setIsEnabled(true);
-            } else {
-                setIsEnabled(false);
-            }
-            const last_name = await AsyncStorage.getItem("last_name");
-            const first_name = await AsyncStorage.getItem("first_name");
-            const patronymic = await AsyncStorage.getItem("patronymic");
-            const how_get = await AsyncStorage.getItem("how_get");
-            const document = await AsyncStorage.getItem("number_doc");
-            const birthday = await AsyncStorage.getItem("birthday");
-            const date_get = await AsyncStorage.getItem("date_get");
-            const avatar_uri = await AsyncStorage.getItem("avatar");
-            const email = await AsyncStorage.getItem("email");
-            // console.warn(email);
-            setEmail(email);
-            if (patronymic != null) {
-                setFIO(`${last_name} ${first_name} ${patronymic}`);
-            } else if (first_name != null) {
-                setFIO(`${last_name} ${first_name}`);
-            } else if (last_name != null) {
-                setFIO(`${last_name}`);
-            }
-            if (how_get != null) {
-                setHowGet(how_get);
-            }
-            if (avatar_uri != null) {
-                setAvatar(avatar_uri);
-            }
-            if (document != null) {
-                setnumberDoc(document);
-            }
-            if (birthday != null) {
-                let data = new Date(parseInt(birthday));
-                console.log(data.toString());
-                setBirthday(`${data.getDay()} ${month[data.getMonth()]} ${data.getFullYear()} г.`)
-            }
-            if (date_get != null) {
-                let date = new Date(parseInt(date_get));
-                setDateGet(`${date.getDay()} ${month[date.getMonth()]} ${date.getFullYear()} г.`)
-            }
-            // console.warn("Update");
-            const token = await AsyncStorage.getItem("token");
-            const res = await axios.get(domain + "/get_profile", { headers: { "Authorization": "Token " + token } });
-            // console.warn(res.data.verify_email);
-            setVerifyEmail(res.data.verify_email);
-    }, []) 
+        if (biometric == "true") {
+            setIsEnabled(true);
+        } else {
+            setIsEnabled(false);
+        }
+        const last_name = await AsyncStorage.getItem("last_name");
+        const first_name = await AsyncStorage.getItem("first_name");
+        const patronymic = await AsyncStorage.getItem("patronymic");
+        // const how_get = await AsyncStorage.getItem("how_get");
+        // const document = await AsyncStorage.getItem("number_doc");
+        // const birthday = await AsyncStorage.getItem("birthday");
+        // const date_get = await AsyncStorage.getItem("date_get");
+        // const avatar_uri = await AsyncStorage.getItem("avatar");
+        const email = await AsyncStorage.getItem("email");
+        const ph = await AsyncStorage.getItem("phone");
+        setPhone(ph);
+        // console.warn(email);
+        setEmail(email);
+        if (patronymic != null) {
+            setFIO(`${last_name} ${first_name} ${patronymic}`);
+        } else if (first_name != null) {
+            setFIO(`${last_name} ${first_name}`);
+        } else if (last_name != null) {
+            setFIO(`${last_name}`);
+        }
+        // if (how_get != null) {
+        //     setHowGet(how_get);
+        // }
+        // if (avatar_uri != null) {
+        //     setAvatar(avatar_uri);
+        // }
+        // if (document != null) {
+        //     setnumberDoc(document);
+        // }
+        // if (birthday != null) {
+        //     let data = new Date(parseInt(birthday));
+        //     console.log(data.toString());
+        //     setBirthday(`${data.getDay()} ${month[data.getMonth()]} ${data.getFullYear()} г.`)
+        // }
+        // if (date_get != null) {
+        //     let date = new Date(parseInt(date_get));
+        //     setDateGet(`${date.getDay()} ${month[date.getMonth()]} ${date.getFullYear()} г.`)
+        // }
+        // console.warn("Update");
+        const token = await AsyncStorage.getItem("token");
+        const res = await axios.get(domain + "/get_profile", { headers: { "Authorization": "Token " + token } });
+        // console.warn(res.data.verify_email);
+        setVerifyEmail(res.data.verify_email);
+    }, [])
 
     useEffect(() => {
         LocalAuthentication.supportedAuthenticationTypesAsync().then((type) => {
@@ -109,7 +113,34 @@ function Profile({ navigation }) {
         Update();
     }, [navigation, colorScheme])
 
-
+    const Exit = async () => {
+        await AsyncStorage.removeItem("token");
+        await AsyncStorage.removeItem("pin");
+        await AsyncStorage.removeItem("biometric");
+        await AsyncStorage.removeItem("first_join");
+        await AsyncStorage.removeItem("first_name");
+        await AsyncStorage.removeItem("last_name");
+        await AsyncStorage.removeItem("patronymic");
+        await AsyncStorage.removeItem("airport");
+        await AsyncStorage.removeItem("airport_iata");
+        navigation.dispatch(
+         CommonActions.reset({
+           index: 0,
+           routes: [{ name: "select_country_code" }]
+         }));
+       }
+    // const Exit = async () => {
+        // await AsyncStorage.removeItem("token");
+        // await AsyncStorage.removeItem("pin");
+        // await AsyncStorage.removeItem("biometric");
+        // await AsyncStorage.removeItem("first_join");
+        // await AsyncStorage.removeItem("first_name");
+        // await AsyncStorage.removeItem("last_name");
+        // await AsyncStorage.removeItem("patronymic");
+        // await AsyncStorage.removeItem("airport");
+        // await AsyncStorage.removeItem("airport_iata");
+    //     navigation.dispatch("select_country_code");
+    // }
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
         await Update();
@@ -131,7 +162,7 @@ function Profile({ navigation }) {
                                 <Text style={[styles.text, themeTextStyle]} >Телефон</Text>
                             </View>
                             <View style={styles.row_center}>
-                                <Text style={[styles.subtext, themeSubTextStyle]} >+ 7 963 346 79 35</Text>
+                                <Text style={[styles.subtext, themeSubTextStyle]} >{phone}</Text>
                                 <Icon
                                     name="chevron-forward-outline"
                                     type="ionicon"
@@ -175,7 +206,7 @@ function Profile({ navigation }) {
                 </View>
 
                 <View style={[styles.panel, themeContainerSelectStyle]}>
-                    <Text style={[styles.title, themeTextStyle]} >Паспортные данные</Text>
+                    <Text style={[styles.title, themeTextStyle]} >Личные данные</Text>
                     <View style={{ marginTop: '5%' }}>
                         <TouchableOpacity style={styles.inline}>
                             <View>
@@ -183,7 +214,7 @@ function Profile({ navigation }) {
                                 <Text style={[styles.subtext, themeSubTextStyle]} >{FIO}</Text>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.inline}>
+                        {/* <TouchableOpacity style={styles.inline}>
                             <View>
                                 <Text style={[styles.text, themeTextStyle]} >Серия и номер паспорта</Text>
                                 <Text style={[styles.subtext, themeSubTextStyle]} >{numberDoc}</Text>
@@ -213,7 +244,7 @@ function Profile({ navigation }) {
                                 <Text style={[styles.text, themeTextStyle]} >Фото паспорта</Text>
                                 <Text style={[styles.subtext, themeSubTextStyle]} >ФИО и фото лица</Text>
                             </View>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
                 </View>
 
@@ -313,6 +344,9 @@ function Profile({ navigation }) {
                         </TouchableOpacity>
                     </View>
                 </View>
+                <TouchableOpacity onPress={Exit} style={{ padding:'4%', marginBottom:'4%'}}>
+                    <Text style={[styles.text, themeTextStyle]} >Выйти</Text>
+                </TouchableOpacity>
             </ScrollView>
             {/* <Loading/> */}
         </View>

@@ -4,7 +4,7 @@ import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { domain } from '../domain';
-
+import { CommonActions } from '@react-navigation/native';
 
 const AcceptLuggage = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
@@ -66,7 +66,11 @@ const AcceptLuggage = ({ navigation, route }) => {
             for (let i = 0; i < keys.length; i++) {
                 await AsyncStorage.removeItem(keys[i]);
             }
-            navigation.replace('qr_code');
+            navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: "qr_code" }]
+                }));
         }
     }
 
