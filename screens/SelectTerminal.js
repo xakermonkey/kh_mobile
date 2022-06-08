@@ -9,7 +9,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Carousel from 'react-native-snap-carousel';
 import RadioForm, { RadioButton, RadioButtonInput } from 'react-native-simple-radio-button';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
-
+import * as Location from 'expo-location';
+import Loading from './Loading';
 
 const SelectTerminal = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
@@ -18,9 +19,27 @@ const SelectTerminal = ({ navigation, route }) => {
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
 
-    const [terminals, setTerminals] = useState([]);
-    const [airport, setAirport] = useState("");
+    const [terminals, setTerminals] = useState(null);
+    const [airport, setAirport] = useState(null);
+    const [iata, setIATA] = useState(null);
     const [refreshing, setRefreshing] = useState(false);
+
+
+
+    const getAirport = async (location, airorts) => {
+        let min_length = 10000;
+        let air = null;
+        for (let i = 0; i < airorts.length; i++) {
+            if (Math.sqrt(Math.pow(location.coords.latitude - airorts[i].lat, 2) + Math.pow(location.coords.longitude - airorts[i].lon, 2)) < min_length) {
+                air = airorts[i];
+                min_length = Math.sqrt(Math.pow(location.coords.latitude - airorts[i].lat, 2) + Math.pow(location.coords.longitude - airorts[i].lon, 2));
+            }
+        }
+        setAirport(air.name);
+        setIATA(air.iata);
+        await AsyncStorage.setItem("airport_iata", air.iata);
+        return air;
+    }
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -33,7 +52,7 @@ const SelectTerminal = ({ navigation, route }) => {
             headerTitle: () => {
                 return (<View style={{ alignItems: 'center' }} >
                     <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
-                    <Text style={[styles.subtext, themeSubTextStyle]} >Вы здесь</Text>
+                    <Text style={[styles.subtext, themeSubTextStyle]} >{airport ? "Вы здесь" : "Поиск..."}</Text>
                 </View>)
             },
             headerRight: () => {
@@ -53,11 +72,32 @@ const SelectTerminal = ({ navigation, route }) => {
             }
         });
         (async () => {
-            setAirport(await AsyncStorage.getItem("airport"));
-            const iata = await AsyncStorage.getItem("airport_iata");
-            const token = await AsyncStorage.getItem('token');
-            const res = await axios.get(domain + "/get_terminals", { params: { "iata": iata }, headers: { "Authorization": "Token " + token } })
-            setTerminals(res.data)
+
+            const airport = await AsyncStorage.getItem("airport");
+            if (airport != null) {
+                const iata = await AsyncStorage.getItem("airport_iata");
+                const token = await AsyncStorage.getItem('token');
+                const res = await axios.get(domain + "/get_terminals", { params: { "iata": iata }, headers: { "Authorization": "Token " + token } })
+                setTerminals(res.data)
+                setAirport(airport);
+            } else {
+                let { status } = await Location.requestForegroundPermissionsAsync();
+                if (status !== 'granted') {
+                    console.warn("Permission denied");
+                    return;
+                }
+                let location = await Location.getLastKnownPositionAsync({});
+                if (location == null) {
+                    navigation.navigate('select_airport');
+                } else {
+                    const token = await AsyncStorage.getItem("token");
+                    const res = await axios.get(domain + "/get_airport", { headers: { "Authorization": "Token " + token } })
+                    const air = await getAirport(location, res.data);
+                    const term = await axios.get(domain + "/get_terminals", { params: { "iata": air.iata }, headers: { "Authorization": "Token " + token } })
+                    setTerminals(term.data);
+                }
+            }
+
         })();
     }, [navigation, colorScheme, airport])
 
@@ -92,77 +132,100 @@ const SelectTerminal = ({ navigation, route }) => {
 
     const carouselRef = useRef();
 
+
+    const renderTerminals = ({item}) => {
+        return (
+            <TouchableOpacity  activeOpacity={0.5} onPress={() => customSelectTerinal(item)}>
+                <View style={{
+                    height: 100, marginBottom: "5%", shadowOffset: {
+                        width: 0,
+                        height: 6,
+                    },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 4,
+                    elevation: 1,
+                }}>
+                    <ImageBackground source={{ uri: 'https://31tv.ru/wp-content/uploads/2020/09/rkyr.jpg' }} style={{ flex: 1 }} imageStyle={{ borderRadius: 16, }}>
+                        <View style={{ backgroundColor: 'rgba(0,0,0,0.3)', flexDirection: 'row', flex: 1, borderRadius: 16 }}>
+                            <View style={{ justifyContent: 'flex-end', flex: 1, bottom: 12, left: 12 }}>
+                                <Text style={[styles.title, { color: '#F2F2F3' }]}>Терминал {item.terminal}, {item.floor} этаж</Text>
+                                <Text style={[styles.terminal_subtext, { color: '#F2F2F3' }]} >{item.location}</Text>
+                            </View>
+                            <View style={{ alignItems: 'flex-end', justifyContent: 'flex-start', flex: 1, top: 12, right: 12 }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    {item.luggage != 0 && <Text style={[styles.subtext, { color: '#F2F2F3' }]} >{item.luggage} заказа</Text>}
+                                    <MaterialIcons name="arrow-forward-ios" size={32} color="#F5CB57" />
+                                </View>
+                                {/* <RadioButtonInput
+                                    obj={{}}
+                                    index={0}
+                                    isSelected={{}}
+                                    onPress={{}}
+                                    buttonInnerColor='#F5CB57'
+                                    buttonOuterColor={colorScheme === 'light' ? '#23232A07' : '#F2F2F31F'}
+                                    buttonSize={24}
+                                    buttonOuterSize={31}
+                                    buttonStyle={{ backgroundColor: colorScheme === 'light' ? '#e8e8e9' : '#F2F2F31F' }}
+                                /> */}
+                            </View>
+                        </View>
+                    </ImageBackground>
+
+                </View>
+
+
+                {/* <View style={styles.terminal_line}>
+                <View style={styles.name_terminal}>
+                    <Text style={[styles.title, themeTextStyle]} >Терминал {obj.terminal}, {obj.floor} этаж</Text>
+                    <Text style={[styles.subtext, themeSubTextStyle]} >{obj.location}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    {obj.luggage != 0 && <Text style={[styles.subtext, themeSubTextStyle]} >{obj.luggage} заказа</Text>}
+                    <Icon
+                        name="chevron-forward-outline"
+                        type="ionicon"
+                        color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                    />
+                </View>
+            </View> */}
+            </TouchableOpacity>
+        )
+    }
+    const EmptyComponent = () => {
+        return(
+            <View style={{ justifyContent: 'center', alignItems: 'center' }} >
+                <Image style={{ width: "50%" }}resizeMode="contain" source={require("../assets/images/Lounge.png")} />
+                <Text style={styles.subtext} >Ничего не найдено</Text>
+            </View>
+        )
+    }
+
     const renderItem = ({ item, index }) => {
         if (index == 0) {
             return (
                 <View style={{}} >
                     <View><Text style={[styles.text_holder, themeTextStyle]} >Камеры хранения</Text></View>
-                    <ScrollView style={{ height: '100%' }}>
+                    <FlatList
+                    contentContainerStyle={{ height: "100%"}}
+                    data={terminals}
+                    keyExtractor={item => item.id}
+                    renderItem={renderTerminals}
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    showsVerticalScrollIndicator={false}
+                    ListEmptyComponent={<EmptyComponent />}
+                    />
+                    {/* <ScrollView style={{ height: '100%' }}>
                         <RefreshControl
                             refreshing={refreshing}
                             onRefresh={onRefresh}
                         />
                         <View style={styles.radiobutton_container}>
                             {terminals.map((obj) => {
-                                return (
-                                    <TouchableOpacity key={obj.id} activeOpacity={0.5} onPress={() => customSelectTerinal(obj)}>
-                                        <View style={{
-                                            height: 100, marginBottom: "5%", shadowOffset: {
-                                                width: 0,
-                                                height: 6,
-                                            },
-                                            shadowOpacity: 0.3,
-                                            shadowRadius: 4,
-                                            elevation: 1,
-                                        }}>
-                                            <ImageBackground source={{ uri: 'https://31tv.ru/wp-content/uploads/2020/09/rkyr.jpg' }} style={{ flex: 1 }} imageStyle={{ borderRadius: 16, }}>
-                                                <View style={{ backgroundColor: 'rgba(0,0,0,0.3)', flexDirection: 'row', flex: 1, borderRadius: 16 }}>
-                                                    <View style={{ justifyContent: 'flex-end', flex: 1, bottom: 12, left: 12 }}>
-                                                        <Text style={[styles.title, { color: '#F2F2F3' }]}>Терминал {obj.terminal}, {obj.floor} этаж</Text>
-                                                        <Text style={[styles.subtext, { color: '#F2F2F3' }]} >{obj.location}</Text>
-                                                    </View>
-                                                    <View style={{ alignItems: 'flex-end', justifyContent: 'flex-start', flex: 1, top: 12, right: 12 }}>
-                                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                            {obj.luggage != 0 && <Text style={[styles.subtext, { color: '#F2F2F3' }]} >{obj.luggage} заказа</Text>}
-                                                            <MaterialIcons name="arrow-forward-ios" size={32} color="#F5CB57" />
-                                                        </View>
-                                                        {/* <RadioButtonInput
-                                                            obj={{}}
-                                                            index={0}
-                                                            isSelected={{}}
-                                                            onPress={{}}
-                                                            buttonInnerColor='#F5CB57'
-                                                            buttonOuterColor={colorScheme === 'light' ? '#23232A07' : '#F2F2F31F'}
-                                                            buttonSize={24}
-                                                            buttonOuterSize={31}
-                                                            buttonStyle={{ backgroundColor: colorScheme === 'light' ? '#e8e8e9' : '#F2F2F31F' }}
-                                                        /> */}
-                                                    </View>
-                                                </View>
-                                            </ImageBackground>
-
-                                        </View>
-
-
-                                        {/* <View style={styles.terminal_line}>
-                                        <View style={styles.name_terminal}>
-                                            <Text style={[styles.title, themeTextStyle]} >Терминал {obj.terminal}, {obj.floor} этаж</Text>
-                                            <Text style={[styles.subtext, themeSubTextStyle]} >{obj.location}</Text>
-                                        </View>
-                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                            {obj.luggage != 0 && <Text style={[styles.subtext, themeSubTextStyle]} >{obj.luggage} заказа</Text>}
-                                            <Icon
-                                                name="chevron-forward-outline"
-                                                type="ionicon"
-                                                color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                                            />
-                                        </View>
-                                    </View> */}
-                                    </TouchableOpacity>
-                                )
+                                
                             })}
                         </View>
-                    </ScrollView>
+                    </ScrollView> */}
                 </View>
 
             )
@@ -170,7 +233,7 @@ const SelectTerminal = ({ navigation, route }) => {
             return (
                 <View style={{}} >
                     <Text style={[styles.text_holder, themeTextStyle]} >Поиск забытых и потерянных вещей</Text>
-                    <View style={{marginTop:'40%'}}>
+                    <View style={{ marginTop: '40%' }}>
                         <Text style={[styles.subtext, themeSubTextStyle]} >Если Вы забыли или потеряли личные вещи или багаж в аэропорту мы поможем Вам их найти </Text>
                         <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('where_forget')} >
                             <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>НАЧАТЬ ПОИСК</Text>
@@ -182,6 +245,21 @@ const SelectTerminal = ({ navigation, route }) => {
 
     }
 
+    if (airport == null) {
+        return (
+            <View style={{ flex: 1 }} >
+                <Loading title={"Ищем где Вы"} />
+            </View>
+        )
+    }
+    if (terminals == null) {
+        return (
+            <View style={{ flex: 1 }} >
+                <Loading title={"Подбираем терминал"} />
+            </View>
+        )
+    }
+
     return (
         <View style={[styles.container, themeContainerStyle]} >
             <StatusBar />
@@ -191,7 +269,7 @@ const SelectTerminal = ({ navigation, route }) => {
                     data={cards}
                     renderItem={renderItem}
                     sliderWidth={Dimensions.get('window').width}
-                    itemWidth={Dimensions.get('window').width * 0.94}
+                    itemWidth={Dimensions.get('window').width * 0.8}
 
                 /></View>
             {/* <View style={styles.subtitle}><Text style={[styles.subtext, themeSubTextStyle]}></Text></View>
@@ -254,10 +332,15 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: "Inter_800ExtraBold"
     },
+    terminal_subtext: {
+        fontSize: 14,
+        fontFamily: "Inter_600SemiBold",
+        // textAlign: 'center'
+    },
     subtext: {
         fontSize: 14,
         fontFamily: "Inter_600SemiBold",
-        textAlign:'center'
+        textAlign: 'center'
     },
     radiobutton_container: {
     },
@@ -269,7 +352,7 @@ const styles = StyleSheet.create({
         // flex: 1,
     },
     btn: {
-        marginTop:'20%',
+        marginTop: '20%',
         backgroundColor: '#F5CB57',
         borderRadius: 12,
         fontSize: 14,

@@ -218,7 +218,7 @@ const AddLuggage = ({ navigation, route }) => {
     }
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={[{ flex: 1 }, themeContainerStyle]}>
             <SafeAreaView opacity={1} needsOffscreenAlphaCompositing={true} style={[{
                 backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C', height: '12%', zIndex: 0, shadowColor: "#000"
             },
@@ -233,7 +233,7 @@ const AddLuggage = ({ navigation, route }) => {
             }]}>
                 <View style={{ flexDirection: 'row', padding: '3%', alignItems: 'center' }}>
                     <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.goBack()}>
-                        <Ionicons name="chevron-back" size={32} color="black" />
+                        <Ionicons name="chevron-back" size={32} color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'} />
                     </TouchableOpacity>
                     <Text style={{ flex: 1, textAlign: 'center', fontFamily: 'Inter_800ExtraBold', fontSize: 16, color: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3' }}>Сдать багаж</Text>
                     <View style={{ flex: 1 }}></View>

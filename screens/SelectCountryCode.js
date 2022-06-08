@@ -145,6 +145,7 @@ const SelectCountryCode = ({ navigation }) => {
                 keyExtractor={(item) => item.code}
                 renderItem={renderItem}
                 ListEmptyComponent={<EmptyComponent />}
+                showsVerticalScrollIndicator={false}
             />
                 {/* <Loading /> */}
         </View>

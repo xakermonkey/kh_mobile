@@ -51,7 +51,7 @@ const BiometricScreen = ({ navigation }) => {
             navigation.dispatch(
                 CommonActions.reset({
                     index: 0,
-                    routes: [{ name: "select_airport" }]
+                    routes: [{ name: "select_terminal" }]
                 }));
         } else {
             navigation.replace('last_name');

@@ -44,8 +44,8 @@ const LicenseLuggage = ({ navigation }) => {
                 </View>
             </ScrollView>
             <View style={styles.container_btn} >
-                <Button title="Я согласен с правилами" titleStyle={{fontFamily: 'Inter_700Bold',fontSize: 14,color: '#000',}} containerStyle={styles.btn} buttonStyle={styles.innertBtn} onPress={() => navigation.navigate('add_luggage')} />
-                <Button title="Отмена" titleStyle={[styles.text_secondary, themeTextStyle]} containerStyle={styles.secondary_btn} buttonStyle={[styles.secondary, themeContainerSelectStyle]} onPress={() => navigation.replace("terminal")}/>
+                <Button activeOpacity={0.9} title="Я согласен с правилами" titleStyle={{fontFamily: 'Inter_700Bold',fontSize: 14,color: '#000',}} containerStyle={styles.btn} buttonStyle={styles.innertBtn} onPress={() => navigation.navigate('add_luggage')} />
+                <Button activeOpacity={0.9} title="Отмена" titleStyle={[styles.text_secondary, themeTextStyle]} containerStyle={styles.secondary_btn} buttonStyle={[styles.secondary, themeContainerSelectStyle]} onPress={() => navigation.replace("terminal")}/>
             </View>
         </SafeAreaView>
     )

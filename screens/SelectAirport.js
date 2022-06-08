@@ -1,11 +1,13 @@
 import { Appearance, useColorScheme, StyleSheet, Text, View, ScrollView, RefreshControl, TouchableOpacity, ImageBackground } from 'react-native'
+import { SearchBar } from 'react-native-elements';
 import React, { useLayoutEffect, useState, useEffect, useCallback } from 'react'
 import RadioForm, { RadioButton, RadioButtonInput } from 'react-native-simple-radio-button';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { domain } from '../domain';
+import { domain, domain_domain } from '../domain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Loading from './Loading';
+import { CommonActions } from '@react-navigation/native';
 
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
@@ -21,6 +23,7 @@ const SelectAirport = ({ navigation }) => {
     const [selectAirport, setSelectAirport] = useState(0);
     const [airport, setAirport] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
+    const [search, setSearch] = useState("");
 
 
     useLayoutEffect(() => {
@@ -63,7 +66,11 @@ const SelectAirport = ({ navigation }) => {
     const customSelectAirport = async (obj) => {
         await AsyncStorage.setItem("airport", obj.name);
         await AsyncStorage.setItem("airport_iata", obj.iata);
-        navigation.replace("select_terminal", { "title": obj.name, 'iata': obj.iata })
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [{ name: "select_terminal" }]
+            }));
     }
 
 
@@ -75,18 +82,32 @@ const SelectAirport = ({ navigation }) => {
         )
     }
 
+    const filterAirport = (obj) => {
+        if (search.length === 0) {
+            return true;
+        }
+        return obj.name.toLowerCase().startsWith(search.toLowerCase());
+    }
+
 
     return (
         <View style={[styles.container, themeContainerStyle]} >
             <StatusBar />
-
+            <SearchBar
+                placeholder="Найти страну"
+                onChangeText={setSearch}
+                value={search}
+                containerStyle={{ backgroundColor: null, padding: '3%' }}
+                inputContainerStyle={themeContainerSelectStyle}
+                platform='ios'
+            />
             <ScrollView style={{ height: '100%' }}>
                 <RefreshControl
                     refreshing={refreshing}
                     onRefresh={onRefresh}
                 />
                 <View style={styles.radiobutton_container}>
-                    {airport.map((obj) => {
+                    {airport.filter(filterAirport).map((obj) => {
                         return (
                             <TouchableOpacity key={obj.iata} activeOpacity={0.5} onPress={() => customSelectAirport(obj)}>
                                 <View style={{
@@ -98,7 +119,7 @@ const SelectAirport = ({ navigation }) => {
                                     shadowRadius: 4,
                                     elevation: 1,
                                 }}>
-                                    <ImageBackground source={{ uri: 'https://31tv.ru/wp-content/uploads/2020/09/rkyr.jpg' }} style={{ flex: 1 }} imageStyle={{ borderRadius: 16, }}>
+                                    <ImageBackground source={{ uri: domain_domain + obj.image }} style={{ flex: 1 }} imageStyle={{ borderRadius: 16, }}>
                                         <View style={{ backgroundColor: 'rgba(0,0,0,0.3)', flexDirection: 'row', flex: 1, borderRadius: 16 }}>
                                             <View style={{ justifyContent: 'flex-end', flex: 1, bottom: 12, left: 12 }}>
                                                 {/* {selectAirport == obj.id && <Text style={[styles.subtext, { color: '#F2F2F3' }]} >Вы здесь</Text>} */}

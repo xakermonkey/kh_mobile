@@ -54,7 +54,7 @@ const Orders = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                         <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                             <Image
-                                source={require("../assets/images/profile.png")}
+                                source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
                                 style={{ width: 24, height: 30 }}
                             />
                         </TouchableOpacity>
@@ -345,6 +345,7 @@ const styles = StyleSheet.create({
     text_select: {
         fontSize: 12,
         fontFamily: "Inter_400Regular",
+        marginLeft: 3
     },
 
     container: {

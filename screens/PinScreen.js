@@ -69,21 +69,18 @@ const PinScreen = ({ navigation }) => {
                 if (result.success == true) {
                     const doc = await AsyncStorage.getItem("first_join");
                     if (doc == "true") {
-                        const airport = await AsyncStorage.getItem("airport");
-                        if (airport != null) {
-                            navigation.replace("select_terminal", { "title": airport });
-                            return 0;
-                        } else {
-                            navigation.replace("select_airport");
-                            return 0;
-                        }
+                        navigation.dispatch(
+                            CommonActions.reset({
+                                index: 0,
+                                routes: [{ name: "select_terminal" }]
+                            }));
                     } else {
                         const patr = await AsyncStorage.getItem("patronymic");
                         if (patr != null) {
                             navigation.dispatch(
                                 CommonActions.reset({
                                     index: 0,
-                                    routes: [{ name: "select_airport" }]
+                                    routes: [{ name: "select_terminal" }]
                                 }));
                         } else {
                             navigation.replace('last_name');
@@ -123,7 +120,7 @@ const PinScreen = ({ navigation }) => {
                             navigation.replace("select_terminal", { "title": airport });
                             return 0;
                         } else {
-                            navigation.replace("select_airport");
+                            navigation.replace("select_terminal");
                             return 0;
                         }
                     } else {
@@ -132,7 +129,7 @@ const PinScreen = ({ navigation }) => {
                             navigation.dispatch(
                                 CommonActions.reset({
                                     index: 0,
-                                    routes: [{ name: "select_airport" }]
+                                    routes: [{ name: "select_terminal" }]
                                 }));
                         } else {
                             navigation.replace('last_name');

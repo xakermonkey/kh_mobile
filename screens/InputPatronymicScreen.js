@@ -30,7 +30,11 @@ const InputPatronymicScreen = ({ navigation }) => {
         AsyncStorage.getItem("patronymic")
             .then((patr) => {
                 if (patr != null) {
-                    navigation.replace("select_airport");
+                    navigation.dispatch(
+                        CommonActions.reset({
+                            index: 0,
+                            routes: [{ name: "select_terminal" }]
+                        }));
                 }
             })
     }, [navigation])
@@ -58,7 +62,7 @@ const InputPatronymicScreen = ({ navigation }) => {
             navigation.dispatch(
                 CommonActions.reset({
                     index: 0,
-                    routes: [{ name: "select_airport" }]
+                    routes: [{ name: "select_terminal" }]
                 }));
         }
     }
@@ -93,7 +97,7 @@ const InputPatronymicScreen = ({ navigation }) => {
                     navigation.dispatch(
                         CommonActions.reset({
                             index: 0,
-                            routes: [{ name: "select_airport" }]
+                            routes: [{ name: "select_terminal" }]
                         }));
 
                 }

@@ -28,7 +28,8 @@ const InputLastNameScreen = ({ navigation }) => {
         AsyncStorage.getItem("last_name")
             .then((last_name) => {
                 if (last_name != null) {
-                    navigation.replace("first_name");
+                    setText(last_name)
+                    navigation.navigate("first_name");
                 }
             })
     }, [navigation])
@@ -37,7 +38,11 @@ const InputLastNameScreen = ({ navigation }) => {
     const Pass = async () => {
         await AsyncStorage.setItem("last_name", "")
         await AsyncStorage.setItem("first_join", "true");
-        navigation.replace("select_airport");
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [{ name: "select_terminal" }]
+            }));
     }
     const [text, setText] = useState('');
     const [bad, setBad] = useState(false);

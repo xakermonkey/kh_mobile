@@ -2,12 +2,12 @@
   "expo": {
     "name": "BAG24",
     "slug": "Keepit",
-    "version": "0.5",
+    "version": "0.6",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon-green.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-green.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -43,7 +43,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/adaptive-icon-green.png",
         "backgroundColor": "#FFFFFF"
       }
     },

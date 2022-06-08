@@ -56,7 +56,7 @@ const Where = ({ navigation }) => {
             <TextInput multiline placeholder='Описание' style={[{ width: '100%', height: 200, borderRadius: 16, padding: 8, fontFamily: 'Inter_500Medium', fontSize: 16 }, themeContainerSelectStyle]}></TextInput>
 
             <Text style={[styles.title, themeTextStyle]}>В каком аэропорту?</Text>
-            <ScrollView style={{ width: "100%" }}>
+            <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={false} >
                 <View style={styles.radiobutton_container}>
                     {airport.map((obj) => {
                         return (
