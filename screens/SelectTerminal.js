@@ -83,7 +83,7 @@ const SelectTerminal = ({ navigation, route }) => {
             } else {
                 let { status } = await Location.requestForegroundPermissionsAsync();
                 if (status !== 'granted') {
-                    console.warn("Permission denied");
+                    navigation.navigate('select_airport');
                     return;
                 }
                 let location = await Location.getLastKnownPositionAsync({});
