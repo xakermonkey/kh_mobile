@@ -1,5 +1,5 @@
-export const domain = "http://172.20.10.2:8000/mobile";
-export const domain_domain = "http://172.20.10.2:8000";
+export const domain = "http://172.20.10.4:8000/mobile";
+export const domain_domain = "http://172.20.10.4:8000";
 
 // export const domain = "http://192.168.0.101:8000/mobile";
 // export const domain_domain = "http://192.168.0.101:8000";
