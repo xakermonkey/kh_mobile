@@ -61,9 +61,6 @@ const Where = ({ navigation }) => {
 
     return (
         <View style={[styles.container, themeContainerStyle]}>
-            <Text style={[styles.title, themeTextStyle]} >Расскажите где Вы забыли вещи</Text>
-            <TextInput multiline placeholder='Описание' style={[{ width: '100%', height: 200, borderRadius: 16, padding: 8, fontFamily: 'Inter_500Medium', fontSize: 16 }, themeContainerSelectStyle]}></TextInput>
-
             <Text style={[styles.title, themeTextStyle]}>В каком аэропорту?</Text>
             <SearchBar
                 placeholder="Найти аэропорт"

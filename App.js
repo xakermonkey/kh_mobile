@@ -55,12 +55,13 @@ import BottomSheet, { BottomSheetBackdrop, BottomSheetModalProvider } from '@gor
 import ChangeFirstNameScreen from './screens/Profile/ChangeFirstNameScreen';
 import ChangeLastNameScreen from './screens/Profile/ChangeLastNameScreen';
 import QRCodeTakeScreen from './screens/QRCodeTake';
+import CameraScreen from './screens/CameraScreen';
 
 
 const Stack = createNativeStackNavigator()
 
 function App() {
-  
+
   let [fontsLoaded] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
@@ -95,10 +96,11 @@ function App() {
         <Stack.Screen name='input_image' component={ImageScreen} /> */}
 
         <Stack.Screen name='select_terminal' component={SelectTerminal} />
-        <Stack.Screen options={{presentation:'modal'}} name='select_airport' component={SelectAirport} />
+        <Stack.Screen options={{ presentation: 'modal' }} name='select_airport' component={SelectAirport} />
         <Stack.Screen name='terminal' component={Terminal} />
         <Stack.Screen name='license_luggage' component={LicenseLuggage} />
         <Stack.Screen options={{ headerShown: false }} name='add_luggage' component={AddLuggage} />
+        <Stack.Screen options={{ headerShown: false, presentation: 'modal' }} name='camera'  component={CameraScreen} />
         <Stack.Screen name='accept_luggage' component={AcceptLuggage} />
         <Stack.Screen name='qr_code' component={QRCodeScreen} />
         <Stack.Screen name='qr_code_take' component={QRCodeTakeScreen} />

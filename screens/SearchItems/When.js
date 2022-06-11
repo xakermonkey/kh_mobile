@@ -1,10 +1,13 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useLayoutEffect, useState, useMemo, useRef, useCallback } from 'react'
 import { Appearance, useColorScheme, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { Button } from 'react-native-elements'
 import { AntDesign } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { domain } from '../../domain';
+import { Icon } from 'react-native-elements';
+import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 
 
 const When = ({ navigation }) => {
@@ -15,6 +18,28 @@ const When = ({ navigation }) => {
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
 
     const [date, setDate] = useState(new Date());
+    const [place, setPlace] = useState(["Аэровокзал", "Самолет", "Парковка", "Не помню"]);
+    const [selectPlace, setSelectPlace] = useState("Аэровокзал");
+
+    const bottomSheetRef = useRef(null);
+    const snapPoints = useMemo(() => ['50%'], []);
+    const handlePresentModalPress = useCallback(() => {
+        bottomSheetRef.current?.snapToIndex(0);
+    }, []);
+
+
+    const CustomBackDrop = (props) => {
+        return (
+            <BottomSheetBackdrop
+                {...props}
+                disappearsOnIndex={-1}
+                opacity='0.9'
+                closeOnPress={true}
+                enableTouchThrough={true}
+                pressBehavior='close'
+            />
+        );
+    };
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -34,12 +59,53 @@ const When = ({ navigation }) => {
         setDate(currentDate);
     };
 
+    const ClickPlace = (obj) => {
+        setSelectPlace(obj);
+        bottomSheetRef.current.close();
+    }
+
+
+    const renderPlace = (obj, ind) => {
+        return(<TouchableOpacity key={ind} activeOpacity={0.5} onPress={() => ClickPlace(obj)} >
+            <View style={styles.terminal_line}>
+                <View style={styles.name_terminal}>
+                    <Text style={[styles.title_bottom, themeTextStyle]} >{obj}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <RadioButtonInput
+                        obj={obj}
+                        index={ind}
+                        isSelected={selectPlace == obj}
+                        onPress={() => ClickPlace(obj)}
+                        buttonInnerColor='#F5CB57'
+                        buttonOuterColor="#f2f2f2"
+                        buttonSize={24}
+                        buttonOuterSize={31}
+                        buttonStyle={{ backgroundColor: '#23232A14' }}
+
+                    />
+                </View>
+            </View>
+        </TouchableOpacity>
+        )
+    }
 
 
 
     return (
         <View style={[styles.container, themeContainerStyle]}>
-            <View style={{ alignItems: 'center', justifyContent: 'flex-start', flex:1 }}>
+            <TouchableOpacity style={styles.container_select} onPress={handlePresentModalPress}>
+            <Text style={[styles.title, themeTextStyle]} >Где Вы забыли свои вещи</Text>
+                <View style={[styles.select, themeContainerSelectStyle]} >
+                    <Text style={[styles.value, themeTextStyle]} >{selectPlace}</Text>
+                    <Icon
+                        name="chevron-down-outline"
+                        type="ionicon"
+                        color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                    />
+                </View>
+            </TouchableOpacity>
+            <View style={{ alignItems: 'center', justifyContent: 'flex-start', flex: 1 }}>
                 <Text style={[styles.title, themeTextStyle]} >Когда Вы забыли</Text>
                 <Text style={[styles.subtext, themeSubTextStyle]}>для ускорения поиска</Text>
                 {/* <Text style={[styles.subtext, themeSubTextStyle]}>дополнительных привилегий</Text> */}
@@ -53,8 +119,8 @@ const When = ({ navigation }) => {
                     onChange={onChange}
                     locale={"ru-RU"}
                     maximumDate={new Date()}
-                    style={{ width: 150, height:100, right:5}}
-                    />
+                    style={{ width: 150, height: 100, right: 5 }}
+                />
                 {/* <MaskInput autoFocus value={date} style={[styles.inputtext, themeTextStyle]} mask={mask} onChangeText={(masked, unmasked) => setDate(masked)} /> */}
                 {/* <KeyboardAvoidingView behavior='padding' style={styles.row}> */}
                 {/* <TouchableOpacity activeOpacity={0.5}>
@@ -62,10 +128,23 @@ const When = ({ navigation }) => {
                     <Text style={[styles.subtext, themeSubTextStyle]}>паспортные данные?</Text>
                 </TouchableOpacity> */}
             </View>
-            <View style={{ alignItems: 'flex-end', flex:1, justifyContent:'flex-end' }}>
+            <View style={{ alignItems: 'flex-end', flex: 1, justifyContent: 'flex-end' }}>
                 <Button buttonStyle={styles.btn} onPress={() => navigation.navigate('what_forget')} containerStyle={styles.cont_btn} icon={<AntDesign name="arrowright" size={24} color="#000" />} />
             </View>
             {/* </KeyboardAvoidingView> */}
+            <BottomSheet
+                ref={bottomSheetRef}
+                index={-1}
+                enablePanDownToClose={true}
+                snapPoints={snapPoints}
+                backdropComponent={CustomBackDrop}
+                backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
+            >
+                <Text style={[styles.bottom_title, themeTextStyle]} >Место</Text>
+                <View style={{ padding: '4%' }}>
+                    {place.map((obj, ind) => renderPlace(obj, ind))}
+                </View>
+            </BottomSheet>
         </View>
     )
 }
@@ -109,7 +188,7 @@ const styles = StyleSheet.create({
         width: 64,
         height: 64,
         borderRadius: 64,
-        marginBottom:'5%'
+        marginBottom: '5%'
     },
     cont_btn: {
         alignItems: 'flex-end',
@@ -118,6 +197,43 @@ const styles = StyleSheet.create({
         fontSize: 32,
         fontFamily: "Inter_800ExtraBold",
         marginBottom: '35%'
+    },
+    bottom_title: {
+        fontSize: 14,
+        fontFamily: "Inter_600SemiBold",
+        textAlign: 'center',
+    },
+    container_select: {
+        marginBottom: '5%',
+        alignItems: 'center'
+    },
+    label: {
+        fontSize: 14,
+        fontFamily: "Inter_500Medium",
+    },
+    select: {
+        flexDirection: 'row',
+        justifyContent: "space-between",
+        alignItems: 'center',
+        borderRadius: 12,
+        marginTop: 10,
+        padding: '3%',
+        width: "100%"
+    },
+    value: {
+        fontSize: 16,
+        fontFamily: "Inter_600SemiBold"
+    },
+    terminal_line: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: '4%'
+    },
+    title_bottom: {
+        fontSize: 16,
+        fontFamily: "Inter_600SemiBold",
+        textAlign: 'center'
     },
 
 

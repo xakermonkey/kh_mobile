@@ -235,7 +235,9 @@ const AddLuggage = ({ navigation, route }) => {
     }
 
     
-
+    const showCamera = () => {
+        navigation.navigate("camera", {func: setImages, img: images})
+    }
 
     return (
         <View style={[{ flex: 1 }, themeContainerStyle]}>
@@ -303,12 +305,8 @@ const AddLuggage = ({ navigation, route }) => {
                         <View style={{}} >
                             <Text style={[styles.textimage, themeTextStyle]}>Прикрепить фото багажа</Text>
                             <Text style={[styles.subtext, themeSubTextStyle]}>Сфотографируйте багаж со всех сторон</Text>
-                            <Camera ref={cameraRef} style={{ width: 100, height: 100}} type='back'>
-                                <View style={{ width: 100, height: 100}} ></View>
-                            </Camera>
-                            <TouchableOpacity onPress={takePhoto} ><Text style={{color : 'white'}} >Снимок</Text></TouchableOpacity>
                             {images.length === 0 ?
-                                <TouchableOpacity onPress={pickImage} style={[styles.inputimage, themeContainerSelectStyle]}>
+                                <TouchableOpacity onPress={showCamera} style={[styles.inputimage, themeContainerSelectStyle]}>
                                     <EvilIcons style={[{ marginRight: 12, marginTop: 3 }, themeTextStyle]} name="image" size={28} color="black" />
                                     {/* <Image style={{ marginRight: 12, marginTop: 3 }} source={require('../assets/images/ImageSquare.png')} /> */}
                                     <View >
@@ -320,7 +318,7 @@ const AddLuggage = ({ navigation, route }) => {
                                     {images.map((item, id) => {
                                         return (<TouchableOpacity activeOpacity='0.9' onPress={() => Remove(id)} key={id} ><Image source={{ uri: item.uri }} style={{ width: 56, height: 56, marginRight: 10, borderRadius: 4 }} /></TouchableOpacity>);
                                     })}
-                                    <TouchableOpacity onPress={pickImage} style={styles.add} ><Image height='56' source={require('../assets/images/PlusCircle.png')} /></TouchableOpacity>
+                                    <TouchableOpacity onPress={showCamera} style={styles.add} ><Image height='56' source={require('../assets/images/PlusCircle.png')} /></TouchableOpacity>
                                 </ScrollView>
                             }
                         </View>

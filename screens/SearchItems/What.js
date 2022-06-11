@@ -92,8 +92,6 @@ const What = ({ navigation }) => {
     return (
         <View style={[styles.container, themeContainerStyle]}>
             <View style={{ flex: 1 }}>
-                <Text style={[styles.title, themeTextStyle]} >Что именно Вы потеряли</Text>
-                <TextInput multiline placeholder='Описание' style={[{ width: '100%', height: 200, borderRadius: 16, padding: 8, fontFamily: 'Inter_500Medium', fontSize: 16 }, themeContainerSelectStyle]}></TextInput>
 
                 <Text style={[styles.title, themeTextStyle]}>Вид багажа</Text>
                 <TouchableOpacity style={styles.container_select} onPress={handlePresentModalKindPress}>
