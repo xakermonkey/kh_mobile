@@ -172,6 +172,7 @@ const SelectTerminal = ({ navigation, route }) => {
                 },
                 headerRight: () => {
                     return (
+                        <TouchableOpacity onPress={() => navigation.navigate('profile')}>
                         <Image
                             source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
                             style={{
@@ -179,6 +180,7 @@ const SelectTerminal = ({ navigation, route }) => {
                             }}
                             resizeMode='contain'
                         />
+                        </TouchableOpacity>
                         )
                 }
             })
@@ -188,7 +190,7 @@ const SelectTerminal = ({ navigation, route }) => {
                     return (
                         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                             <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 10 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
-                                <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
+                                <FontAwesome name="location-arrow" size={28} style={{ color: '#21cfba' }} />
                                 <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
     
                             </TouchableOpacity>
@@ -204,6 +206,7 @@ const SelectTerminal = ({ navigation, route }) => {
                 },
                 headerRight: () => {
                     return (
+                        <TouchableOpacity onPress={() => navigation.navigate('profile')}>
                         <Image
                             source={colorScheme === 'light' ? require("../assets/images/lost_logo.png") : require("../assets/images/lost_logo_white.png")}
                             style={{
@@ -211,6 +214,7 @@ const SelectTerminal = ({ navigation, route }) => {
                             }}
                             resizeMode='contain'
                         />
+                        </TouchableOpacity>
                         )
                 }
             })
