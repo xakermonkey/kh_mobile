@@ -39,11 +39,11 @@ const When = ({ navigation }) => {
 
     return (
         <View style={[styles.container, themeContainerStyle]}>
-            <View style={{ alignItems: 'center', justifyContent: 'flex-start', }}>
+            <View style={{ alignItems: 'center', justifyContent: 'flex-start', flex:1 }}>
                 <Text style={[styles.title, themeTextStyle]} >Когда Вы забыли</Text>
                 <Text style={[styles.subtext, themeSubTextStyle]}>для ускорения поиска</Text>
                 {/* <Text style={[styles.subtext, themeSubTextStyle]}>дополнительных привилегий</Text> */}
-                <Text style={[styles.label, themeTextStyle]} >Дата потери</Text>
+                {/* <Text style={[styles.label, themeTextStyle]} >Дата потери</Text> */}
                 <DateTimePicker
                     testID="dateTimePicker"
                     value={date}
@@ -53,8 +53,8 @@ const When = ({ navigation }) => {
                     onChange={onChange}
                     locale={"ru-RU"}
                     maximumDate={new Date()}
-                    style={{ alignSelf:'center',width: 200, backgroundColor:'#00f'}}
-                />
+                    style={{ width: 150, height:100, right:5}}
+                    />
                 {/* <MaskInput autoFocus value={date} style={[styles.inputtext, themeTextStyle]} mask={mask} onChangeText={(masked, unmasked) => setDate(masked)} /> */}
                 {/* <KeyboardAvoidingView behavior='padding' style={styles.row}> */}
                 {/* <TouchableOpacity activeOpacity={0.5}>
@@ -62,7 +62,7 @@ const When = ({ navigation }) => {
                     <Text style={[styles.subtext, themeSubTextStyle]}>паспортные данные?</Text>
                 </TouchableOpacity> */}
             </View>
-            <View style={{ alignItems: 'flex-end' }}>
+            <View style={{ alignItems: 'flex-end', flex:1, justifyContent:'flex-end' }}>
                 <Button buttonStyle={styles.btn} onPress={() => navigation.navigate('what_forget')} containerStyle={styles.cont_btn} icon={<AntDesign name="arrowright" size={24} color="#000" />} />
             </View>
             {/* </KeyboardAvoidingView> */}
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     },
     row: {
         flexDirection: 'row',
-        width: '85%',
+        // width: '85%',
         justifyContent: 'space-between',
         alignItems: 'center',
         textAlign: 'left',
@@ -108,7 +108,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5CB58',
         width: 64,
         height: 64,
-        borderRadius: 64
+        borderRadius: 64,
+        marginBottom:'5%'
     },
     cont_btn: {
         alignItems: 'flex-end',

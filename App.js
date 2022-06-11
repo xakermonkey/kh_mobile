@@ -50,7 +50,11 @@ import ClosedOrders from './screens/Profile/ClosedOrders';
 import PaymentMethods from './screens/Profile/PaymentMethods';
 import ChooseLanguage from './screens/Profile/ChooseLanguage';
 
+
 import BottomSheet, { BottomSheetBackdrop, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import ChangeFirstNameScreen from './screens/Profile/ChangeFirstNameScreen';
+import ChangeLastNameScreen from './screens/Profile/ChangeLastNameScreen';
+import QRCodeTakeScreen from './screens/QRCodeTake';
 
 
 const Stack = createNativeStackNavigator()
@@ -97,6 +101,7 @@ function App() {
         <Stack.Screen options={{ headerShown: false }} name='add_luggage' component={AddLuggage} />
         <Stack.Screen name='accept_luggage' component={AcceptLuggage} />
         <Stack.Screen name='qr_code' component={QRCodeScreen} />
+        <Stack.Screen name='qr_code_take' component={QRCodeTakeScreen} />
 
         <Stack.Screen name='where_forget' component={Where} />
         <Stack.Screen name='when_forget' component={When} />
@@ -114,6 +119,8 @@ function App() {
         <Stack.Screen name='add_card' component={AddCard} />
         <Stack.Screen name='airports' component={Airports} />
         <Stack.Screen name='terminals' component={Terminals} />
+        <Stack.Screen name='change_first_name' component={ChangeFirstNameScreen} />
+        <Stack.Screen name='change_last_name' component={ChangeLastNameScreen} />
         <Stack.Screen name='closed_orders' component={ClosedOrders} />
         <Stack.Screen name='payment_methods' component={PaymentMethods} />
         <Stack.Screen name='choose_language' component={ChooseLanguage} />

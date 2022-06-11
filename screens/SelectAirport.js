@@ -94,12 +94,14 @@ const SelectAirport = ({ navigation }) => {
         <View style={[styles.container, themeContainerStyle]} >
             <StatusBar />
             <SearchBar
-                placeholder="Найти страну"
+                placeholder="Найти аэропорт"
                 onChangeText={setSearch}
                 value={search}
-                containerStyle={{ backgroundColor: null, padding: '3%' }}
+                containerStyle={{ backgroundColor: null }}
                 inputContainerStyle={themeContainerSelectStyle}
                 platform='ios'
+                cancelButtonTitle='Отмена'
+                style={{color: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',}}
             />
             <ScrollView style={{ height: '100%' }}>
                 <RefreshControl

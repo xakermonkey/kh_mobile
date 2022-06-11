@@ -20,7 +20,8 @@ function Profile({ navigation }) {
 
     const [isEnabled, setIsEnabled] = useState(false);
     const [biometric_type, setBiomentric] = useState("")
-    const [FIO, setFIO] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [firstName, setFirstName] = useState("");
     const [numberDoc, setnumberDoc] = useState("");
     const [dateGet, setDateGet] = useState("");
     const [birthday, setBirthday] = useState("");
@@ -31,6 +32,7 @@ function Profile({ navigation }) {
     const [verifyEmail, setVerifyEmail] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [phone, setPhone] = useState("");
+    const [hideProfile, setHideProfile] = useState(true);
 
     const toggleSwitch = async () => {
         setIsEnabled(!isEnabled);
@@ -45,8 +47,14 @@ function Profile({ navigation }) {
             setIsEnabled(false);
         }
         const last_name = await AsyncStorage.getItem("last_name");
+        if (last_name != null) {
+            setLastName(last_name);
+        }
         const first_name = await AsyncStorage.getItem("first_name");
-        const patronymic = await AsyncStorage.getItem("patronymic");
+        if (first_name != null) {
+            setFirstName(first_name);
+        }
+        // const patronymic = await AsyncStorage.getItem("patronymic");
         // const how_get = await AsyncStorage.getItem("how_get");
         // const document = await AsyncStorage.getItem("number_doc");
         // const birthday = await AsyncStorage.getItem("birthday");
@@ -57,13 +65,7 @@ function Profile({ navigation }) {
         setPhone(ph);
         // console.warn(email);
         setEmail(email);
-        if (patronymic != null) {
-            setFIO(`${last_name} ${first_name} ${patronymic}`);
-        } else if (first_name != null) {
-            setFIO(`${last_name} ${first_name}`);
-        } else if (last_name != null) {
-            setFIO(`${last_name}`);
-        }
+
         // if (how_get != null) {
         //     setHowGet(how_get);
         // }
@@ -85,7 +87,6 @@ function Profile({ navigation }) {
         // console.warn("Update");
         const token = await AsyncStorage.getItem("token");
         const res = await axios.get(domain + "/get_profile", { headers: { "Authorization": "Token " + token } });
-        // console.warn(res.data.verify_email);
         setVerifyEmail(res.data.verify_email);
     }, [])
 
@@ -124,21 +125,21 @@ function Profile({ navigation }) {
         await AsyncStorage.removeItem("airport");
         await AsyncStorage.removeItem("airport_iata");
         navigation.dispatch(
-         CommonActions.reset({
-           index: 0,
-           routes: [{ name: "select_country_code" }]
-         }));
-       }
+            CommonActions.reset({
+                index: 0,
+                routes: [{ name: "select_country_code" }]
+            }));
+    }
     // const Exit = async () => {
-        // await AsyncStorage.removeItem("token");
-        // await AsyncStorage.removeItem("pin");
-        // await AsyncStorage.removeItem("biometric");
-        // await AsyncStorage.removeItem("first_join");
-        // await AsyncStorage.removeItem("first_name");
-        // await AsyncStorage.removeItem("last_name");
-        // await AsyncStorage.removeItem("patronymic");
-        // await AsyncStorage.removeItem("airport");
-        // await AsyncStorage.removeItem("airport_iata");
+    // await AsyncStorage.removeItem("token");
+    // await AsyncStorage.removeItem("pin");
+    // await AsyncStorage.removeItem("biometric");
+    // await AsyncStorage.removeItem("first_join");
+    // await AsyncStorage.removeItem("first_name");
+    // await AsyncStorage.removeItem("last_name");
+    // await AsyncStorage.removeItem("patronymic");
+    // await AsyncStorage.removeItem("airport");
+    // await AsyncStorage.removeItem("airport_iata");
     //     navigation.dispatch("select_country_code");
     // }
     const onRefresh = useCallback(async () => {
@@ -204,14 +205,19 @@ function Profile({ navigation }) {
                         </TouchableOpacity>
                     </View>
                 </View>
-
                 <View style={[styles.panel, themeContainerSelectStyle]}>
                     <Text style={[styles.title, themeTextStyle]} >Личные данные</Text>
                     <View style={{ marginTop: '5%' }}>
-                        <TouchableOpacity style={styles.inline}>
+                        <TouchableOpacity style={styles.inline} onPress={() => navigation.navigate("change_last_name")}>
                             <View>
-                                <Text style={[styles.text, themeTextStyle]} >ФИО</Text>
-                                <Text style={[styles.subtext, themeSubTextStyle]} >{FIO}</Text>
+                                <Text style={[styles.text, themeTextStyle]} >Фамилия</Text>
+                                <Text style={[styles.subtext, themeSubTextStyle]} >{lastName}</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.inline} onPress={() => navigation.navigate("change_first_name")} >
+                            <View>
+                                <Text style={[styles.text, themeTextStyle]} >Имя</Text>
+                                <Text style={[styles.subtext, themeSubTextStyle]} >{firstName}</Text>
                             </View>
                         </TouchableOpacity>
                         {/* <TouchableOpacity style={styles.inline}>
@@ -244,7 +250,7 @@ function Profile({ navigation }) {
                                 <Text style={[styles.text, themeTextStyle]} >Фото паспорта</Text>
                                 <Text style={[styles.subtext, themeSubTextStyle]} >ФИО и фото лица</Text>
                             </View>
-                        </TouchableOpacity> */}
+    </TouchableOpacity> */}
                     </View>
                 </View>
 
@@ -344,7 +350,7 @@ function Profile({ navigation }) {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <TouchableOpacity onPress={Exit} style={{ padding:'4%', marginBottom:'4%'}}>
+                <TouchableOpacity onPress={Exit} style={{ padding: '4%', marginBottom: '4%' }}>
                     <Text style={[styles.text, themeTextStyle]} >Выйти</Text>
                 </TouchableOpacity>
             </ScrollView>

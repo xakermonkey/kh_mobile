@@ -44,32 +44,50 @@ const SelectTerminal = ({ navigation, route }) => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
+            title: "",
             headerShadowVisible: false,
             headerStyle: {
                 backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C'
             },
             headerBackVisible: false,
             headerBackTitleVisible: false,
-            headerTitle: () => {
-                return (<View style={{ alignItems: 'center' }} >
-                    <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
-                    <Text style={[styles.subtext, themeSubTextStyle]} >{airport ? "Вы здесь" : "Поиск..."}</Text>
-                </View>)
-            },
-            headerRight: () => {
+            // headerTitle: () => {
+            //     return (<View style={{ alignItems: 'center' }} >
+            //         <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
+            //         <Text style={[styles.subtext, themeSubTextStyle]} >{airport ? "Вы здесь" : "Поиск..."}</Text>
+            //     </View>)
+            // },
+
+            headerLeft: () => {
                 return (
                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                        <TouchableOpacity style={{ marginRight: 20 }} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
+                        <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 10 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
                             <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
-                        </TouchableOpacity>
+                            <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
 
+                        </TouchableOpacity>
+{/* 
                         <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                             <Image
                                 source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
                                 style={{ width: 24, height: 30 }}
                             />
-                        </TouchableOpacity>
-                    </View>)
+                        </TouchableOpacity> */}
+                    </View>
+                )
+            },
+            headerRight: () => {
+                return (
+                    <TouchableOpacity onPress={() => navigation.navigate('profile')}>
+                    <Image
+                        source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
+                        style={{
+                            width: 100, height: 40
+                        }}
+                        resizeMode='contain'
+                    />
+                    </TouchableOpacity>
+                    )
             }
         });
         (async () => {
@@ -136,38 +154,66 @@ const SelectTerminal = ({ navigation, route }) => {
     useEffect(() => {
         if (selectIndex == 0) {
             navigation.setOptions({
-                headerRight: () => {
+                headerLeft: () => {
                     return (
                         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                            <TouchableOpacity style={{ marginRight: 20 }} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
+                            <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 10 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
                                 <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
+                                <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
+    
                             </TouchableOpacity>
-
+    {/* 
                             <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                                 <Image
                                     source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
                                     style={{ width: 24, height: 30 }}
                                 />
-                            </TouchableOpacity>
-                        </View>)
+                            </TouchableOpacity> */}
+                        </View>
+                    )
+                },
+                headerRight: () => {
+                    return (
+                        <Image
+                            source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
+                            style={{
+                                width: 100, height: 40
+                            }}
+                            resizeMode='contain'
+                        />
+                        )
                 }
             })
         } else {
             navigation.setOptions({
-                headerRight: () => {
+                headerLeft: () => {
                     return (
                         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                            <TouchableOpacity style={{ marginRight: 20 }} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
-                                <FontAwesome name="location-arrow" size={28} style={{ color: '#21cfba' }} />
+                            <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 10 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
+                                <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
+                                <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
+    
                             </TouchableOpacity>
-
+    {/* 
                             <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                                 <Image
-                                    source={colorScheme === 'light' ? require("../assets/images/profile_turquoise.png") : require("../assets/images/profile_turquoise_white.png")}
+                                    source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
                                     style={{ width: 24, height: 30 }}
                                 />
-                            </TouchableOpacity>
-                        </View>)
+                            </TouchableOpacity> */}
+                        </View>
+                    )
+                },
+                headerRight: () => {
+                    return (
+                        <Image
+                            source={colorScheme === 'light' ? require("../assets/images/lost_logo.png") : require("../assets/images/lost_logo_white.png")}
+                            style={{
+                                width: 100, height: 40
+                            }}
+                            resizeMode='contain'
+                        />
+                        )
                 }
             })
         }
@@ -238,7 +284,7 @@ const SelectTerminal = ({ navigation, route }) => {
         return (
             <View style={{ justifyContent: 'center', alignItems: 'center' }} >
                 <Image style={{ width: "50%" }} resizeMode="contain" source={require("../assets/images/Lounge.png")} />
-                <Text style={styles.subtext} >Ничего не найдено</Text>
+                <Text style={[styles.subtext, themeTextStyle]} >Ничего не найдено</Text>
             </View>
         )
     }
@@ -262,7 +308,7 @@ const SelectTerminal = ({ navigation, route }) => {
                     </View>
                     <FlatList
                         contentContainerStyle={{ height: "100%" }}
-                        style={{ width: '100%' }}
+                        style={{ width: '100%', paddingHorizontal: '9%' }}
                         data={terminals}
                         keyExtractor={item => item.id}
                         renderItem={renderTerminals}
@@ -302,13 +348,15 @@ const SelectTerminal = ({ navigation, route }) => {
                     }}>
                         <Text style={[styles.text_holder, { color: '#000' }]} >Поиск забытых и потерянных вещей</Text>
                     </View>
-                    <View style={{justifyContent:'center', flex: 1}}>
-                    <Text style={[styles.subtext, themeSubTextStyle, { }]} >Если Вы забыли или потеряли личные вещи или багаж в аэропорту мы поможем Вам их найти </Text>
-                    </View>
-                    <View style={{ flex:1, justifyContent: 'flex-end' }}>
-                        <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('where_forget')} >
-                            <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>НАЧАТЬ ПОИСК</Text>
-                        </TouchableOpacity>
+                    <View style={{ flex: 1, paddingHorizontal: '9%' }}>
+                        <View style={{ justifyContent: 'center', flex: 1 }}>
+                            <Text style={[styles.subtext, themeSubTextStyle, {}]} >Если Вы забыли или потеряли личные вещи или багаж в аэропорту мы поможем Вам их найти </Text>
+                        </View>
+                        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+                            <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('where_forget')} >
+                                <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>НАЧАТЬ ПОИСК</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             )
@@ -341,7 +389,7 @@ const SelectTerminal = ({ navigation, route }) => {
     return (
         <View style={[styles.container, themeContainerStyle]} >
             <StatusBar />
-            <View style={{ alignItems: 'center' }}>
+            <View style={{ alignItems: 'center', marginTop: '3%' }}>
                 <Carousel
                     ref={carouselRef}
                     data={cards}
@@ -390,7 +438,6 @@ export default SelectTerminal
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop:'3%'
         // padding: '3%',
     },
     container_select: {
@@ -409,8 +456,9 @@ const styles = StyleSheet.create({
         fontFamily: "Inter_600SemiBold"
     },
     title_header: {
-        fontSize: 16,
-        fontFamily: "Inter_800ExtraBold"
+        fontSize: 14,
+        fontFamily: "Inter_500Medium",
+        marginLeft: 10
     },
     terminal_subtext: {
         fontSize: 14,

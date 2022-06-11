@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState } from 'react'
 import { Appearance, useColorScheme, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, View, ImageBackground } from 'react-native'
-import { Button } from 'react-native-elements'
+import { Button, SearchBar } from 'react-native-elements'
 import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { domain, domain_domain } from '../../domain';
@@ -22,6 +22,8 @@ const Where = ({ navigation }) => {
     const [selectAirport, setSelectAirport] = useState();
     const [airport, setAirport] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
+    const [search, setSearch] = useState("");
+
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -50,15 +52,32 @@ const Where = ({ navigation }) => {
         setSelectAirport(obj);
     }
 
+    const filterAirport = (obj) => {
+        if (search.length === 0) {
+            return true;
+        }
+        return obj.name.toLowerCase().startsWith(search.toLowerCase());
+    }
+
     return (
         <View style={[styles.container, themeContainerStyle]}>
             <Text style={[styles.title, themeTextStyle]} >Расскажите где Вы забыли вещи</Text>
             <TextInput multiline placeholder='Описание' style={[{ width: '100%', height: 200, borderRadius: 16, padding: 8, fontFamily: 'Inter_500Medium', fontSize: 16 }, themeContainerSelectStyle]}></TextInput>
 
             <Text style={[styles.title, themeTextStyle]}>В каком аэропорту?</Text>
+            <SearchBar
+                placeholder="Найти аэропорт"
+                onChangeText={setSearch}
+                value={search}
+                containerStyle={{ backgroundColor: null }}
+                inputContainerStyle={themeContainerSelectStyle}
+                platform='ios'
+                cancelButtonTitle='Отмена'
+                style={{color: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',}}
+            />
             <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={false} >
                 <View style={styles.radiobutton_container}>
-                    {airport.map((obj) => {
+                    {airport.filter(filterAirport).map((obj) => {
                         return (
                             <TouchableOpacity key={obj.iata} activeOpacity={0.5} onPress={() => customSelectAirport(obj)}>
                                 <View style={{

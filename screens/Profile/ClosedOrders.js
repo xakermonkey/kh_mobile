@@ -1,11 +1,12 @@
-import { Appearance, useColorScheme, StyleSheet, Text, View, TouchableOpacity, Image, Switch } from 'react-native'
+import { Appearance, useColorScheme, StyleSheet, Text, View, TouchableOpacity, Image, Switch, FlatList, ScrollView } from 'react-native'
 import React, { useLayoutEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { Icon } from 'react-native-elements'; import { StatusBar } from 'expo-status-bar';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-import {
-    BottomSheetModal,
-    BottomSheetModalProvider,
-} from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import Orders from '../Orders';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { domain, domain_domain } from '../../domain';
 
 
 
@@ -23,13 +24,27 @@ const ClosedOrders = ({ navigation, route }) => {
     const themeBtn = colorScheme === 'light' ? styles.lightBtn : styles.darkBtn;
 
     const bottomSheetModalRef = useRef(null);
-    const snapPoints = useMemo(() => ['30%', '30%'], []);
+    const snapPoints = useMemo(() => ['30%'], []);
     const handlePresentModalPress = useCallback(() => {
-        bottomSheetModalRef.current?.present();
+        bottomSheetModalRef.current.snapToIndex(0);
     }, []);
-    const handleSheetChanges = useCallback((index) => {
-        console.log('handleSheetChanges', index);
-    }, []);
+
+    const CustomBackDrop = (props) => {
+        return (
+            <BottomSheetBackdrop
+                {...props}
+                disappearsOnIndex={-1}
+                opacity='0.9'
+                closeOnPress={true}
+                enableTouchThrough={true}
+                pressBehavior='close'
+            />
+        );
+    };
+
+    const [orders, setOrders] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
+    const [terminal, setTerminal] = useState("");
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -39,87 +54,131 @@ const ClosedOrders = ({ navigation, route }) => {
             },
             headerBackTitleVisible: false,
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
-            headerTitle: () => {
-                return (<View style={{ alignItems: 'center' }} >
-                    <Text style={[styles.title, themeTextStyle]} >Терминал A, 2 этаж</Text>
-                    <Text style={[styles.subtext, themeSubTextStyle]} >Шереметьево</Text>
-                </View>)
-            },
             headerRight: () => {
                 return (
                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                         <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                             <Image
                                 source={require("../../assets/images/profile.png")}
-                                style={{width:24, height:30}}
+                                style={{ width: 24, height: 30 }}
                             />
                         </TouchableOpacity>
                     </View>)
             }
-        })
+        });
+        (async () => {
+            const term = await AsyncStorage.getItem("close_terminal_name");
+            setTerminal(term);
+            const air = await AsyncStorage.getItem("close_airport");
+            navigation.setOptions({
+                headerTitle: () => {
+                    return (<View style={{ alignItems: 'center' }} >
+                        <Text style={[styles.title, themeTextStyle]} >{term}</Text>
+                        <Text style={[styles.subtext, themeSubTextStyle]} >{air}</Text>
+                    </View>)
+                },
+            })
+            const id = await AsyncStorage.getItem("close_terminal");
+            const token = await AsyncStorage.getItem("token");
+            const res = await axios.get(domain + `/get_close_orders/${id}`, { headers: { "Authorization": "Token " + token } })
+            setOrders(res.data)
+        })();
     }, [navigation])
 
 
-    const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
-    return (
-        <View style={[styles.container, themeContainerStyle]} >
-            <StatusBar />
-            <View style={{alignContent:'center', alignItems:'center', height:'100%', justifyContent:'center'}}>
-            <Image source={require('../../assets/images/NoOrders.png')} style={{width:128, height:172}} />
-            <Text style={[styles.text, { textAlign: 'center', marginTop:'20%' }, themeTextStyle]} >Заказов нет</Text>
+    const EmptyComponent = () => {
+        return (
+            <View style={{ alignContent: 'center', alignItems: 'center', height: '100%', justifyContent: 'center' }}>
+                <Image source={require('../../assets/images/NoOrders.png')} style={{ width: 128, height: 172 }} />
+                <Text style={[styles.text, { textAlign: 'center', marginTop: '20%' }, themeTextStyle]} >Заказов нет</Text>
             </View>
+        )
+    }
 
-            {/* <View style={[styles.container_location, themeContainerSelectStyle]}>
-                <View style={styles.row_center}>
-                    <Image source={require('../../assets/images/Orders/img1.png')} style={styles.img} />
-                    <Image source={require('../../assets/images/Orders/img2.png')} style={styles.img} />
-                    <Image source={require('../../assets/images/Orders/img3.png')} style={styles.img} />
-                    <Image source={require('../../assets/images/Orders/img4.png')} style={styles.img} />
-                </View>
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        const id = await AsyncStorage.getItem("close_terminal")
+        const token = await AsyncStorage.getItem("token");
+        const res = await axios.get(domain + `/get_close_orders/${id}`, { headers: { "Authorization": "Token " + token } });
+        setOrders(res.data);
+        setRefreshing(false);
+    }, []);
+
+    const renderCard = ({ item }) => {
+        console.log(item);
+        return (
+            <View style={[styles.container_location, themeContainerSelectStyle]}>
+                <ScrollView contentContainerStyle={styles.row_center} horizontal={true}>
+                    {item.photo.map((obj, ind) => {
+                        return (<Image key={ind} height={60} width={60} resizeMode="contain" source={{ uri: domain_domain + obj.photo }} style={styles.img} />)
+                    })}
+                </ScrollView>
                 <View style={{ marginTop: '4%' }}>
                     <View style={styles.row_center_between}>
                         <Text style={[styles.description, themeSubTextStyle]} >Багаж</Text>
-                        <Text style={[styles.text_description, themeTextStyle]} >Чемодан</Text>
+                        <Text style={[styles.text_description, themeTextStyle]} >{item.kind_luggage}</Text>
                     </View>
                     <View style={styles.row_center_between}>
                         <Text style={[styles.description, themeSubTextStyle]} >Камера хранения</Text>
-                        <Text style={[styles.text_description, themeTextStyle]} >Терминал A, 2 этаж</Text>
+                        <Text style={[styles.text_description, themeTextStyle]} >{terminal}</Text>
                     </View>
                     <View style={styles.row_center_between}>
                         <Text style={[styles.description, themeSubTextStyle]} >Принят</Text>
-                        <Text style={[styles.text_description, themeTextStyle]} >21 сентября 2022</Text>
+                        <Text style={[styles.text_description, themeTextStyle]} >{item.date_send}</Text>
+                    </View>
+                    <View style={styles.row_center_between}>
+                        <Text style={[styles.description, themeSubTextStyle]} >Возвращен</Text>
+                        <Text style={[styles.text_description, themeTextStyle]} >{item.date_take}</Text>
                     </View>
                     <View style={styles.row_center_between}>
                         <Text style={[styles.description, themeSubTextStyle]} >Стоимость</Text>
-                        <Text style={[styles.text_description, themeTextStyle]} >500 ₽</Text>
+                        <Text style={[styles.text_description, themeTextStyle]} >{item.len_day > 0 ? item.len_day * item.price_per_day + " ₽" : "доплата не требуется"} </Text>
                     </View>
-                    <View style={styles.row_center_between}>
-                        <Text style={[styles.description, themeSubTextStyle]} >Хранение </Text>
-                        <Text style={[styles.text_description, themeTextStyle]} >2 дня</Text>
-                    </View>
-                    <View style={styles.row_center_between}>
-                        <Text style={[styles.description, themeSubTextStyle]} >Продление хранения </Text>
-                        <Text style={[styles.text_description, themeTextStyle]} >250 ₽</Text>
-                    </View>
+                    {item.len_day > 0 &&
+                        <View style={styles.row_center_between}>
+                            <Text style={[styles.description, themeSubTextStyle]} >Хранение </Text>
+                            <Text style={[styles.text_description, themeTextStyle]} >{item.len_day} дня</Text>
+                        </View>
+                    }
+                    {item.len_day > 0 &&
+                        <View style={styles.row_center_between}>
+                            <Text style={[styles.description, themeSubTextStyle]} >Продление хранения </Text>
+                            <Text style={[styles.text_description, themeTextStyle]} >{item.price_per_day} ₽</Text>
+                        </View>
+                    }
+
                 </View>
                 <View style={[styles.row_center_between, { marginTop: '4%' }]}>
                     <TouchableOpacity activeOpacity={.9} style={[styles.btn_check, themeContainerSelectStyle]} onPress={handlePresentModalPress} >
                         <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14 }, themeTextStyle]}>Чеки</Text>
                     </TouchableOpacity>
                 </View>
-            </View> */}
+            </View>
+        )
+    }
 
-            <BottomSheetModalProvider>
-                <View>
-                    <BottomSheetModal
-                        ref={bottomSheetModalRef}
-                        index={1}
-                        snapPoints={snapPoints}
-                        onChange={handleSheetChanges}
-                        backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
-                    >
+
+    return (
+        <View style={[styles.container, themeContainerStyle]} >
+            <StatusBar />
+            <FlatList
+                style={{ width: "100%" }}
+                data={orders}
+                keyExtractor={item => item.id}
+                renderItem={renderCard}
+                ListEmptyComponent={<EmptyComponent />}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+            />
+            <BottomSheet
+                ref={bottomSheetModalRef}
+                index={-1}
+                backdropComponent={CustomBackDrop}
+                snapPoints={snapPoints}
+                enablePanDownToClose={true}
+                backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
+            >
                         <Text style={[styles.text, { textAlign: 'center' }, themeTextStyle]} >Чеки за оплату</Text>
 
                         <View style={{ padding: '5%' }}>
@@ -136,9 +195,7 @@ const ClosedOrders = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'Inter_700Bold', color: '#000', fontSize: 14 }}>Сохранить чеки</Text>
                             </TouchableOpacity>
                         </View>
-                    </BottomSheetModal>
-                </View>
-            </BottomSheetModalProvider>
+            </BottomSheet>
         </View>
     )
 }
@@ -160,15 +217,15 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     text: {
-        fontSize: 24,
-        fontFamily: "Inter_800ExtraBold",
+        fontSize: 14,
+        fontFamily: "Inter_600SemiBold",
     },
     subtext: {
     },
     subtext_btn: {
         fontSize: 12,
         fontFamily: "Inter_500Medium",
-        color:"#0C0C0D7A",
+        color: "#0C0C0D7A",
     },
     description: {
         fontSize: 12,
@@ -181,6 +238,7 @@ const styles = StyleSheet.create({
     text_select: {
         fontSize: 12,
         fontFamily: "Inter_400Regular",
+        marginLeft: 3
     },
 
     container: {
@@ -262,7 +320,9 @@ const styles = StyleSheet.create({
     },
 
     img: {
-        marginRight: 8
+        marginRight: 8,
+        height: 60,
+        width: 60
     },
 
 

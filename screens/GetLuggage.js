@@ -6,6 +6,10 @@ import {
     BottomSheetModal,
     BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
+import { CommonActions } from '@react-navigation/native';
+import axios from 'axios';
+import { domain } from '../domain';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AcceptLuggageMileonAir = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
@@ -43,6 +47,31 @@ const AcceptLuggageMileonAir = ({ navigation, route }) => {
         })
     }, [navigation])
 
+    const setSale = (text) => {
+        if (parseInt(text) > route.params.total_price) {
+            setMile(route.params.total_price.toString());
+        } else {
+            setMile(text);
+        }
+    }
+
+    const Payment = async () => {
+        const token = await AsyncStorage.getItem("token");
+        const luggageId = await AsyncStorage.getItem("take_luggage");
+        await axios.post(domain + "/take_luggage/" + luggageId,
+            {
+                price_for_storage: route.params.total_price,
+                day_len: route.params.len_day,
+                sale_day_storage: parseInt(mile)
+            },
+            {
+                headers: {
+                    "Authorization": "Token " + token
+                }
+            })
+        navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: "qr_code_take" }] }))
+    }
+
 
     return (
         <View style={[styles.container, themeContainerStyle]}  >
@@ -52,12 +81,12 @@ const AcceptLuggageMileonAir = ({ navigation, route }) => {
                     <Text style={[styles.price_line_text, themeSubTextStyle]} >Хранение багажа</Text>
                     <Text style={[styles.price_line_price, themeTextStyle]} >{route.params.total_price} ₽</Text>
                 </View>
-                <View style={{height:1, backgroundColor:'#fff'}}></View>
+                <View style={{ height: 1, backgroundColor: '#fff' }}></View>
                 <View style={styles.price_line}>
                     <Text style={[styles.price_line_text, themeSubTextStyle]} >Списание миль</Text>
                     <Text style={[styles.price_line_price, themeTextStyle]} >-{mile == "" ? "0" : mile} миль</Text>
                 </View>
-                <View style={{height:1, backgroundColor:'#fff'}}></View>
+                <View style={{ height: 1, backgroundColor: '#fff' }}></View>
                 <View style={[styles.line, themeContainerStyle]} ></View>
                 <View style={styles.price_line}>
                     <Text style={[styles.price_line_text, themeSubTextStyle]} >Итоговая стоимость</Text>
@@ -90,15 +119,17 @@ const AcceptLuggageMileonAir = ({ navigation, route }) => {
                                 />
                                 <Text style={themeSubTextStyle} >миль</Text>
                             </View>
-                            <View style={[{ width: 1, backgroundColor:'#fff' }, themeContainerStyle]}></View>
+                            <View style={[{ width: 1, backgroundColor: '#fff' }, themeContainerStyle]}></View>
                         </View>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1, paddingHorizontal: 20 }}>
                             <TextInput
                                 value={mile}
                                 placeholder="40"
+                                onChangeText={setSale}
                                 style={[styles.text_input, themeTextStyle]}
                                 keyboardType="number-pad"
+                                maxLength={route.params.total_price.toString().length}
                             />
                             <Text style={[{ textAlign: 'right', fontSize: 12, fontFamily: "Inter_400Regular" }, themeSubTextStyle]} >Мининимальное {"\n"}списание 40 миль</Text>
                         </View>
@@ -159,7 +190,7 @@ const AcceptLuggageMileonAir = ({ navigation, route }) => {
                                 <Text style={[styles.text_description, { color: '#0C0C0D7A' }, themeSubTextStyle]} >21 сентября 2022</Text>
                             </View>
 
-                            <TouchableOpacity activeOpacity={.9} style={styles.btn_bottomsheet} onPress={() => navigation.navigate('qr_code')} >
+                            <TouchableOpacity activeOpacity={.9} style={styles.btn_bottomsheet} onPress={Payment} >
                                 <Text style={{ fontFamily: 'Inter_700Bold', color: '#000', fontSize: 14 }}>Сохранить чеки</Text>
                             </TouchableOpacity>
                         </View>
@@ -301,7 +332,7 @@ const styles = StyleSheet.create({
         shadowRadius: 16,
         elevation: 12,
     },
-    
+
     /////
 
 

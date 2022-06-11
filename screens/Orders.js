@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { domain, domain_domain } from '../domain';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
+import { CommonActions } from '@react-navigation/native';
 
 
 
@@ -117,8 +118,8 @@ const Orders = ({ navigation, route }) => {
         //     );
         //     return 0;
         // } else {
-            navigation.navigate('license_luggage');
-            // return 0;
+        navigation.navigate('license_luggage');
+        // return 0;
         // }
 
     }
@@ -132,11 +133,28 @@ const Orders = ({ navigation, route }) => {
         setRefreshing(false);
     }, []);
 
-    const takeItems = () => {
+    const takeItems = async () => {
+        await AsyncStorage.setItem("take_luggage", selectOrder.id.toString());
         if (totalPrice > 0) {
-            navigation.navigate('accept_luggage_mileonair', { "total_price": totalPrice });
+            navigation.navigate('accept_luggage_mileonair', { "total_price": totalPrice, len_day: selectOrder.len_day });
         } else {
-            navigation.navigate('qr_code');
+            const token = await AsyncStorage.getItem("token");
+            await axios.post(domain + "/take_luggage/" + selectOrder.id,
+                {
+                    price_for_storage: 0,
+                    day_len: 0,
+                    sale_day_storage: 0
+                },
+                {
+                    headers: {
+                        "Authorization": "Token " + token
+                    }
+                })
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: "qr_code_take" }]
+                }));
         }
 
     }
@@ -145,10 +163,12 @@ const Orders = ({ navigation, route }) => {
     const renderCard = ({ item }) => {
 
         const clickCheckBox = () => {
-            if (selectOrder == item.id){
+            if (selectOrder == item) {
                 setSelectOrder(null);
-            }else{
-                setSelectOrder(item.id)
+                settotalPrice(0);
+            } else {
+                setSelectOrder(item)
+                settotalPrice(item.len_day * item.price_per_day);
             }
         }
 
@@ -193,23 +213,23 @@ const Orders = ({ navigation, route }) => {
                 </View>
                 <View style={[styles.row_center_between, { marginTop: '4%' }]}>
                     <View style={styles.row_center}>
-                    <RadioButton labelHorizontal={true} style={{ justifyContent: 'space-between', alignItems: 'center', marginBottom: "2%" }}>
-                        <RadioButtonInput
-                          obj={item}
-                          index={item.id}
-                          isSelected={selectOrder == item.id}
-                          onPress={clickCheckBox}
-                          buttonInnerColor='#F5CB57'
-                          buttonOuterColor="#F2F2F31F"
-                          buttonSize={24}
-                          buttonOuterSize={31}
-                          buttonStyle={themeContainerSelectStyle}
+                        <RadioButton labelHorizontal={true} style={{ justifyContent: 'space-between', alignItems: 'center', marginBottom: "2%" }}>
+                            <RadioButtonInput
+                                obj={item}
+                                index={item.id}
+                                isSelected={selectOrder == item}
+                                onPress={clickCheckBox}
+                                buttonInnerColor='#F5CB57'
+                                buttonOuterColor="#F2F2F31F"
+                                buttonSize={24}
+                                buttonOuterSize={31}
+                                buttonStyle={themeContainerSelectStyle}
 
-                        />
-                        <View style={{}}>
-                        <Text style={[styles.text_select, themeSubTextStyle]} >{selectOrder != item.id ? "Выбрать для возврата" : "Выбрано"}</Text>
-                        </View>
-                      </RadioButton>
+                            />
+                            <View style={{}}>
+                                <Text style={[styles.text_select, themeSubTextStyle]} >{selectOrder != item ? "Выбрать для возврата" : "Выбрано"}</Text>
+                            </View>
+                        </RadioButton>
                         {/* <BouncyCheckbox
                             size={24}
                             fillColor='#F5CB57'
@@ -227,6 +247,16 @@ const Orders = ({ navigation, route }) => {
                         <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14 }, themeTextStyle]}>Чеки</Text>
                     </TouchableOpacity>
                 </View>
+            </View>
+        )
+    }
+
+
+    const EmptyComponent = () => {
+        return (
+            <View style={{ alignContent: 'center', alignItems: 'center', height: '100%', justifyContent: 'center' }}>
+                <Image source={require('../assets/images/NoOrders.png')} style={{ width: 128, height: 172 }} />
+                <Text style={[styles.text, { textAlign: 'center', marginTop: '20%' }, themeTextStyle]} >Заказов нет</Text>
             </View>
         )
     }
@@ -256,6 +286,7 @@ const Orders = ({ navigation, route }) => {
                 renderItem={renderCard}
                 onRefresh={onRefresh}
                 refreshing={refreshing}
+                ListEmptyComponent={<EmptyComponent />}
             />
             {selectOrder == null ?
                 <View style={{ position: 'absolute', bottom: '5%', width: '100%' }}>
@@ -266,7 +297,7 @@ const Orders = ({ navigation, route }) => {
                 <View style={{ position: 'absolute', bottom: '5%', width: '100%' }}>
                     <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={takeItems} >
                         <Text style={{ fontFamily: 'Inter_700Bold', color: '#000', fontSize: 14 }}>Забрать сейчас</Text>
-                        <Text style={styles.subtext_btn}>{totalPrice > 0 ? `1 единицы на сумму ${totalPrice} ₽` : "Доплата не требуется"}</Text>
+                        <Text style={styles.subtext_btn}>{totalPrice > 0 ? `Товар на сумму ${totalPrice} ₽` : "Доплата не требуется"}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity activeOpacity={.9} style={[styles.btn_2, themeBtn]} onPress={() => navigation.navigate('deliver_home')} >
                         <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14 }, themeBtnSubText]}>Доставить домой</Text>

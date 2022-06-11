@@ -27,10 +27,14 @@ const InputFirstNameScreen = ({ navigation }) => {
         })
         AsyncStorage.getItem("first_name")
             .then((first_name) => {
-                if (first_name != null) {
-                    setText(first_name);
-                    navigation.navigate("patronymic");
+                if (first_name != null){
+                    navigation.dispatch(
+                        CommonActions.reset({
+                            index: 0,
+                            routes: [{ name: "select_terminal" }]
+                        }));
                 }
+                
             })
     }, [navigation])
 
@@ -65,11 +69,35 @@ const InputFirstNameScreen = ({ navigation }) => {
     const setDoc = async () => {
         if (text != "") {
             if (/[0-9]/.test(text)) {
-                console.log("Error!");
                 setBad(true);
             } else {
-                await AsyncStorage.setItem("first_name", text);
-                navigation.navigate("patronymic");
+                
+                const token = await AsyncStorage.getItem("token");
+                const last_name = await AsyncStorage.getItem("last_name");
+                const data = new FormData();
+                data.append("last_name", last_name);
+                data.append("first_name", text);
+                const res = await fetch(domain + "/set_document",
+                    {
+                        method: "POST",
+                        body: data,
+                        headers: {
+                            "Authorization": "Token " + token,
+                            'Accept': 'application/json',
+                            'Content-Type': 'multipart/form-data',
+                        }
+                    });
+                const res_json = await res.json();
+                if (res_json.ok == "ok") {
+                    await AsyncStorage.setItem("first_name", text);
+                    await AsyncStorage.setItem("first_join", "true");
+                    navigation.dispatch(
+                        CommonActions.reset({
+                            index: 0,
+                            routes: [{ name: "select_terminal" }]
+                        }));
+
+                }
             }
         }
 
@@ -81,7 +109,7 @@ const InputFirstNameScreen = ({ navigation }) => {
             <Text style={[styles.subtext, themeSubTextStyle]}>для ускорения обслуживания и получения</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>дополнительных привилегий</Text>
             <Text style={[styles.label, themeTextStyle]} >Имя</Text>
-            <TextInput autoFocus value={text} style={[styles.inputtext, themeTextStyle]} onChangeText={(text) => setText(text)} />
+            <TextInput autoFocus value={text} style={[styles.inputtext, bad ? {color: "#FF3956"} : themeTextStyle]} onChangeText={(text) => setText(text)} />
             <KeyboardAvoidingView behavior='padding' style={styles.row}>
                 <TouchableOpacity activeOpacity={0.5}>
                     <Text style={[styles.subtext, themeSubTextStyle]} >Зачем нам ваши </Text>

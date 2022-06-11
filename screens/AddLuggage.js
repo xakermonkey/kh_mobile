@@ -15,6 +15,8 @@ import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
+import { Camera, CameraType } from 'expo-camera';
+
 
 const AddLuggage = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
@@ -91,6 +93,7 @@ const AddLuggage = ({ navigation, route }) => {
     const [images, setImages] = useState([]);
     const [isEnabled, setIsEnabled] = useState(false);
     const [mile, setMile] = useState("")
+    const cameraRef = useRef();
 
 
 
@@ -108,6 +111,7 @@ const AddLuggage = ({ navigation, route }) => {
                     alert('Sorry, we need camera roll permissions to make this work!');
                 }
             }
+            const { status } = await Camera.requestCameraPermissionsAsync();
         })();
     }, []);
 
@@ -128,6 +132,19 @@ const AddLuggage = ({ navigation, route }) => {
             setImages([...images, obj]);
         }
     };
+
+    const takePhoto = async () => {
+        const result = await cameraRef.current.takePictureAsync();
+        let shir = result.uri.split(".")
+            shir = shir[shir.length - 1]
+            const obj = {
+                uri: result.uri,
+                type: 'image/' + shir,
+                name: `img${images.length + 1}.${shir}`
+            }
+            // console.log(obj)
+            setImages([...images, obj]);
+    }
 
     const ClickTerminal = (obj) => {
         setSelectTerminal(obj);
@@ -217,6 +234,9 @@ const AddLuggage = ({ navigation, route }) => {
         </View>)
     }
 
+    
+
+
     return (
         <View style={[{ flex: 1 }, themeContainerStyle]}>
             <SafeAreaView opacity={1} needsOffscreenAlphaCompositing={true} style={[{
@@ -283,6 +303,10 @@ const AddLuggage = ({ navigation, route }) => {
                         <View style={{}} >
                             <Text style={[styles.textimage, themeTextStyle]}>Прикрепить фото багажа</Text>
                             <Text style={[styles.subtext, themeSubTextStyle]}>Сфотографируйте багаж со всех сторон</Text>
+                            <Camera ref={cameraRef} style={{ width: 100, height: 100}} type='back'>
+                                <View style={{ width: 100, height: 100}} ></View>
+                            </Camera>
+                            <TouchableOpacity onPress={takePhoto} ><Text style={{color : 'white'}} >Снимок</Text></TouchableOpacity>
                             {images.length === 0 ?
                                 <TouchableOpacity onPress={pickImage} style={[styles.inputimage, themeContainerSelectStyle]}>
                                     <EvilIcons style={[{ marginRight: 12, marginTop: 3 }, themeTextStyle]} name="image" size={28} color="black" />

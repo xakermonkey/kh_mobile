@@ -66,7 +66,7 @@ const InputLastNameScreen = ({ navigation }) => {
             <Text style={[styles.subtext, themeSubTextStyle]}>для ускорения обслуживания и получения</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>дополнительных привилегий</Text>
             <Text style={[styles.label, themeSubTextStyle]} >Фамилия</Text>
-            <TextInput autoFocus value={text} style={[styles.inputtext, themeTextStyle]} onChangeText={(text) => setText(text)} />
+            <TextInput autoFocus value={text} style={[styles.inputtext, bad ? {color: "#FF3956"} : themeTextStyle]} onChangeText={(text) => setText(text)} />
             <KeyboardAvoidingView behavior='padding' style={styles.row}>
                 <TouchableOpacity activeOpacity={0.5}>
                     <Text style={[styles.subtext, themeSubTextStyle]} >Зачем нам ваши </Text>

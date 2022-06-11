@@ -1,10 +1,10 @@
 import React, { useLayoutEffect, useState, useMemo, useRef, useCallback } from 'react'
 import { Appearance, useColorScheme, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Keyboard, View, ImageBackground } from 'react-native'
 import { Button, Icon } from 'react-native-elements'
-import { AntDesign } from '@expo/vector-icons';
+// import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { domain, domain_domain } from '../../domain';
-import { CommonActions } from '@react-navigation/native';
+// import { CommonActions } from '@react-navigation/native';
 import axios from 'axios';
 import RadioForm, { RadioButton, RadioButtonInput } from 'react-native-simple-radio-button';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
@@ -17,13 +17,6 @@ const What = ({ navigation }) => {
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
-
-    // const [text, setText] = useState("");,
-    // const [bad, setBad] = useState(false);
-
-    // const [selectAirport, setSelectAirport] = useState();
-    // const [airport, setAirport] = useState([]);
-    // const [refreshing, setRefreshing] = useState(false);
     const [kind, setKind] = useState();
     const [selectKind, setSelectKind] = useState();
 
@@ -36,9 +29,6 @@ const What = ({ navigation }) => {
             },
             headerBackTitleVisible: false,
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
-            // headerRight: () => {
-            //     return (<TouchableOpacity activeOpacity={0.5} onPress={{}} ><Text style={[{ fontSize: 16, fontFamily: "Inter_800ExtraBold" }, themeTextStyle]} >Пропустить</Text></TouchableOpacity>)
-            // }
         });
         (async () => {
             const iata = await AsyncStorage.getItem("airport_iata");
@@ -49,26 +39,6 @@ const What = ({ navigation }) => {
         })();
     }, [navigation])
 
-
-    // const customSelectAirport = async (obj) => {
-    //     setSelectAirport(obj);
-    // }
-
-    // const createLuggage = async () => {
-    //     await AsyncStorage.setItem("luggage_ls", selectTerminal.id.toString());
-    //     await AsyncStorage.setItem("luggage_kind", selectKind.id.toString());
-    //     for (let i = 0; i < images.length; i++) {
-    //         await AsyncStorage.setItem(`luggage_file${i + 1}`, images[i].uri);
-    //     }
-    //     navigation.navigate("accept_luggage", { "price": selectTerminal.price_storage, "sale": mile })
-    // }
-    const bottomSheetterminalRef = useRef(null);
-    // const snapPointsterminal = useMemo(() => ['50%'], []);
-    // const handlePresentModalTerminalPress = useCallback(() => {
-    //     Keyboard.dismiss();
-    //     bottomSheetterminalRef.current?.snapToIndex(0);
-    // }, []);
-
     const bottomSheetKindRef = useRef(null);
     const snapPointsKind = useMemo(() => ['50%'], []);
     const handlePresentModalKindPress = useCallback(() => {
@@ -76,12 +46,6 @@ const What = ({ navigation }) => {
         bottomSheetKindRef.current?.snapToIndex(0);
     }, []);
 
-    const bottomSheetInfoRef = useRef(null);
-    // const snapPointsInfo = useMemo(() => ['50%'], []);
-    // const handlePresentModalInfoPress = useCallback(() => {
-    //     Keyboard.dismiss();
-    //     bottomSheetInfoRef.current?.snapToIndex(0);
-    // }, []);
     const CustomBackDrop = (props) => {
         return (
             <BottomSheetBackdrop
@@ -91,7 +55,6 @@ const What = ({ navigation }) => {
                 closeOnPress={true}
                 enableTouchThrough={true}
                 pressBehavior='close'
-            // style={{zIndex:0}}
             />
         );
     };
@@ -128,62 +91,36 @@ const What = ({ navigation }) => {
     }
     return (
         <View style={[styles.container, themeContainerStyle]}>
-            <Text style={[styles.title, themeTextStyle]} >Что именно Вы потеряли</Text>
-            <TextInput multiline placeholder='Описание' style={[{ width: '100%', height: 200, borderRadius: 16, padding: 8, fontFamily: 'Inter_500Medium', fontSize: 16 }, themeContainerSelectStyle]}></TextInput>
+            <View style={{ flex: 1 }}>
+                <Text style={[styles.title, themeTextStyle]} >Что именно Вы потеряли</Text>
+                <TextInput multiline placeholder='Описание' style={[{ width: '100%', height: 200, borderRadius: 16, padding: 8, fontFamily: 'Inter_500Medium', fontSize: 16 }, themeContainerSelectStyle]}></TextInput>
 
-            <Text style={[styles.title, themeTextStyle]}>Вид багажа</Text>
-            <TouchableOpacity style={styles.container_select} onPress={handlePresentModalKindPress}>
-                <View style={[styles.select, themeContainerSelectStyle]} >
-                    <Text style={[styles.value, themeTextStyle]} >{selectKind.name}</Text>
-                    <Icon
-                        name="chevron-down-outline"
-                        type="ionicon"
-                        color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                    />
+                <Text style={[styles.title, themeTextStyle]}>Вид багажа</Text>
+                <TouchableOpacity style={styles.container_select} onPress={handlePresentModalKindPress}>
+                    <View style={[styles.select, themeContainerSelectStyle]} >
+                        <Text style={[styles.value, themeTextStyle]} >{selectKind.name}</Text>
+                        <Icon
+                            name="chevron-down-outline"
+                            type="ionicon"
+                            color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                        />
+                    </View>
+                </TouchableOpacity>
+
+                <Text style={[styles.title, themeTextStyle]}>Какого цвета?</Text>
+
+                <View style={{ flexDirection: 'row' }}>
+                    <View style={{ height: 30, width: 30, backgroundColor: '#F5CB57', borderRadius: '50%' }}></View>
+                    <View style={{ height: 30, width: 30, backgroundColor: '#F5C', borderRadius: '50%', marginLeft:10 }}></View>
+                    <View style={{ height: 30, width: 30, backgroundColor: '#F50', borderRadius: '50%', marginLeft:10 }}></View>
                 </View>
-            </TouchableOpacity>
-
-            <Text style={[styles.title, themeTextStyle]}>Какого цвета?</Text>
-
-            <View style={{ flexDirection: 'row' }}>
-                <RadioButtonInput
-                    obj={{}}
-                    index={{}}
-                    isSelected={{}}
-                    onPress={{}}
-                    buttonInnerColor='#F5CB57'
-                    buttonOuterColor="#f2f2f2"
-                    buttonSize={32}
-                    buttonOuterSize={31}
-                    buttonStyle={{ backgroundColor: '#23232A14' }}
-                />
-                <RadioButtonInput
-                    obj={{}}
-                    index={{}}
-                    isSelected={{}}
-                    onPress={{}}
-                    buttonInnerColor='#F5C'
-                    buttonOuterColor="#f2f2f2"
-                    buttonSize={32}
-                    buttonOuterSize={31}
-                    buttonStyle={{ backgroundColor: '#23232A14', marginLeft:10 }}
-                />
-                <RadioButtonInput
-                    obj={{}}
-                    index={{}}
-                    isSelected={{}}
-                    onPress={{}}
-                    buttonInnerColor='#F50'
-                    buttonOuterColor="#f2f2f2"
-                    buttonSize={32}
-                    buttonOuterSize={31}
-                    buttonStyle={{ backgroundColor: '#23232A14', marginLeft:10 }}
-                />
             </View>
 
-            <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('info_forget')} >
-                <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>ИСКАТЬ</Text>
-            </TouchableOpacity>
+            <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+                <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('info_forget')} >
+                    <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>ИСКАТЬ</Text>
+                </TouchableOpacity>
+            </View>
             <BottomSheet
                 ref={bottomSheetKindRef}
                 index={-1}
@@ -228,7 +165,7 @@ const styles = StyleSheet.create({
         textAlign: 'left',
     },
     btn: {
-        marginTop: '20%',
+        marginBottom: '5%',
         backgroundColor: '#F5CB57',
         borderRadius: 12,
         fontSize: 14,

@@ -109,7 +109,7 @@ const SelectCountryCode = ({ navigation }) => {
         return(
             <View style={{ justifyContent: 'center', alignItems: 'center' }} >
                 <Image style={{ width: "50%" }}resizeMode="contain" source={require("../assets/images/Lounge.png")} />
-                <Text style={styles.subtext} >Ничего не найдено</Text>
+                <Text style={[styles.subtext, themeTextStyle]} >Ничего не найдено</Text>
             </View>
         )
     }
@@ -139,6 +139,8 @@ const SelectCountryCode = ({ navigation }) => {
                 containerStyle={{ backgroundColor: null, padding: '3%' }}
                 inputContainerStyle={themeContainerSelectStyle}
                 platform='ios'
+                cancelButtonTitle='Отмена'
+                style={{color: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',}}
             />
             <FlatList
                 data={city.filter(FilterData)}
