@@ -121,7 +121,7 @@ function Profile({ navigation }) {
         await AsyncStorage.removeItem("first_join");
         await AsyncStorage.removeItem("first_name");
         await AsyncStorage.removeItem("last_name");
-        await AsyncStorage.removeItem("patronymic");
+        // await AsyncStorage.removeItem("patronymic");
         await AsyncStorage.removeItem("airport");
         await AsyncStorage.removeItem("airport_iata");
         navigation.dispatch(

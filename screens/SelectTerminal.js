@@ -38,7 +38,7 @@ const SelectTerminal = ({ navigation, route }) => {
         }
         setAirport(air.name);
         setIATA(air.iata);
-        await AsyncStorage.setItem("airport_iata", air.iata);
+        await AsyncStorage.setItem("airport", air.name);
         return air;
     }
 
@@ -92,13 +92,13 @@ const SelectTerminal = ({ navigation, route }) => {
         });
         (async () => {
 
-            const airport = await AsyncStorage.getItem("airport");
-            if (airport != null) {
-                const iata = await AsyncStorage.getItem("airport_iata");
-                const token = await AsyncStorage.getItem('token');
-                const res = await axios.get(domain + "/get_terminals", { params: { "iata": iata }, headers: { "Authorization": "Token " + token } })
+            const airport_iata = await AsyncStorage.getItem("airport_iata");
+            const token = await AsyncStorage.getItem('token');
+            if (airport_iata != null) {
+                setIATA(airport_iata);
+                setAirport(await AsyncStorage.getItem("airport"));
+                const res = await axios.get(domain + "/get_terminals", { params: { "iata": airport_iata }, headers: { "Authorization": "Token " + token } })
                 setTerminals(res.data)
-                setAirport(airport);
             } else {
                 let { status } = await Location.requestForegroundPermissionsAsync();
                 if (status !== 'granted') {
@@ -109,7 +109,6 @@ const SelectTerminal = ({ navigation, route }) => {
                 if (location == null) {
                     navigation.navigate('select_airport');
                 } else {
-                    const token = await AsyncStorage.getItem("token");
                     const res = await axios.get(domain + "/get_airport", { headers: { "Authorization": "Token " + token } })
                     const air = await getAirport(location, res.data);
                     const term = await axios.get(domain + "/get_terminals", { params: { "iata": air.iata }, headers: { "Authorization": "Token " + token } })
@@ -124,7 +123,6 @@ const SelectTerminal = ({ navigation, route }) => {
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
         const token = await AsyncStorage.getItem("token");
-        const iata = await AsyncStorage.getItem("airport_iata");
         const res = await axios.get(domain + "/get_terminals", { params: { "iata": iata }, headers: { "Authorization": "Token " + token } })
         setTerminals(res.data);
         setRefreshing(false);

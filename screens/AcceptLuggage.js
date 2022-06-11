@@ -29,6 +29,7 @@ const AcceptLuggage = ({ navigation, route }) => {
 
     const PayLuggage = async () => {
         const token = await AsyncStorage.getItem("token");
+        console.log(token);
         const data = new FormData();
         data.append("ls", parseInt(await AsyncStorage.getItem("luggage_ls")));
         data.append("kind", parseInt(await AsyncStorage.getItem("luggage_kind")));
@@ -58,7 +59,6 @@ const AcceptLuggage = ({ navigation, route }) => {
             }
         });
         const ret = await res.json();
-        console.log(ret);
         if (ret.status == true){
             await AsyncStorage.setItem("lastLuggage", ret.id.toString());
             await AsyncStorage.removeItem("luggage_ls");
