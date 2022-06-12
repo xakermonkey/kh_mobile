@@ -37,7 +37,7 @@ const AcceptLuggage = ({ navigation, route }) => {
         } else {
             data.append("sale", parseInt(route.params.sale));
         }
-        const keys = (await AsyncStorage.getAllKeys()).filter((obj) => obj.startsWith("luggage_file"));
+        const keys =  (await AsyncStorage.getAllKeys()).filter((obj) => obj.startsWith("luggage_file"));
         for (let i = 0; i < keys.length; i++) {
             let uri = await AsyncStorage.getItem(keys[i]);
             let shir = uri.split(".")
@@ -57,11 +57,8 @@ const AcceptLuggage = ({ navigation, route }) => {
                 'Content-Type': 'multipart/form-data',
             }
         });
-        console.warn('lf');
-
         const ret = await res.json();
-        console.warn(ret);
-        if (ret.status == true) {
+        if (ret.status == true){
             await AsyncStorage.setItem("lastLuggage", ret.id.toString());
             await AsyncStorage.removeItem("luggage_ls");
             await AsyncStorage.removeItem("luggage_kind");
@@ -70,8 +67,8 @@ const AcceptLuggage = ({ navigation, route }) => {
             }
             navigation.dispatch(
                 CommonActions.reset({
-                    index: 0,
-                    routes: [{ name: "qr_code" }]
+                  index: 0,
+                  routes: [{ name: "qr_code" }]
                 }));
         }
     }

@@ -46,7 +46,7 @@ const BiometricScreen = ({ navigation }) => {
 
     const Biomentric = async (press) => {
         await AsyncStorage.setItem("biometric", press.toString())
-        const patr = await AsyncStorage.getItem("patronymic");
+        const patr = await AsyncStorage.getItem("first_name");
         if (patr != null) {
             navigation.dispatch(
                 CommonActions.reset({

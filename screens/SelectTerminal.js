@@ -38,7 +38,7 @@ const SelectTerminal = ({ navigation, route }) => {
         }
         setAirport(air.name);
         setIATA(air.iata);
-        await AsyncStorage.setItem("airport_iata", air.iata);
+        await AsyncStorage.setItem("airport", air.name);
         return air;
     }
 
@@ -66,7 +66,7 @@ const SelectTerminal = ({ navigation, route }) => {
                             <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
 
                         </TouchableOpacity>
-                        {/* 
+                        {/*
                         <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                             <Image
                                 source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
@@ -92,11 +92,12 @@ const SelectTerminal = ({ navigation, route }) => {
         });
         (async () => {
 
-            const airport = await AsyncStorage.getItem("airport");
-            if (airport != null) {
-                const iata = await AsyncStorage.getItem("airport_iata");
-                const token = await AsyncStorage.getItem('token');
-                const res = await axios.get(domain + "/get_terminals", { params: { "iata": iata }, headers: { "Authorization": "Token " + token } })
+            const airport_iata = await AsyncStorage.getItem("airport_iata");
+            const token = await AsyncStorage.getItem('token');
+            if (airport_iata != null) {
+                setIATA(airport_iata);
+                setAirport(await AsyncStorage.getItem("airport"));
+                const res = await axios.get(domain + "/get_terminals", { params: { "iata": airport_iata }, headers: { "Authorization": "Token " + token } })
                 setTerminals(res.data)
                 setAirport(airport);
             } else {
@@ -109,7 +110,6 @@ const SelectTerminal = ({ navigation, route }) => {
                 if (location == null) {
                     navigation.navigate('select_airport');
                 } else {
-                    const token = await AsyncStorage.getItem("token");
                     const res = await axios.get(domain + "/get_airport", { headers: { "Authorization": "Token " + token } })
                     const air = await getAirport(location, res.data);
                     const term = await axios.get(domain + "/get_terminals", { params: { "iata": air.iata }, headers: { "Authorization": "Token " + token } })
@@ -124,7 +124,6 @@ const SelectTerminal = ({ navigation, route }) => {
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
         const token = await AsyncStorage.getItem("token");
-        const iata = await AsyncStorage.getItem("airport_iata");
         const res = await axios.get(domain + "/get_terminals", { params: { "iata": iata }, headers: { "Authorization": "Token " + token } })
         setTerminals(res.data);
         setRefreshing(false);
@@ -162,7 +161,7 @@ const SelectTerminal = ({ navigation, route }) => {
                                 <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
 
                             </TouchableOpacity>
-                            {/* 
+                            {/*
                         <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                             <Image
                                 source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
@@ -175,15 +174,15 @@ const SelectTerminal = ({ navigation, route }) => {
                 headerRight: () => {
                     return (
                         <TouchableOpacity onPress={() => navigation.navigate('profile')}>
-                            <Image
-                                source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
-                                style={{
-                                    width: 100, height: 40
-                                }}
-                                resizeMode='contain'
-                            />
+                        <Image
+                            source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
+                            style={{
+                                width: 100, height: 40
+                            }}
+                            resizeMode='contain'
+                        />
                         </TouchableOpacity>
-                    )
+                        )
                 }
             })
         } else {
@@ -192,11 +191,11 @@ const SelectTerminal = ({ navigation, route }) => {
                     return (
                         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                             <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 10 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
-                                <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
+                                <FontAwesome name="location-arrow" size={28} style={{ color: '#21cfba' }} />
                                 <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
 
                             </TouchableOpacity>
-                            {/* 
+                            {/*
                             <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                                 <Image
                                     source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
@@ -209,17 +208,15 @@ const SelectTerminal = ({ navigation, route }) => {
                 headerRight: () => {
                     return (
                         <TouchableOpacity onPress={() => navigation.navigate('profile')}>
-
-                            <Image
-                                source={colorScheme === 'light' ? require("../assets/images/lost_logo.png") : require("../assets/images/lost_logo_white.png")}
-                                style={{
-                                    width: 100, height: 40
-                                }}
-                                resizeMode='contain'
-                            />
+                        <Image
+                            source={colorScheme === 'light' ? require("../assets/images/lost_logo.png") : require("../assets/images/lost_logo_white.png")}
+                            style={{
+                                width: 100, height: 40
+                            }}
+                            resizeMode='contain'
+                        />
                         </TouchableOpacity>
-
-                    )
+                        )
                 }
             })
         }

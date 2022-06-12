@@ -234,6 +234,13 @@ const AddLuggage = ({ navigation, route }) => {
         </View>)
     }
 
+
+    const saveImage = (obj) => {
+        setImages([...images, obj]);
+    }
+
+    const fun = saveImage;
+
     
     const saveImage = (obj) => {
         setImages([...images, obj]);

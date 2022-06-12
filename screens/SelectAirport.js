@@ -42,10 +42,10 @@ const SelectAirport = ({ navigation }) => {
                 axios.get(domain + "/get_airport", { headers: { "Authorization": "Token " + token } })
                     .then(res => {
                         setAirport(res.data);
-                        AsyncStorage.getItem("airport_iata")
+                        AsyncStorage.getItem("airport")
                             .then(iata => {
                                 if (iata != null) {
-                                    setSelectAirport(res.data.filter(obj => obj.iata == iata)[0]);
+                                    setSelectAirport(res.data.filter(obj => obj.name == iata)[0]);
                                 }
                             });
                     })
