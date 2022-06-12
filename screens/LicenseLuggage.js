@@ -26,7 +26,7 @@ const LicenseLuggage = ({ navigation }) => {
 
 
     return (
-        <SafeAreaView style={[styles.container, themeContainerStyle]}>
+        <View style={[styles.container, themeContainerStyle]}>
             <StatusBar />
             <ScrollView showsVerticalScrollIndicator={false} style={styles.textContainer}>
                 <Text style={[styles.title, themeTextStyle]}>Правила сдачи и хранения багажа</Text>
@@ -135,7 +135,7 @@ const LicenseLuggage = ({ navigation }) => {
                         Вещи на хранение принимаются с объявленной ценностью.
                     </Text>
                 </View>
-                <View style={[styles.abzath, {marginBottom: "40%"}]}>
+                <View style={[styles.abzath, {marginBottom: "45%"}]}>
                     <Text style={[styles.numeric, themeTextStyle]}>7.</Text>
                     <Text style={[styles.li, themeTextStyle]}>
                         Убытки клиента вследствие утраты или повреждения, сделанные при хранении вещей, подлежат возмещению в пределах суммы на оценке (Ст. 923 ГК РФ, в 7.1.12).
@@ -146,7 +146,7 @@ const LicenseLuggage = ({ navigation }) => {
                 <Button activeOpacity={0.9} title="Я согласен с правилами" titleStyle={{ fontFamily: 'Inter_700Bold', fontSize: 14, color: '#000', }} containerStyle={styles.btn} buttonStyle={styles.innertBtn} onPress={() => navigation.navigate('add_luggage')} />
                 <Button activeOpacity={0.9} title="Отмена" titleStyle={[styles.text_secondary, themeTextStyle]} containerStyle={styles.secondary_btn} buttonStyle={[styles.secondary, themeContainerSelectStyle]} onPress={() => navigation.goBack()} />
             </View>
-        </SafeAreaView>
+        </View>
     )
 }
 
@@ -155,11 +155,12 @@ export default LicenseLuggage
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+
     },
     title: {
         fontSize: 30,
         fontFamily: "Inter_800ExtraBold",
-        marginTop: "10%",
+        marginTop: "5%",
         paddingLeft: "5%",
     },
     subtext: {
@@ -168,8 +169,9 @@ const styles = StyleSheet.create({
         marginBottom: 26
     },
     textContainer: {
-        width: '85%',
-        paddingLeft: "5%"
+        // width: '85%',
+        paddingLeft: "5%",
+        paddingHorizontal:'10%'
     },
     abzath: {
         flexDirection: 'row',

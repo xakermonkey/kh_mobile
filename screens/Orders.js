@@ -52,14 +52,16 @@ const Orders = ({ navigation, route }) => {
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
             headerRight: () => {
                 return (
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                        <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
-                            <Image
-                                source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
-                                style={{ width: 24, height: 30 }}
-                            />
-                        </TouchableOpacity>
-                    </View>)
+                    <TouchableOpacity onPress={() => navigation.navigate('profile')}>
+                        <Image
+                            source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
+                            style={{
+                                width: 100, height: 40
+                            }}
+                            resizeMode='contain'
+                        />
+                    </TouchableOpacity>
+                )
             }
         });
         (async () => {

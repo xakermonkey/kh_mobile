@@ -76,7 +76,7 @@ const SelectAirport = ({ navigation }) => {
 
     if (airport.length == 0) {
         return (
-            <View style={{ width: "100%", height: "100%" }} >
+            <View style={[{ width: "100%", height: "100%" }, themeContainerStyle]} >
                 <Loading title={"Загрузка"} />
             </View>
         )

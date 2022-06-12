@@ -62,7 +62,7 @@ const InputLastNameScreen = ({ navigation }) => {
     }
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]}>
-            <Text style={[styles.title, themeTextStyle]} >Введите паспортные данные</Text>
+            <Text style={[styles.title, themeTextStyle]} >Введите личные данные</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>для ускорения обслуживания и получения</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>дополнительных привилегий</Text>
             <Text style={[styles.label, themeSubTextStyle]} >Фамилия</Text>

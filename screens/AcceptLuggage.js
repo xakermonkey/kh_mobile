@@ -37,7 +37,7 @@ const AcceptLuggage = ({ navigation, route }) => {
         } else {
             data.append("sale", parseInt(route.params.sale));
         }
-        const keys =  (await AsyncStorage.getAllKeys()).filter((obj) => obj.startsWith("luggage_file"));
+        const keys = (await AsyncStorage.getAllKeys()).filter((obj) => obj.startsWith("luggage_file"));
         for (let i = 0; i < keys.length; i++) {
             let uri = await AsyncStorage.getItem(keys[i]);
             let shir = uri.split(".")
@@ -57,9 +57,11 @@ const AcceptLuggage = ({ navigation, route }) => {
                 'Content-Type': 'multipart/form-data',
             }
         });
+        console.warn('lf');
+
         const ret = await res.json();
-        console.log(ret);
-        if (ret.status == true){
+        console.warn(ret);
+        if (ret.status == true) {
             await AsyncStorage.setItem("lastLuggage", ret.id.toString());
             await AsyncStorage.removeItem("luggage_ls");
             await AsyncStorage.removeItem("luggage_kind");
@@ -68,8 +70,8 @@ const AcceptLuggage = ({ navigation, route }) => {
             }
             navigation.dispatch(
                 CommonActions.reset({
-                  index: 0,
-                  routes: [{ name: "qr_code" }]
+                    index: 0,
+                    routes: [{ name: "qr_code" }]
                 }));
         }
     }
@@ -77,47 +79,53 @@ const AcceptLuggage = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]}  >
-            <StatusBar/>
-            <View style={[styles.container_price, themeContainerSelectStyle]} >
-                <View style={styles.price_line}>
-                    <Text style={[styles.price_line_text, themeTextStyle]} >Хранение багажа</Text>
-                    <Text style={[styles.price_line_price, themeTextStyle]} >{route.params.price} ₽</Text>
-                </View>
-                <View style={styles.price_line}>
-                    <Text style={[styles.price_line_text, themeTextStyle]} >Списание миль</Text>
-                    <Text style={[styles.price_line_price, themeTextStyle]} >-{route.params.sale == "" ? 0 : route.params.sale} миль</Text>
-                </View>
-                <View style={[styles.line, themeContainerStyle]} ></View>
-                <View style={styles.price_line}>
-                    <Text style={[styles.price_line_text, themeTextStyle]} >Итоговая стоимость</Text>
-                    <Text style={[styles.price_line_price, themeTextStyle]} >{route.params.sale == "" ? route.params.price : parseInt(route.params.price) - parseInt(route.params.sale)} ₽</Text>
-                </View>
-            </View>
-            <View style={styles.type_pay} >
-                <View style={{flexDirection: 'row', alignItems: 'center'}} >
-                    <Image
-                    source={require("../assets/images/visa.png")}
-                    width={50}
-                    height={50}
-                    style={styles.card_img}
-                    />
-                    <View style={{ marginLeft: '5%'}} >
-                        <Text style={[styles.text_type, themeTextStyle]} >Способ оплаты</Text>
-                        <Text style={[styles.subtext, themeSubTextStyle]} >Visa **** 1679</Text>
+            <View style={[styles.container, themeContainerStyle]}>
+                <StatusBar />
+                <View style={{flex:1, justifyContent:'flex-end'}}>
+                <View style={[styles.container_price, themeContainerSelectStyle]} >
+                    <View style={styles.price_line}>
+                        <Text style={[styles.price_line_text, themeTextStyle]} >Хранение багажа</Text>
+                        <Text style={[styles.price_line_price, themeTextStyle]} >{route.params.price} ₽</Text>
+                    </View>
+                    <View style={styles.price_line}>
+                        <Text style={[styles.price_line_text, themeTextStyle]} >Списание миль</Text>
+                        <Text style={[styles.price_line_price, themeTextStyle]} >-{route.params.sale == "" ? 0 : route.params.sale} миль</Text>
+                    </View>
+                    <View style={[styles.line, themeContainerStyle]} ></View>
+                    <View style={styles.price_line}>
+                        <Text style={[styles.price_line_text, themeTextStyle]} >Итоговая стоимость</Text>
+                        <Text style={[styles.price_line_price, themeTextStyle]} >{route.params.sale == "" ? route.params.price : parseInt(route.params.price) - parseInt(route.params.sale)} ₽</Text>
                     </View>
                 </View>
-                <View style={{flexDirection: 'row', alignItems: 'center'}} >
-                    <Text style={[styles.subtext, themeSubTextStyle]} >Изменить</Text>
-                    <Icon
-                        name="chevron-forward-outline"
-                        type="ionicon"
-                        color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                        />
+                </View>
+                <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+                    <View style={styles.type_pay} >
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                            <Image
+                                source={require("../assets/images/visa.png")}
+                                width={50}
+                                height={50}
+                                style={styles.card_img}
+                            />
+                            <View style={{ marginLeft: '5%' }} >
+                                <Text style={[styles.text_type, themeTextStyle]} >Способ оплаты</Text>
+                                <Text style={[styles.subtext, themeSubTextStyle]} >Visa **** 1679</Text>
+                            </View>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                            <Text style={[styles.subtext, themeSubTextStyle]} >Изменить</Text>
+                            <Icon
+                                name="chevron-forward-outline"
+                                type="ionicon"
+                                color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                            />
+                        </View>
+                    </View>
+                    <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={PayLuggage} >
+                        <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Оплатить</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
-            <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={PayLuggage} >
-                <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Оплатить</Text>
-            </TouchableOpacity>
         </SafeAreaView>
     )
 }
@@ -137,13 +145,15 @@ const styles = StyleSheet.create({
     container: {
         // backgroundColor: "#F9F9FA",
         flex: 1,
-        width: "100%",
-        alignItems: "center"
+        padding: '5%'
+        // width: "100%",
+        // alignItems: "center"
     },
     container_price: {
-        width: "85%",
-        borderRadius: 12,
-        marginTop: "50%",
+        // width: "85%",
+        borderRadius: 16,
+        // justifyContent: 'flex-end'
+        // marginTop: "50%",
         // backgroundColor: "#23232A14"
     },
     price_line: {
@@ -168,9 +178,9 @@ const styles = StyleSheet.create({
         fontFamily: "Inter_800ExtraBold"
     },
     btn: {
-        position: 'absolute',
+        // position: 'absolute',
         backgroundColor: '#F5CB57',
-        width: '90%',
+        // width: '90%',
         borderRadius: 12,
         fontSize: 14,
         justifyContent: 'center',
@@ -183,14 +193,14 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.48,
         shadowRadius: 16,
-        bottom: "5%",
+        // bottom: "5%",
         elevation: 12,
     },
     type_pay: {
         flexDirection: 'row',
-        width: "85%",
+        // width: "85%",
         justifyContent: 'space-between',
-        marginTop: "50%"
+        marginBottom: "5%"
     },
     card_img: {
         width: 50,
@@ -205,7 +215,7 @@ const styles = StyleSheet.create({
     },
 
 
-    
+
     lightContainer: {
         color: "#0C0C0D7A",
     },

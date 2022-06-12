@@ -36,6 +36,7 @@ import Where from './screens/SearchItems/Where';
 import When from './screens/SearchItems/When';
 import What from './screens/SearchItems/What';
 import Info from './screens/SearchItems/Info';
+import RuleReferences from './screens/SearchItems/RuleReferences';
 
 import AcceptLuggageMileonAir from './screens/GetLuggage';
 import SelectTransportCompany from './screens/SelectTransportCompany';
@@ -109,6 +110,7 @@ function App() {
         <Stack.Screen name='when_forget' component={When} />
         <Stack.Screen name='what_forget' component={What} />
         <Stack.Screen name='info_forget' component={Info} />
+        <Stack.Screen name='rule_references' component={RuleReferences} />
 
         <Stack.Screen name='orders' component={Orders} />
         <Stack.Screen name='accept_luggage_mileonair' component={AcceptLuggageMileonAir} />

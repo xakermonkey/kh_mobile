@@ -1,13 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react'
 import { Appearance, useColorScheme, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'; 
-import MaskInput, {formatWithMask} from 'react-native-mask-input';
+import { Ionicons } from '@expo/vector-icons';
+import MaskInput, { formatWithMask } from 'react-native-mask-input';
 import axios from 'axios';
 import { domain } from '../domain';
 // import { Ionicons } from '@expo/vector-icons';
 
-const LoginScreen = ({navigation, route}) => {
+const LoginScreen = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
@@ -15,7 +15,7 @@ const LoginScreen = ({navigation, route}) => {
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
 
     const [number, setNumber] = useState(route.params.code);
-    const [mask, setMask] = useState([...route.params.code.split(""), " ", '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/ ]);
+    const [mask, setMask] = useState([...route.params.code.split(""), " ", '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/]);
     const [maskNumber, setMaskNumber] = useState(route.params.code);
 
 
@@ -34,11 +34,11 @@ const LoginScreen = ({navigation, route}) => {
             const { masked, unmasked, obfuscated } = formatWithMask({
                 text: number,
                 mask: mask,
-              });
-            axios.post(domain + "/login", {"number": number})
-            .then((res) => {
-                navigation.navigate('code', { 'login': masked, 'number': number})
-            })
+            });
+            axios.post(domain + "/login", { "number": number })
+                .then((res) => {
+                    navigation.navigate('code', { 'login': masked, 'number': number })
+                })
 
         }
     }, [number, mask])
@@ -46,16 +46,22 @@ const LoginScreen = ({navigation, route}) => {
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]} >
             <StatusBar />
-            <Text style={[styles.title, themeTextStyle]}>Вход</Text>
-            <Text style={[styles.subtext, themeSubTextStyle]} >Введите номер телефона, </Text>
-            <Text style={[styles.subsubtext, themeSubTextStyle]} >чтобы войти в существующий аккаунт </Text>
-            <Text style={[styles.subsubtext, themeSubTextStyle]} >или создать новый</Text>
-            <MaskInput mask={mask} style={[styles.inputText, themeTextStyle]} showSoftInputOnFocus={false} value={number} />
+            <View style={{ flex: 1, alignItems:'center' }}>
+                <Text style={[styles.title, themeTextStyle]}>Вход</Text>
+                <Text style={[styles.subtext, themeSubTextStyle]} >Введите номер телефона, </Text>
+                <Text style={[styles.subsubtext, themeSubTextStyle]} >чтобы войти в существующий аккаунт </Text>
+                <Text style={[styles.subsubtext, themeSubTextStyle]} >или создать новый</Text>
+            </View>
+
+            <View style={{ flex: 1 }}>
+                <MaskInput mask={mask} style={[styles.inputText, themeTextStyle]} showSoftInputOnFocus={false} value={number} />
+            </View>
 
             <View style={{
-                bottom: 48,
-                position: 'absolute',
-                alignItems:'center'
+                bottom: 20,
+                // position: 'absolute',
+                alignItems: 'center',
+                flex: 2,
             }}>
                 <TouchableOpacity onPress={() => navigation.navigate('license')}>
                     <Text style={[{ fontFamily: 'Inter_400Regular', fontSize: 14, paddingHorizontal: 99, textAlign: 'center' }, themeSubTextStyle]} >Вводя свой номер телефона вы соглашаетесь с <Text style={[{ fontFamily: 'Inter_700Bold' }, themeSubTextStyle]} >Правилами</Text></Text>
@@ -112,9 +118,10 @@ const styles = StyleSheet.create({
         lineHeight: 24,
     },
     inputText: {
+        // flex:1,
         fontSize: 32,
         fontFamily: "Inter_800ExtraBold",
-        marginTop: '25%'
+        // marginTop: '25%'
     },
     keyboard: {
 

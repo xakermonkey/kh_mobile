@@ -66,7 +66,7 @@ const SelectTerminal = ({ navigation, route }) => {
                             <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
 
                         </TouchableOpacity>
-{/* 
+                        {/* 
                         <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                             <Image
                                 source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
@@ -79,15 +79,15 @@ const SelectTerminal = ({ navigation, route }) => {
             headerRight: () => {
                 return (
                     <TouchableOpacity onPress={() => navigation.navigate('profile')}>
-                    <Image
-                        source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
-                        style={{
-                            width: 100, height: 40
-                        }}
-                        resizeMode='contain'
-                    />
+                        <Image
+                            source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
+                            style={{
+                                width: 100, height: 40
+                            }}
+                            resizeMode='contain'
+                        />
                     </TouchableOpacity>
-                    )
+                )
             }
         });
         (async () => {
@@ -160,28 +160,30 @@ const SelectTerminal = ({ navigation, route }) => {
                             <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 10 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
                                 <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
                                 <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
-    
+
                             </TouchableOpacity>
-    {/* 
-                            <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
-                                <Image
-                                    source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
-                                    style={{ width: 24, height: 30 }}
-                                />
-                            </TouchableOpacity> */}
+                            {/* 
+                        <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
+                            <Image
+                                source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
+                                style={{ width: 24, height: 30 }}
+                            />
+                        </TouchableOpacity> */}
                         </View>
                     )
                 },
                 headerRight: () => {
                     return (
-                        <Image
-                            source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
-                            style={{
-                                width: 100, height: 40
-                            }}
-                            resizeMode='contain'
-                        />
-                        )
+                        <TouchableOpacity onPress={() => navigation.navigate('profile')}>
+                            <Image
+                                source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
+                                style={{
+                                    width: 100, height: 40
+                                }}
+                                resizeMode='contain'
+                            />
+                        </TouchableOpacity>
+                    )
                 }
             })
         } else {
@@ -192,9 +194,9 @@ const SelectTerminal = ({ navigation, route }) => {
                             <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 10 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
                                 <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
                                 <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
-    
+
                             </TouchableOpacity>
-    {/* 
+                            {/* 
                             <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                                 <Image
                                     source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
@@ -206,14 +208,18 @@ const SelectTerminal = ({ navigation, route }) => {
                 },
                 headerRight: () => {
                     return (
-                        <Image
-                            source={colorScheme === 'light' ? require("../assets/images/lost_logo.png") : require("../assets/images/lost_logo_white.png")}
-                            style={{
-                                width: 100, height: 40
-                            }}
-                            resizeMode='contain'
-                        />
-                        )
+                        <TouchableOpacity onPress={() => navigation.navigate('profile')}>
+
+                            <Image
+                                source={colorScheme === 'light' ? require("../assets/images/lost_logo.png") : require("../assets/images/lost_logo_white.png")}
+                                style={{
+                                    width: 100, height: 40
+                                }}
+                                resizeMode='contain'
+                            />
+                        </TouchableOpacity>
+
+                    )
                 }
             })
         }

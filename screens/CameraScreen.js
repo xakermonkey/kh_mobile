@@ -17,7 +17,7 @@ const CameraScreen = ({navigation, route}) => {
                 name: `img${route.params.img.length + 1}.${shir}`
             }
             // console.log(obj)
-            route.params.func((images) => [...images, obj]);
+            route.params.func(obj);
             navigation.goBack();
     }
 

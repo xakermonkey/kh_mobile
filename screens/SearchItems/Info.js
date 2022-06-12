@@ -36,7 +36,13 @@ const Info = ({ navigation }) => {
             <View style={{flex:1,justifyContent:'center'}}>
             <Text style={[styles.title, themeTextStyle]} >Похоже мы обнаружили вещи похожие на ваши.
                 Для получения своих вещей обратитесь в единый call center службы розыска по тел 8-800 - *****</Text>
+
+                <TouchableOpacity activeOpacity={.9} onPress={() => navigation.navigate('rule_references')} >
+                <Text style={[{ fontFamily: 'Inter_700Bold', textAlign:'center', marginTop:'5%' }, themeSubTextStyle]}>Правила выдачи забытых и найденных вещей и предметов в камере хранения багажа</Text>
+            </TouchableOpacity>
                 </View>
+
+                
 
             <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('select_terminal')} >
                 <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>К терминалам</Text>

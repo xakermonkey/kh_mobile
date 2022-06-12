@@ -235,8 +235,15 @@ const AddLuggage = ({ navigation, route }) => {
     }
 
     
+    const saveImage = (obj) => {
+        setImages([...images, obj]);
+    }
+
+    const fun = saveImage;
+
+    
     const showCamera = () => {
-        navigation.navigate("camera", {func: setImages, img: images})
+        navigation.navigate("camera", {func: fun, img: images})
     }
 
     return (
@@ -280,7 +287,7 @@ const AddLuggage = ({ navigation, route }) => {
                         <View style={styles.container_select} >
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Text style={[styles.label, themeSubTextStyle]} >Камера хранения</Text>
-                                <TouchableOpacity onPress={handlePresentModalInfoPress} ><Feather name="info" size={18} color="#0C0C0D7A" style={{ marginLeft: "10%" }} /></TouchableOpacity>
+                                <TouchableOpacity onPress={handlePresentModalInfoPress} ><Feather name="info" size={18}  style={[{ marginLeft: "10%" }, themeTextStyle]} /></TouchableOpacity>
                             </View>
                             <TouchableOpacity onPress={() => handlePresentModalTerminalPress()} style={[styles.select, themeContainerSelectStyle]} >
                                 <Text style={[styles.value, themeTextStyle]} >Терминал {selectTerminal.terminal}, {selectTerminal.floor} этаж</Text>
@@ -318,7 +325,7 @@ const AddLuggage = ({ navigation, route }) => {
                                     {images.map((item, id) => {
                                         return (<TouchableOpacity activeOpacity='0.9' onPress={() => Remove(id)} key={id} ><Image source={{ uri: item.uri }} style={{ width: 56, height: 56, marginRight: 10, borderRadius: 4 }} /></TouchableOpacity>);
                                     })}
-                                    <TouchableOpacity onPress={showCamera} style={styles.add} ><Image height='56' source={require('../assets/images/PlusCircle.png')} /></TouchableOpacity>
+                                    <TouchableOpacity onPress={showCamera} style={styles.add} ><Image height='56' source={colorScheme === 'light' ? require('../assets/images/PlusCircle.png') : require('../assets/images/PlusCircle_white.png')} /></TouchableOpacity>
                                 </ScrollView>
                             }
                         </View>
@@ -411,20 +418,20 @@ const AddLuggage = ({ navigation, route }) => {
                 <Text style={[styles.bottom_title, themeTextStyle]} >Информация о камере хранения</Text>
                 <View style={{ padding: '4%' }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: "5%" }} >
-                        <Text style={{ fontSize: 14, color: "#000000", fontFamily: "Inter_600SemiBold" }} >Расположение</Text>
+                        <Text style={[{ fontSize: 14, fontFamily: "Inter_600SemiBold" }, themeTextStyle]} >Расположение</Text>
                         <View style={{}}>
-                            <Text style={{ textAlign: "right", fontSize: 12, fontFamily: "Inter_500Medium", color: "#0C0C0D7A" }} >Терминал {selectTerminal.terminal}, {selectTerminal.floor} этаж</Text>
-                            <Text style={{ textAlign: "right", fontSize: 12, fontFamily: "Inter_500Medium", color: "#0C0C0D7A" }} >{selectTerminal.location}</Text>
+                            <Text style={[{ textAlign: "right", fontSize: 12, fontFamily: "Inter_500Medium" }, themeSubTextStyle]} >Терминал {selectTerminal.terminal}, {selectTerminal.floor} этаж</Text>
+                            <Text style={[{ textAlign: "right", fontSize: 12, fontFamily: "Inter_500Medium" }, themeSubTextStyle]} >{selectTerminal.location}</Text>
                         </View>
 
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: "5%" }} >
-                        <Text style={{ fontSize: 14, color: "#000000", fontFamily: "Inter_600SemiBold" }} >Время работы</Text>
-                        <Text style={{ textAlign: "right", fontSize: 12, fontFamily: "Inter_500Medium", color: "#0C0C0D7A" }} >{selectTerminal.work_time}</Text>
+                        <Text style={[{ fontSize: 14, fontFamily: "Inter_600SemiBold" }, themeTextStyle]} >Время работы</Text>
+                        <Text style={[{ textAlign: "right", fontSize: 12, fontFamily: "Inter_500Medium" }, , themeSubTextStyle]} >{selectTerminal.work_time}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: "5%" }} >
-                        <Text style={{ fontSize: 14, color: "#000000", fontFamily: "Inter_600SemiBold" }} >Условия</Text>
-                        <Text style={{ textAlign: "right", fontSize: 12, fontFamily: "Inter_500Medium", color: "#0C0C0D7A" }} >{selectTerminal.conditions}</Text>
+                        <Text style={[{ fontSize: 14, fontFamily: "Inter_600SemiBold" }, themeTextStyle]} >Условия</Text>
+                        <Text style={[{ textAlign: "right", fontSize: 12, fontFamily: "Inter_500Medium"}, themeSubTextStyle]} >{selectTerminal.conditions}</Text>
                     </View>
                 </View>
                 <TouchableOpacity activeOpacity={.9} style={[styles.btn, { width: "90%", alignSelf: 'center', marginTop: "10%" }]} onPress={() => bottomSheetInfoRef.current.close()} >
