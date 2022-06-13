@@ -119,7 +119,7 @@ const When = ({ navigation }) => {
                     onChange={onChange}
                     locale={"ru-RU"}
                     maximumDate={new Date()}
-                    style={{ width: 150, height: 100, right: 5 }}
+                    style={{ width:147}}
                 />
                 {/* <MaskInput autoFocus value={date} style={[styles.inputtext, themeTextStyle]} mask={mask} onChangeText={(masked, unmasked) => setDate(masked)} /> */}
                 {/* <KeyboardAvoidingView behavior='padding' style={styles.row}> */}

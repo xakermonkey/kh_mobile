@@ -107,9 +107,9 @@ const SelectCountryCode = ({ navigation }) => {
 
     const EmptyComponent = () => {
         return(
-            <View style={{ justifyContent: 'center', alignItems: 'center' }} >
-                <Image style={{ width: "50%" }}resizeMode="contain" source={require("../assets/images/Lounge.png")} />
-                <Text style={[styles.subtext, themeTextStyle]} >Ничего не найдено</Text>
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop:'10%' }} >
+                <Image style={{ height:200 }}resizeMode="contain" source={colorScheme === 'light' ? require("../assets/images/Lounge.png") : require("../assets/images/Lounge_white.png")} />
+                <Text style={[styles.subtext_notfounde, themeTextStyle]} >Ничего не найдено</Text>
             </View>
         )
     }
@@ -173,7 +173,8 @@ const styles = StyleSheet.create({
         fontFamily: "Inter_500Medium",
 
     },
-    subtext: {
+    subtext_notfounde: {
+        marginTop:'5%',
         fontSize: 14,
         fontFamily: "Inter_600SemiBold",
 

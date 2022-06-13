@@ -42,7 +42,7 @@ const CodeScreen = ({ navigation, route }) => {
                     if (res.data.doc.last_name != null) {
                         await AsyncStorage.setItem("last_name", res.data.doc.last_name);
                     }
-                    if(res.data.doc.first_name != null){
+                    if (res.data.doc.first_name != null) {
                         await AsyncStorage.setItem("first_name", res.data.doc.first_name);
                         await AsyncStorage.setItem("first_join", "true");
                     }
@@ -58,7 +58,7 @@ const CodeScreen = ({ navigation, route }) => {
                     // if (res.data.doc.series_number != null) {
                     //     await AsyncStorage.setItem("number_doc", res.data.doc.series_number);
                     // }
-                    
+
                     // if (res.data.doc.birthday != null) {
                     //     await AsyncStorage.setItem("birthday", new Date(res.data.doc.birthday).getTime().toString());
                     // }
@@ -70,23 +70,23 @@ const CodeScreen = ({ navigation, route }) => {
                     if (pin == null) {
                         navigation.dispatch(
                             CommonActions.reset({
-                              index: 0,
-                              routes: [{ name: "changepin", params:{from: "code"} }]
+                                index: 0,
+                                routes: [{ name: "changepin", params: { from: "code" } }]
                             }));
                         return 0;
                     }
                     if (biometric == null) {
                         navigation.dispatch(
                             CommonActions.reset({
-                              index: 0,
-                              routes: [{ name: "biometric"}]
+                                index: 0,
+                                routes: [{ name: "biometric" }]
                             }));
                         return 0;
                     }
                     navigation.dispatch(
                         CommonActions.reset({
-                          index: 0,
-                          routes: [{ name: "pin"}]
+                            index: 0,
+                            routes: [{ name: "pin" }]
                         }));
                     return 0;
                 }
@@ -106,15 +106,18 @@ const CodeScreen = ({ navigation, route }) => {
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]} >
             <StatusBar />
-            <Text style={[styles.title, themeTextStyle]}>Код из СМС</Text>
-            <Text style={[styles.subtext, themeSubTextStyle]} >Введите код из сообщения,</Text>
-            <Text style={[styles.subsubtext, themeSubTextStyle]} >отправленного на номер</Text>
-            <Text style={[styles.subsubtext, themeSubTextStyle]} >{route.params.login}</Text>
-            <TextInput autoFocus style={[styles.inputText, verify ? themeTextStyle : { color: "#9B0000" }]} showSoftInputOnFocus={false} value={code} />
-
+            <View style={{ flex: 0, alignItems: 'center' }}>
+                <Text style={[styles.title, themeTextStyle]}>Код из СМС</Text>
+                <Text style={[styles.subtext, themeSubTextStyle]} >Введите код из сообщения,</Text>
+                <Text style={[styles.subsubtext, themeSubTextStyle]} >отправленного на номер</Text>
+                <Text style={[styles.subsubtext, themeSubTextStyle]} >{route.params.login}</Text>
+            </View>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+                <TextInput autoFocus style={[styles.inputText, verify ? themeTextStyle : { color: "#9B0000" }]} showSoftInputOnFocus={false} value={code} />
+            </View>
             <View style={{
-                bottom: 48,
-                position: 'absolute',
+                bottom: 20,
+                // position: 'absolute',
                 alignItems: 'center'
             }}>
                 <TouchableOpacity onPress={() => navigation.navigate('license')}>
@@ -174,7 +177,7 @@ const styles = StyleSheet.create({
     inputText: {
         fontSize: 32,
         fontFamily: "Inter_800ExtraBold",
-        marginTop: '25%'
+        // marginTop: '25%'
     },
     row: {
         flexDirection: 'row',

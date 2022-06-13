@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     container_price: {
         width: "85%",
         borderRadius: 12,
-        marginTop: "7%",
+        marginTop: "4%",
     },
     price_line: {
         flexDirection: 'row',
@@ -179,12 +179,12 @@ const styles = StyleSheet.create({
     container_location: {
         width: "98%",
         borderRadius: 12,
-        marginTop: "7%",
+        marginTop: "4%",
         alignItems: 'center',
         padding: "4%",
     },
     map: {
-        marginTop: "7%",
+        // marginTop: "%",
         borderRadius: 12
     },
     btn: {

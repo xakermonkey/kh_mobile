@@ -6,6 +6,7 @@ import axios from 'axios';
 import { domain } from '../domain';
 import QRCode from 'react-native-qrcode-svg';
 import { CommonActions } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 const QRCodeScreen = ({ navigation }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
@@ -38,21 +39,25 @@ const QRCodeScreen = ({ navigation }) => {
 
 
     return (
-        <View style={[styles.container, themeContainerStyle]}  >
+        <SafeAreaView style={[styles.container, themeContainerStyle]}  >
             <StatusBar />
-            <View style={{ marginTop: '20%' }} ><QRCode size={225} style={{ marginTop: '20%' }} solor={colorScheme === 'light' ? "black" : "white"} value={`?type=${type}&id=${id}`} /></View>
-            {/* <Image style={{marginTop:'20%'}} source={colorScheme === 'light' ? require("../assets/images/qr_black.png") : require("../assets/images/qr_white.png")} /> */}
-            <Text style={[styles.qr_text, themeTextStyle]}>QR-код</Text>
-            <Text style={[styles.subtext, themeSubTextStyle]}>Покажите QR код сотруднику камеры хранения, чтобы забрать багаж</Text>
+            <View style={[styles.container, themeContainerStyle]} >
+                <View style={{ flex: 1, alignItems:'center' }} >
+                    <QRCode size={225} style={{}} solor={colorScheme === 'light' ? "black" : "white"} value={`?type=${type}&id=${id}`} />
+                    {/* <Image style={{marginTop:'20%'}} source={colorScheme === 'light' ? require("../assets/images/qr_black.png") : require("../assets/images/qr_white.png")} /> */}
+                    <Text style={[styles.qr_text, themeTextStyle]}>QR-код</Text>
+                    <Text style={[styles.subtext, themeSubTextStyle]}>Покажите QR код сотруднику камеры хранения, чтобы забрать багаж</Text>
+                </View>
 
-            <TouchableOpacity activeOpacity={.9} style={[styles.btn, themeButtonStyle]} onPress={() => navigation.dispatch(
-                CommonActions.reset({
-                    index: 0,
-                    routes: [{ name: "select_terminal" }]
-                }))} >
-                <Text style={[{ fontFamily: 'Inter_700Bold' }, themeTextStyle]}>Перейти к заказу</Text>
-            </TouchableOpacity>
-        </View>
+                <TouchableOpacity activeOpacity={.9} style={[styles.btn]} onPress={() => navigation.dispatch(
+                    CommonActions.reset({
+                        index: 0,
+                        routes: [{ name: "select_terminal" }]
+                    }))} >
+                    <Text style={[{ fontFamily: 'Inter_700Bold' }]}>Перейти к заказу</Text>
+                </TouchableOpacity>
+            </View>
+        </SafeAreaView>
     )
 }
 
@@ -67,17 +72,18 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        padding: '3%',
-        alignItems: "center"
+        padding: '5%',
+        // alignItems: "center"
     },
     qr_text: {
-        marginTop: '30%',
+        marginTop: '20%',
         fontSize: 28,
         fontFamily: "Inter_800ExtraBold"
     },
     btn: {
-        position: 'absolute',
-        width: '100%',
+        // position: 'absolute',
+        // width: '100%',
+        backgroundColor: '#F5CB57',
         borderRadius: 12,
         fontSize: 14,
         justifyContent: 'center',
@@ -90,7 +96,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.48,
         shadowRadius: 16,
-        bottom: '5%',
+        // bottom: '5%',
         elevation: 12,
     },
 

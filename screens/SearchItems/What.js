@@ -32,8 +32,9 @@ const What = ({ navigation }) => {
         });
         (async () => {
             const iata = await AsyncStorage.getItem("airport_iata");
+            const airport = await AsyncStorage.getItem("airport");
             const token = await AsyncStorage.getItem("token");
-            const res = await axios.get(domain + "/add_luggage", { params: { iata: iata }, headers: { "Authorization": "Token " + token } });
+            const res = await axios.get(domain + "/add_luggage", { params: { iata: iata, airport: airport }, headers: { "Authorization": "Token " + token } });
             setKind(res.data.kind);
             setSelectKind(res.data.kind[0]);
         })();

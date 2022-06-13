@@ -60,9 +60,12 @@ const ChangePinScreen = ({ navigation, route }) => {
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]}>
             <StatusBar />
+            <View style={{ flex: 0, alignItems:'center' }}>
             <Text style={[styles.title, themeTextStyle]}>Установите ПИН-код</Text>
             <Text style={[styles.subtext, themeSubTextStyle]}>для входа</Text>
+</View>
 
+<View style={{flex:1, width:150, alignItems:'center', justifyContent:'center'}}>
             <View style={[styles.row_circle, bFirst ? { marginTop: '16%' } : { marginTop: '25%' }]} >
                 <View style={[styles.circle, firstPin.length < 1 ? themeDot : themeKeyboardStyle]} ></View>
                 <View style={[styles.circle, firstPin.length < 2 ? themeDot : themeKeyboardStyle]} ></View>
@@ -79,9 +82,10 @@ const ChangePinScreen = ({ navigation, route }) => {
                 </View>
             }
             { bad && <Text style={[{ color: '#FF3956', fontFamily: 'Inter_400Regular', fontSize: 12, textAlign: 'center' }]} >ПИН-коды не совпадают</Text>}
+            </View>
 <View style={{
-    bottom: 48,
-    position: 'absolute',
+    bottom: 20,
+    // position: 'absolute',
     alignItems: 'center'
 }}>
     <TouchableOpacity onPress={() => navigation.navigate('license')}>
@@ -143,16 +147,18 @@ const styles = StyleSheet.create({
         width: 300
     },
     row_circle: {
+        // flex:1,
         flexDirection: 'row',
-        width: '30%',
+        width: 130,
         justifyContent: 'space-between',
-        marginTop: '25%'
+        // marginTop: '25%'
     },
     row_circle_second: {
+        // flex:1,
         flexDirection: 'row',
-        width: '30%',
+        width: 130,
         justifyContent: 'space-between',
-        marginBottom: 30
+        marginBottom: '5%'
     },
     circle: {
         height: 20,

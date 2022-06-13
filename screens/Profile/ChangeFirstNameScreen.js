@@ -1,5 +1,9 @@
 import React, { useLayoutEffect, useState } from 'react'
-import { Appearance, useColorScheme, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native'
+import {
+    Appearance, useColorScheme, KeyboardAvoidingView,
+    SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity,
+    Keyboard, TouchableWithoutFeedback, View
+} from 'react-native'
 import { Button } from 'react-native-elements'
 import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -26,10 +30,10 @@ const ChangeFirstNameScreen = ({ navigation }) => {
         });
         (async () => {
             const fn = await AsyncStorage.getItem("first_name")
-            if (fn != null){
+            if (fn != null) {
                 setText(fn)
             }
-            
+
         })();
     }, [navigation])
 
@@ -60,7 +64,7 @@ const ChangeFirstNameScreen = ({ navigation }) => {
                     navigation.dispatch(
                         CommonActions.reset({
                             index: 0,
-                            routes: [{ name: "select_terminal" },{ name: "profile" }]
+                            routes: [{ name: "select_terminal" }, { name: "profile" }]
                         }));
 
                 }
@@ -71,15 +75,25 @@ const ChangeFirstNameScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]}>
-            <Text style={[styles.title, themeTextStyle]} >Введите паспортные данные</Text>
-            <Text style={[styles.subtext, themeSubTextStyle]}>для ускорения обслуживания и получения</Text>
-            <Text style={[styles.subtext, themeSubTextStyle]}>дополнительных привилегий</Text>
-            <Text style={[styles.label, themeTextStyle]} >Имя</Text>
-            <TextInput autoFocus value={text} style={[styles.inputtext, bad ? {color: "#FF3956"} : themeTextStyle]} onChangeText={(text) => {setBad(false);setText(text)}} />
-            <TouchableOpacity style={styles.btn} onPress={setDoc}>
-                <Text style={styles.btn_text}>Сохранить</Text>
-            </TouchableOpacity>
-        </SafeAreaView>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false} >
+                <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+                    <View style={{ justifyContent: 'flex-end', flex: 1 }}>
+                        <View style={{ alignItems: 'center', flex: 1 }}>
+                            <Text style={[styles.title, themeTextStyle]} >Изменение личных данных</Text>
+
+                            <Text style={[styles.label, themeTextStyle]} >Имя</Text>
+                            <TextInput autoFocus value={text} style={[styles.inputtext, bad ? { color: "#FF3956" } : themeTextStyle]} onChangeText={(text) => { setBad(false); setText(text) }} />
+                        </View>
+                        <View style={{ flex: 1, justifyContent: 'flex-end', padding: '4%' }}>
+
+                            <TouchableOpacity style={styles.btn} onPress={setDoc}>
+                                <Text style={styles.btn_text}>Сохранить</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </KeyboardAvoidingView>
+            </TouchableWithoutFeedback >
+        </SafeAreaView >
     )
 }
 
@@ -88,8 +102,8 @@ export default ChangeFirstNameScreen
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'flex-start',
+        // alignItems: 'center',
+        // justifyContent: 'flex-start',
     },
     title: {
         fontSize: 20,
@@ -109,7 +123,9 @@ const styles = StyleSheet.create({
     inputtext: {
         fontSize: 32,
         fontFamily: "Inter_800ExtraBold",
-        marginBottom: '35%'
+        // marginBottom: '35%',
+        width: '100%',
+        textAlign: 'center'
     },
     row: {
         flexDirection: 'row',
@@ -124,7 +140,7 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     btn: {
-        width: "90%",
+        // width: "90%",
         backgroundColor: '#F5CB57',
         borderRadius: 12,
         fontSize: 14,

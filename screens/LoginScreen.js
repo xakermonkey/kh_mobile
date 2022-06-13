@@ -46,14 +46,14 @@ const LoginScreen = ({ navigation, route }) => {
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]} >
             <StatusBar />
-            <View style={{ flex: 1, alignItems:'center' }}>
+            <View style={{ flex: 0, alignItems:'center' }}>
                 <Text style={[styles.title, themeTextStyle]}>Вход</Text>
                 <Text style={[styles.subtext, themeSubTextStyle]} >Введите номер телефона, </Text>
                 <Text style={[styles.subsubtext, themeSubTextStyle]} >чтобы войти в существующий аккаунт </Text>
                 <Text style={[styles.subsubtext, themeSubTextStyle]} >или создать новый</Text>
             </View>
 
-            <View style={{ flex: 1 }}>
+            <View style={{ flex:1, justifyContent:'center' }}>
                 <MaskInput mask={mask} style={[styles.inputText, themeTextStyle]} showSoftInputOnFocus={false} value={number} />
             </View>
 
@@ -61,10 +61,11 @@ const LoginScreen = ({ navigation, route }) => {
                 bottom: 20,
                 // position: 'absolute',
                 alignItems: 'center',
-                flex: 2,
+                flex: 0,
+                // backgroundColor:'#0f0'
             }}>
                 <TouchableOpacity onPress={() => navigation.navigate('license')}>
-                    <Text style={[{ fontFamily: 'Inter_400Regular', fontSize: 14, paddingHorizontal: 99, textAlign: 'center' }, themeSubTextStyle]} >Вводя свой номер телефона вы соглашаетесь с <Text style={[{ fontFamily: 'Inter_700Bold' }, themeSubTextStyle]} >Правилами</Text></Text>
+                    <Text style={[{ fontFamily: 'Inter_400Regular', fontSize: 14, paddingHorizontal: 80, textAlign: 'center' }, themeSubTextStyle]} >Вводя свой номер телефона вы соглашаетесь с <Text style={[{ fontFamily: 'Inter_700Bold' }, themeSubTextStyle]} >Правилами</Text></Text>
                 </TouchableOpacity>
                 <View style={styles.keyboard}>
                     <View style={styles.row} >

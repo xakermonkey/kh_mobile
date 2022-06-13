@@ -36,8 +36,7 @@ const SelectTerminal = ({ navigation, route }) => {
                 min_length = Math.sqrt(Math.pow(location.coords.latitude - airorts[i].lat, 2) + Math.pow(location.coords.longitude - airorts[i].lon, 2));
             }
         }
-        setAirport(air.name);
-        setIATA(air.iata);
+        setIATA(iata);
         await AsyncStorage.setItem("airport", air.name);
         return air;
     }
@@ -57,25 +56,6 @@ const SelectTerminal = ({ navigation, route }) => {
             //         <Text style={[styles.subtext, themeSubTextStyle]} >{airport ? "Вы здесь" : "Поиск..."}</Text>
             //     </View>)
             // },
-
-            headerLeft: () => {
-                return (
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                        <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 10 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
-                            <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
-                            <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
-
-                        </TouchableOpacity>
-                        {/*
-                        <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
-                            <Image
-                                source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
-                                style={{ width: 24, height: 30 }}
-                            />
-                        </TouchableOpacity> */}
-                    </View>
-                )
-            },
             headerRight: () => {
                 return (
                     <TouchableOpacity onPress={() => navigation.navigate('profile')}>
@@ -91,15 +71,34 @@ const SelectTerminal = ({ navigation, route }) => {
             }
         });
         (async () => {
-
             const airport_iata = await AsyncStorage.getItem("airport_iata");
             const token = await AsyncStorage.getItem('token');
             if (airport_iata != null) {
                 setIATA(airport_iata);
-                setAirport(await AsyncStorage.getItem("airport"));
+                const airport = await AsyncStorage.getItem("airport");
+                setAirport(airport);
+                navigation.setOptions({
+                    headerLeft: () => {
+                        return (
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                                <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 8 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
+                                    <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
+                                    <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
+
+                                </TouchableOpacity>
+                                {/* 
+                            <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
+                                <Image
+                                    source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
+                                    style={{ width: 24, height: 30 }}
+                                />
+                            </TouchableOpacity> */}
+                            </View>
+                        )
+                    }
+                })
                 const res = await axios.get(domain + "/get_terminals", { params: { "iata": airport_iata }, headers: { "Authorization": "Token " + token } })
                 setTerminals(res.data)
-                setAirport(airport);
             } else {
                 let { status } = await Location.requestForegroundPermissionsAsync();
                 if (status !== 'granted') {
@@ -112,13 +111,33 @@ const SelectTerminal = ({ navigation, route }) => {
                 } else {
                     const res = await axios.get(domain + "/get_airport", { headers: { "Authorization": "Token " + token } })
                     const air = await getAirport(location, res.data);
+                    setAirport(air.name);
+                    navigation.setOptions({
+                        headerLeft: () => {
+                            return (
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                                    <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 8 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
+                                        <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
+                                        <Text style={[styles.title_header, themeTextStyle]} >{air.name}</Text>
+
+                                    </TouchableOpacity>
+                                    {/* 
+                                <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
+                                    <Image
+                                        source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
+                                        style={{ width: 24, height: 30 }}
+                                    />
+                                </TouchableOpacity> */}
+                                </View>
+                            )
+                        }
+                    })
                     const term = await axios.get(domain + "/get_terminals", { params: { "iata": air.iata }, headers: { "Authorization": "Token " + token } })
                     setTerminals(term.data);
                 }
             }
-
         })();
-    }, [navigation, colorScheme, airport])
+    }, [navigation, colorScheme])
 
 
     const onRefresh = useCallback(async () => {
@@ -156,46 +175,12 @@ const SelectTerminal = ({ navigation, route }) => {
                 headerLeft: () => {
                     return (
                         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                            <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 10 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
+                            <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 8 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
                                 <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
                                 <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
 
                             </TouchableOpacity>
-                            {/*
-                        <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
-                            <Image
-                                source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
-                                style={{ width: 24, height: 30 }}
-                            />
-                        </TouchableOpacity> */}
-                        </View>
-                    )
-                },
-                headerRight: () => {
-                    return (
-                        <TouchableOpacity onPress={() => navigation.navigate('profile')}>
-                        <Image
-                            source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
-                            style={{
-                                width: 100, height: 40
-                            }}
-                            resizeMode='contain'
-                        />
-                        </TouchableOpacity>
-                        )
-                }
-            })
-        } else {
-            navigation.setOptions({
-                headerLeft: () => {
-                    return (
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                            <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 10 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
-                                <FontAwesome name="location-arrow" size={28} style={{ color: '#21cfba' }} />
-                                <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
-
-                            </TouchableOpacity>
-                            {/*
+                            {/* 
                             <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
                                 <Image
                                     source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
@@ -208,15 +193,49 @@ const SelectTerminal = ({ navigation, route }) => {
                 headerRight: () => {
                     return (
                         <TouchableOpacity onPress={() => navigation.navigate('profile')}>
-                        <Image
-                            source={colorScheme === 'light' ? require("../assets/images/lost_logo.png") : require("../assets/images/lost_logo_white.png")}
-                            style={{
-                                width: 100, height: 40
-                            }}
-                            resizeMode='contain'
-                        />
+                            <Image
+                                source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
+                                style={{
+                                    width: 100, height: 40
+                                }}
+                                resizeMode='contain'
+                            />
                         </TouchableOpacity>
-                        )
+                    )
+                }
+            })
+        } else {
+            navigation.setOptions({
+                headerLeft: () => {
+                    return (
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                            <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 8 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
+                                <FontAwesome name="location-arrow" size={28} style={{ color: '#21cfba' }} />
+                                <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
+
+                            </TouchableOpacity>
+                            {/* 
+                            <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
+                                <Image
+                                    source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
+                                    style={{ width: 24, height: 30 }}
+                                />
+                            </TouchableOpacity> */}
+                        </View>
+                    )
+                },
+                headerRight: () => {
+                    return (
+                        <TouchableOpacity onPress={() => navigation.navigate('profile')}>
+                            <Image
+                                source={colorScheme === 'light' ? require("../assets/images/lost_logo.png") : require("../assets/images/lost_logo_white.png")}
+                                style={{
+                                    width: 100, height: 40
+                                }}
+                                resizeMode='contain'
+                            />
+                        </TouchableOpacity>
+                    )
                 }
             })
         }
@@ -285,9 +304,9 @@ const SelectTerminal = ({ navigation, route }) => {
     }
     const EmptyComponent = () => {
         return (
-            <View style={{ justifyContent: 'center', alignItems: 'center' }} >
-                <Image style={{ width: "50%" }} resizeMode="contain" source={require("../assets/images/Lounge.png")} />
-                <Text style={[styles.subtext, themeTextStyle]} >Ничего не найдено</Text>
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop:'10%' }} >
+                <Image style={{ height:200 }}resizeMode="contain" source={colorScheme === 'light' ? require("../assets/images/Lounge.png") : require("../assets/images/Lounge_white.png")} />
+                <Text style={[styles.subtext_notfounde, themeTextStyle]} >Ничего не найдено</Text>
             </View>
         )
     }
@@ -469,6 +488,13 @@ const styles = StyleSheet.create({
         // textAlign: 'center'
     },
     subtext: {
+        fontSize: 14,
+        fontFamily: "Inter_600SemiBold",
+        textAlign: 'center',
+        // padding:'10%'
+    },
+    subtext_notfounde: {
+        marginTop:'5%',
         fontSize: 14,
         fontFamily: "Inter_600SemiBold",
         textAlign: 'center',

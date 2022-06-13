@@ -78,9 +78,10 @@ const AddLuggage = ({ navigation, route }) => {
         });
         (async () => {
             const iata = await AsyncStorage.getItem("airport_iata");
+            const airport = await AsyncStorage.getItem("airport");
             const token = await AsyncStorage.getItem("token");
             const term_id = await AsyncStorage.getItem("terminal_id");
-            const res = await axios.get(domain + "/add_luggage", { params: { iata: iata }, headers: { "Authorization": "Token " + token } });
+            const res = await axios.get(domain + "/add_luggage", { params: { iata: iata, airport: airport }, headers: { "Authorization": "Token " + token } });
             setKind(res.data.kind);
             setSelectKind(res.data.kind[0])
             setTerminal(res.data.ls);
@@ -238,23 +239,14 @@ const AddLuggage = ({ navigation, route }) => {
     const saveImage = (obj) => {
         setImages([...images, obj]);
     }
-
     const fun = saveImage;
-
-    
-    const saveImage = (obj) => {
-        setImages([...images, obj]);
-    }
-
-    const fun = saveImage;
-
-    
     const showCamera = () => {
         navigation.navigate("camera", {func: fun, img: images})
     }
 
     return (
         <View style={[{ flex: 1 }, themeContainerStyle]}>
+            <StatusBar />
             <SafeAreaView opacity={1} needsOffscreenAlphaCompositing={true} style={[{
                 backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C', height: '12%', zIndex: 0, shadowColor: "#000"
             },
@@ -278,8 +270,8 @@ const AddLuggage = ({ navigation, route }) => {
 
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false} >
                 <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1, zIndex: -1 }}>
+                    <ScrollView>
                     <View style={[styles.container, themeContainerStyle]}>
-                        <StatusBar />
                         <View style={[styles.container_price, themeContainerSelectStyle]} >
                             <View style={styles.price_line}>
                                 <Text style={[styles.price_line_text, themeTextStyle]} >Хранение багажа</Text>
@@ -368,7 +360,7 @@ const AddLuggage = ({ navigation, route }) => {
                                         <TextInput
                                             value={mile}
                                             placeholder="40"
-                                            style={[styles.text_input, themeTextStyle, { width: 150 }]}
+                                            style={[styles.text_input, themeTextStyle, { width: 120 }]}
                                             keyboardType="number-pad"
                                             onChangeText={text => setMile(text)}
                                             onFocus={() => setBKeyBoardView(true)}
@@ -385,6 +377,7 @@ const AddLuggage = ({ navigation, route }) => {
                         </TouchableOpacity>
                         {/* <View style={{flex:1}}></View> */}
                     </View>
+                    </ScrollView>
                 </KeyboardAvoidingView>
             </TouchableWithoutFeedback>
 
