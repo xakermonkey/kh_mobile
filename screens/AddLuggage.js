@@ -1,7 +1,7 @@
 import {
     Appearance, useColorScheme, StyleSheet, Text, View, SafeAreaView, TouchableOpacity,
     Image, ScrollView, Switch, TextInput, KeyboardAvoidingView,
-    Platform, ActivityIndicator, Keyboard, TouchableWithoutFeedback
+    Platform, ActivityIndicator, Keyboard, TouchableWithoutFeedback, Alert
 } from 'react-native'
 import React, { useLayoutEffect, useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { Icon } from 'react-native-elements';
@@ -16,6 +16,7 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 import { Camera, CameraType } from 'expo-camera';
+import { getBalance, getQrCode } from '../moa';
 
 
 const AddLuggage = ({ navigation, route }) => {
@@ -77,6 +78,10 @@ const AddLuggage = ({ navigation, route }) => {
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
         });
         (async () => {
+            setQR(await AsyncStorage.getItem("qr"));
+            if (qr != null) {
+                setBalance(await getBalance(qr));
+            }
             const iata = await AsyncStorage.getItem("airport_iata");
             const airport = await AsyncStorage.getItem("airport");
             const token = await AsyncStorage.getItem("token");
@@ -94,13 +99,48 @@ const AddLuggage = ({ navigation, route }) => {
     const [images, setImages] = useState([]);
     const [isEnabled, setIsEnabled] = useState(false);
     const [mile, setMile] = useState("")
+    const [qr, setQR] = useState(null);
+    const [balance, setBalance] = useState("0");
     const cameraRef = useRef();
 
 
 
 
     const toggleSwitch = () => {
-        setIsEnabled(!isEnabled)
+        if (qr == null) {
+            Alert.alert("Внимание", "Вы еще не подключились к MILEONAIR",
+                [
+                    { text: "Отмена", style: 'destructive' },
+                    {
+                        text: "Подключить",
+                        onPress: async () => {
+                            const number = await AsyncStorage.getItem("phone_number");
+                            const qr = await getQrCode(number);
+                            await AsyncStorage.setItem("qr", qr);
+                            setQR(qr);
+                            setBalance(await getBalance(qr));
+                            setIsEnabled(true);
+                        },
+                        
+                    }
+                ]);
+        } else {
+            setIsEnabled(!isEnabled)
+        }
+
+    }
+
+
+    const changeMile = (text) => {
+        if (parseInt(text) > parseInt(balance)){
+            setMile(balance.toString());
+            return 0;
+        }  
+        if (parseInt(text) > parseInt(selectTerminal.price_storage) - 1){
+            setMile((parseInt(selectTerminal.price_storage) - 1).toString());
+            return 0;
+        }
+        setMile(text);
     }
 
 
@@ -137,14 +177,14 @@ const AddLuggage = ({ navigation, route }) => {
     const takePhoto = async () => {
         const result = await cameraRef.current.takePictureAsync();
         let shir = result.uri.split(".")
-            shir = shir[shir.length - 1]
-            const obj = {
-                uri: result.uri,
-                type: 'image/' + shir,
-                name: `img${images.length + 1}.${shir}`
-            }
-            // console.log(obj)
-            setImages([...images, obj]);
+        shir = shir[shir.length - 1]
+        const obj = {
+            uri: result.uri,
+            type: 'image/' + shir,
+            name: `img${images.length + 1}.${shir}`
+        }
+        // console.log(obj)
+        setImages([...images, obj]);
     }
 
     const ClickTerminal = (obj) => {
@@ -241,7 +281,7 @@ const AddLuggage = ({ navigation, route }) => {
     }
     const fun = saveImage;
     const showCamera = () => {
-        navigation.navigate("camera", {func: fun, img: images})
+        navigation.navigate("camera", { func: fun, img: images })
     }
 
     return (
@@ -271,112 +311,115 @@ const AddLuggage = ({ navigation, route }) => {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false} >
                 <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1, zIndex: -1 }}>
                     <ScrollView>
-                    <View style={[styles.container, themeContainerStyle]}>
-                        <View style={[styles.container_price, themeContainerSelectStyle]} >
-                            <View style={styles.price_line}>
-                                <Text style={[styles.price_line_text, themeTextStyle]} >Хранение багажа</Text>
-                                <Text style={[styles.price_line_price, themeTextStyle]} >{selectTerminal.price_storage} ₽</Text>
+                        <View style={[styles.container, themeContainerStyle]}>
+                            <View style={[styles.container_price, themeContainerSelectStyle]} >
+                                <View style={styles.price_line}>
+                                    <Text style={[styles.price_line_text, themeTextStyle]} >Хранение багажа</Text>
+                                    <Text style={[styles.price_line_price, themeTextStyle]} >{selectTerminal.price_storage} ₽</Text>
+                                </View>
+                                <View style={[styles.line, themeLineStyle]} ></View>
+                                <View style={styles.price_line}>
+                                    <Text style={[styles.price_line_text, themeTextStyle]} >Продление хранения</Text>
+                                    <Text style={[styles.price_line_price, themeTextStyle]} >{selectTerminal.extension_storage} ₽</Text>
+                                </View>
                             </View>
-                            <View style={[styles.line, themeLineStyle]} ></View>
-                            <View style={styles.price_line}>
-                                <Text style={[styles.price_line_text, themeTextStyle]} >Продление хранения</Text>
-                                <Text style={[styles.price_line_price, themeTextStyle]} >{selectTerminal.extension_storage} ₽</Text>
+                            <View style={styles.container_select} >
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Text style={[styles.label, themeSubTextStyle]} >Камера хранения</Text>
+                                    <TouchableOpacity onPress={handlePresentModalInfoPress} ><Feather name="info" size={18} style={[{ marginLeft: "10%" }, themeTextStyle]} /></TouchableOpacity>
+                                </View>
+                                <TouchableOpacity onPress={() => handlePresentModalTerminalPress()} style={[styles.select, themeContainerSelectStyle]} >
+                                    <Text style={[styles.value, themeTextStyle]} >Терминал {selectTerminal.terminal}, {selectTerminal.floor} этаж</Text>
+                                    <Icon
+                                        name="chevron-down-outline"
+                                        type="ionicon"
+                                        color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                                    />
+                                </TouchableOpacity>
                             </View>
-                        </View>
-                        <View style={styles.container_select} >
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Text style={[styles.label, themeSubTextStyle]} >Камера хранения</Text>
-                                <TouchableOpacity onPress={handlePresentModalInfoPress} ><Feather name="info" size={18}  style={[{ marginLeft: "10%" }, themeTextStyle]} /></TouchableOpacity>
-                            </View>
-                            <TouchableOpacity onPress={() => handlePresentModalTerminalPress()} style={[styles.select, themeContainerSelectStyle]} >
-                                <Text style={[styles.value, themeTextStyle]} >Терминал {selectTerminal.terminal}, {selectTerminal.floor} этаж</Text>
-                                <Icon
-                                    name="chevron-down-outline"
-                                    type="ionicon"
-                                    color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                                />
+                            <TouchableOpacity style={styles.container_select} onPress={handlePresentModalKindPress}>
+                                <Text style={[styles.label, themeSubTextStyle]} >Вид багажа</Text>
+                                <View style={[styles.select, themeContainerSelectStyle]} >
+                                    <Text style={[styles.value, themeTextStyle]} >{selectKind.name}</Text>
+                                    <Icon
+                                        name="chevron-down-outline"
+                                        type="ionicon"
+                                        color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                                    />
+                                </View>
                             </TouchableOpacity>
-                        </View>
-                        <TouchableOpacity style={styles.container_select} onPress={handlePresentModalKindPress}>
-                            <Text style={[styles.label, themeSubTextStyle]} >Вид багажа</Text>
-                            <View style={[styles.select, themeContainerSelectStyle]} >
-                                <Text style={[styles.value, themeTextStyle]} >{selectKind.name}</Text>
-                                <Icon
-                                    name="chevron-down-outline"
-                                    type="ionicon"
-                                    color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                                />
-                            </View>
-                        </TouchableOpacity>
-                        <View style={{}} >
-                            <Text style={[styles.textimage, themeTextStyle]}>Прикрепить фото багажа</Text>
-                            <Text style={[styles.subtext, themeSubTextStyle]}>Сфотографируйте багаж со всех сторон</Text>
-                            {images.length === 0 ?
-                                <TouchableOpacity onPress={showCamera} style={[styles.inputimage, themeContainerSelectStyle]}>
-                                    <EvilIcons style={[{ marginRight: 12, marginTop: 3 }, themeTextStyle]} name="image" size={28} color="black" />
-                                    {/* <Image style={{ marginRight: 12, marginTop: 3 }} source={require('../assets/images/ImageSquare.png')} /> */}
-                                    <View >
-                                        <Text style={[styles.placesub, themeTextStyle]} >Добавить фото</Text>
-                                        <Text style={[styles.placesub, themeSubTextStyle]}>Макс. размер фото 10mb</Text>
-                                    </View>
-                                </TouchableOpacity> :
-                                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ width: "100%", height: 56, flexDirection: 'row', marginTop: "3%" }} >
-                                    {images.map((item, id) => {
-                                        return (<TouchableOpacity activeOpacity='0.9' onPress={() => Remove(id)} key={id} ><Image source={{ uri: item.uri }} style={{ width: 56, height: 56, marginRight: 10, borderRadius: 4 }} /></TouchableOpacity>);
-                                    })}
-                                    <TouchableOpacity onPress={showCamera} style={styles.add} ><Image height='56' source={colorScheme === 'light' ? require('../assets/images/PlusCircle.png') : require('../assets/images/PlusCircle_white.png')} /></TouchableOpacity>
-                                </ScrollView>
-                            }
-                        </View>
-                        <View style={{ height: 150, marginTop: '8%' }}>
-                            <View style={styles.container_mileonair} >
-                                <View  >
-                                    <Text style={[styles.value, themeTextStyle]} >Оплатить милями MILEONAIR</Text>
-                                    <Text style={[styles.label_mile, themeSubTextStyle]} >3 600 миль</Text>
-                                </View>
-                                <Switch
-                                    trackColor={{ false: "#23232A14", true: "#23232A14" }}
-                                    thumbColor={isEnabled ? "#F5CB57" : "#F2F2F3"}
-                                    ios_backgroundColor="#23232A14"
-                                    onValueChange={toggleSwitch}
-                                    value={isEnabled}
-                                />
-                            </View>
-                            {isEnabled &&
-                                <View style={[{ borderRadius: 12, flexDirection: 'row', justifyContent: 'space-between', marginTop: '5%' }, themeContainerSelectStyle]}>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <View style={{ alignItems: 'center', alignContent: 'center', paddingHorizontal: 20, paddingVertical: 6 }}>
-                                            <Icon
-                                                name="airplane"
-                                                type="ionicon"
-                                                color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                                            />
-                                            <Text style={themeSubTextStyle} >миль</Text>
+                            <View style={{}} >
+                                <Text style={[styles.textimage, themeTextStyle]}>Прикрепить фото багажа</Text>
+                                <Text style={[styles.subtext, themeSubTextStyle]}>Сфотографируйте багаж со всех сторон</Text>
+                                {images.length === 0 ?
+                                    <TouchableOpacity onPress={showCamera} style={[styles.inputimage, themeContainerSelectStyle]}>
+                                        <EvilIcons style={[{ marginRight: 12, marginTop: 3 }, themeTextStyle]} name="image" size={28} color="black" />
+                                        {/* <Image style={{ marginRight: 12, marginTop: 3 }} source={require('../assets/images/ImageSquare.png')} /> */}
+                                        <View >
+                                            <Text style={[styles.placesub, themeTextStyle]} >Добавить фото</Text>
+                                            <Text style={[styles.placesub, themeSubTextStyle]}>Макс. размер фото 10mb</Text>
                                         </View>
-                                        <View style={[{ width: 2 }, themeLineStyle]}></View>
+                                    </TouchableOpacity> :
+                                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ width: "100%", height: 56, flexDirection: 'row', marginTop: "3%" }} >
+                                        {images.map((item, id) => {
+                                            return (<TouchableOpacity activeOpacity='0.9' onPress={() => Remove(id)} key={id} ><Image source={{ uri: item.uri }} style={{ width: 56, height: 56, marginRight: 10, borderRadius: 4 }} /></TouchableOpacity>);
+                                        })}
+                                        <TouchableOpacity onPress={showCamera} style={styles.add} ><Image height='56' source={colorScheme === 'light' ? require('../assets/images/PlusCircle.png') : require('../assets/images/PlusCircle_white.png')} /></TouchableOpacity>
+                                    </ScrollView>
+                                }
+                            </View>
+                            <View style={{ height: 150, marginTop: '8%' }}>
+                                <View style={styles.container_mileonair} >
+                                    <View  >
+                                        <Text style={[styles.value, themeTextStyle]} >Оплатить милями MILEONAIR</Text>
+                                        <Text style={[styles.label_mile, themeSubTextStyle]} >{qr != null ? balance + " миль" : "Не подключено"}</Text>
                                     </View>
-
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1, paddingHorizontal: 20 }}>
-                                        <TextInput
-                                            value={mile}
-                                            placeholder="40"
-                                            style={[styles.text_input, themeTextStyle, { width: 120 }]}
-                                            keyboardType="number-pad"
-                                            onChangeText={text => setMile(text)}
-                                            onFocus={() => setBKeyBoardView(true)}
-                                            onBlur={() => setBKeyBoardView(false)}
-                                        />
-                                        <Text style={[{ textAlign: 'right', fontSize: 12, fontFamily: "Inter_400Regular" }, themeSubTextStyle]} >Мининимальное {"\n"}списание 40 миль</Text>
-                                    </View>
+                                    <Switch
+                                        trackColor={{ false: "#23232A14", true: "#23232A14" }}
+                                        thumbColor={isEnabled ? "#F5CB57" : "#F2F2F3"}
+                                        ios_backgroundColor="#23232A14"
+                                        onValueChange={toggleSwitch}
+                                        value={isEnabled}
+                                    />
                                 </View>
-                            }
-                        </View>
-                        <View style={{}} ></View>
-                        <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={createLuggage} >
+                                {isEnabled &&
+                                    <View style={[{ borderRadius: 12, flexDirection: 'row', justifyContent: 'space-between', marginTop: '5%' }, themeContainerSelectStyle]}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <View style={{ alignItems: 'center', alignContent: 'center', paddingHorizontal: 20, paddingVertical: 6 }}>
+                                                <Icon
+                                                    name="airplane"
+                                                    type="ionicon"
+                                                    color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                                                />
+                                                <Text style={themeSubTextStyle} >миль</Text>
+                                            </View>
+                                            <View style={[{ width: 2 }, themeLineStyle]}></View>
+                                        </View>
+
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1, paddingHorizontal: 20 }}>
+                                            <TextInput
+                                                value={mile}
+                                                placeholder="40"
+                                                style={[styles.text_input, themeTextStyle, { width: 120 }]}
+                                                keyboardType="number-pad"
+                                                onChangeText={changeMile}
+                                                onFocus={() => setBKeyBoardView(true)}
+                                                onBlur={() => setBKeyBoardView(false)}
+                                            />
+                                            <Text style={[{ textAlign: 'right', fontSize: 12, fontFamily: "Inter_400Regular" }, themeSubTextStyle]} >Мининимальное {"\n"}списание 40 миль</Text>
+                                        </View>
+                                    </View>
+                                }
+                            </View>
+                            <View style={{}} ></View>
+                            {/* <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('moa_code')} >
+                                <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Перейти к оплате</Text>
+                            </TouchableOpacity> */}
+                            <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={createLuggage} >
                             <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Перейти к оплате</Text>
                         </TouchableOpacity>
-                        {/* <View style={{flex:1}}></View> */}
-                    </View>
+                            {/* <View style={{flex:1}}></View> */}
+                        </View>
                     </ScrollView>
                 </KeyboardAvoidingView>
             </TouchableWithoutFeedback>
@@ -431,7 +474,7 @@ const AddLuggage = ({ navigation, route }) => {
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: "5%" }} >
                         <Text style={[{ fontSize: 14, fontFamily: "Inter_600SemiBold" }, themeTextStyle]} >Условия</Text>
-                        <Text style={[{ textAlign: "right", fontSize: 12, fontFamily: "Inter_500Medium"}, themeSubTextStyle]} >{selectTerminal.conditions}</Text>
+                        <Text style={[{ textAlign: "right", fontSize: 12, fontFamily: "Inter_500Medium" }, themeSubTextStyle]} >{selectTerminal.conditions}</Text>
                     </View>
                 </View>
                 <TouchableOpacity activeOpacity={.9} style={[styles.btn, { width: "90%", alignSelf: 'center', marginTop: "10%" }]} onPress={() => bottomSheetInfoRef.current.close()} >

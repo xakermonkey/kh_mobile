@@ -39,6 +39,7 @@ const CodeScreen = ({ navigation, route }) => {
                     const res = await axios.post(domain + "/set_code", { 'number': route.params.number, 'code': code })
                     await AsyncStorage.setItem("token", res.data.token);
                     await AsyncStorage.setItem("phone", route.params.login);
+                    await AsyncStorage.setItem("phone_number", route.params.number);
                     if (res.data.doc.last_name != null) {
                         await AsyncStorage.setItem("last_name", res.data.doc.last_name);
                     }

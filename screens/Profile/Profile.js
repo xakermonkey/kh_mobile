@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useLayoutEffect, useCallback } from 'react';
 import { CommonActions } from '@react-navigation/native';
-import { Image, StyleSheet, Text, View, TouchableOpacity, ScrollView, Switch, Appearance, useColorScheme, RefreshControl } from 'react-native';
+import { Image, StyleSheet, Text, View, TouchableOpacity, ScrollView, Switch, Appearance, useColorScheme, RefreshControl, Alert } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { Icon } from 'react-native-elements';
 import Loading from '../Loading';
@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { month } from '../../params';
 import { domain, domain_domain } from '../../domain';
 import axios from 'axios';
+import { getQrCode } from '../../moa';
 
 
 function Profile({ navigation }) {
@@ -65,6 +66,10 @@ function Profile({ navigation }) {
         setPhone(ph);
         // console.warn(email);
         setEmail(email);
+        const qr = await AsyncStorage.getItem("qr");
+        if (qr != null){
+            setisMile(true);
+        }
 
         // if (how_get != null) {
         //     setHowGet(how_get);
@@ -147,6 +152,24 @@ function Profile({ navigation }) {
         await Update();
         setRefreshing(false);
     }, []);
+
+
+    const addMileProfile = async () => {
+        if (!isMile){
+            const number = await AsyncStorage.getItem("phone_number");
+            if (number != null){
+                const qr = await getQrCode(number);
+                await AsyncStorage.setItem("qr", qr);
+                Alert.alert("Поздравляем!", "Вы подключились к MILEONAIR");
+            }else{
+                Alert.alert("Error", "error");
+            }
+        }else{
+            await AsyncStorage.removeItem("qr");
+            Alert.alert("Внимание", "Вы отключились от MILEONAIR");
+        }
+        setisMile(!isMile);
+    }
 
     return (
         <View style={[styles.container, themeContainerStyle]}>
@@ -302,7 +325,7 @@ function Profile({ navigation }) {
                                 trackColor={{ false: '#767577', true: '#23232A14' }}
                                 thumbColor={isMile ? '#F5CB57' : '#f4f3f4'}
                                 ios_backgroundColor="#23232A14"
-                                onValueChange={setisMile}
+                                onValueChange={addMileProfile}
                                 value={isMile}
                             />
                         </TouchableOpacity>
