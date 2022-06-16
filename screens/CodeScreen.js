@@ -47,6 +47,9 @@ const CodeScreen = ({ navigation, route }) => {
                         await AsyncStorage.setItem("first_name", res.data.doc.first_name);
                         await AsyncStorage.setItem("first_join", "true");
                     }
+                    if (res.data.qr.qr != null){
+                        await AsyncStorage.setItem("qr", res.data.qr.qr);
+                    }
                     // if (res.data.doc.how_get != null) {
                     //     await AsyncStorage.setItem("how_get", res.data.doc.how_get);
                     // }

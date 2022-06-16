@@ -96,6 +96,7 @@ function Airport({ navigation }) {
                 containerStyle={{ backgroundColor: null, padding: '3%' }}
                 inputContainerStyle={themeContainerSelectStyle}
                 platform='ios'
+                style={{color: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',}}
             />
             <ScrollView style={{ height: '100%' }}>
                 <RefreshControl

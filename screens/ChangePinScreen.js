@@ -88,9 +88,9 @@ const ChangePinScreen = ({ navigation, route }) => {
     // position: 'absolute',
     alignItems: 'center'
 }}>
-    <TouchableOpacity onPress={() => navigation.navigate('license')}>
+    {/* <TouchableOpacity onPress={() => navigation.navigate('license')}>
         <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14, textAlign: 'center' }, themeSubTextStyle]} >Забыли пароль?</Text>
-    </TouchableOpacity>
+    </TouchableOpacity> */}
     <View style={styles.keyboard}>
         <View style={styles.row} >
             <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('1')}  ><Text style={[styles.num, themeTextStyle]} >1</Text></TouchableOpacity>

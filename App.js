@@ -50,6 +50,7 @@ import Airports from './screens/Profile/Airports';
 import Terminals from './screens/Profile/Terminals';
 import ClosedOrders from './screens/Profile/ClosedOrders';
 import PaymentMethods from './screens/Profile/PaymentMethods';
+import HowJoinMOA from './screens/Profile/HowJoinMOA';
 import ChooseLanguage from './screens/Profile/ChooseLanguage';
 
 
@@ -129,6 +130,7 @@ function App() {
         <Stack.Screen name='change_last_name' component={ChangeLastNameScreen} />
         <Stack.Screen name='closed_orders' component={ClosedOrders} />
         <Stack.Screen name='payment_methods' component={PaymentMethods} />
+        <Stack.Screen name='how_join_moa' component={HowJoinMOA} />
         <Stack.Screen name='choose_language' component={ChooseLanguage} />
 
       </Stack.Navigator>

@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { domain } from '../domain';
 import { CommonActions } from '@react-navigation/native';
+import { RCCDiscard } from '../moa';
 
 const AcceptLuggage = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
@@ -64,6 +65,26 @@ const AcceptLuggage = ({ navigation, route }) => {
             await AsyncStorage.removeItem("luggage_kind");
             for (let i = 0; i < keys.length; i++) {
                 await AsyncStorage.removeItem(keys[i]);
+            }
+            if (route.params.sale != "" && parseInt(route.params.sale) != 0){
+                let date = new Date().toISOString().split("T");
+                const code = await AsyncStorage.getItem("confirmation_code");
+                const transaction_uuid = await AsyncStorage.getItem("transaction_uuid");
+                const res = await RCCDiscard({
+                    transaction_uuid: transaction_uuid,
+                    confirmation_code: code,
+                    receipt: {
+                        fn_number: "",
+                        date: `${date[0]} ${date[1].split(".")[0]}`,
+                        organization_name: "",
+                        organization_inn: "",
+                        point_name: "",
+                        kkt_number: "",
+                        operator: "",
+                        type: 0
+                    }
+                })
+                console.warn("OK");
             }
             navigation.dispatch(
                 CommonActions.reset({

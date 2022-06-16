@@ -16,7 +16,7 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 import { Camera, CameraType } from 'expo-camera';
-import { getBalance, getQrCode } from '../moa';
+import { getBalance, getQrCode, initialTransaction, RCCSendMSG } from '../moa';
 
 
 const AddLuggage = ({ navigation, route }) => {
@@ -102,6 +102,7 @@ const AddLuggage = ({ navigation, route }) => {
     const [qr, setQR] = useState(null);
     const [balance, setBalance] = useState("0");
     const cameraRef = useRef();
+    const [bad, setBad] = useState(false);
 
 
 
@@ -121,10 +122,11 @@ const AddLuggage = ({ navigation, route }) => {
                             setBalance(await getBalance(qr));
                             setIsEnabled(true);
                         },
-                        
+
                     }
                 ]);
         } else {
+            setMile("");
             setIsEnabled(!isEnabled)
         }
 
@@ -132,12 +134,14 @@ const AddLuggage = ({ navigation, route }) => {
 
 
     const changeMile = (text) => {
-        if (parseInt(text) > parseInt(balance)){
-            setMile(balance.toString());
-            return 0;
-        }  
-        if (parseInt(text) > parseInt(selectTerminal.price_storage) - 1){
+        // if (parseInt(text) > parseInt(balance)){
+        //     setMile(balance.toString());
+        //     Alert.alert("Предупреждение", "На Вашем счету нет столько миль");
+        //     return 0;
+        // }  
+        if (parseInt(text) > parseInt(selectTerminal.price_storage) - 1) {
             setMile((parseInt(selectTerminal.price_storage) - 1).toString());
+            Alert.alert("Предупреждение", "Максимальное списание баллов: " + (parseInt(selectTerminal.price_storage) - 1).toString())
             return 0;
         }
         setMile(text);
@@ -208,12 +212,37 @@ const AddLuggage = ({ navigation, route }) => {
     }
 
     const createLuggage = async () => {
+        if (parseInt(mile) < 40 && parseInt(mile) != 0) {
+            Alert.alert("Предупреждение", "Минимально возжозмоное списание миль: 40");
+            setBad(true);
+            return 0;
+        }
         await AsyncStorage.setItem("luggage_ls", selectTerminal.id.toString());
         await AsyncStorage.setItem("luggage_kind", selectKind.id.toString());
         for (let i = 0; i < images.length; i++) {
             await AsyncStorage.setItem(`luggage_file${i + 1}`, images[i].uri);
         }
-        navigation.navigate("accept_luggage", { "price": selectTerminal.price_storage, "sale": mile })
+        if (mile == "" || parseInt(mile) == 0) {
+            navigation.navigate("accept_luggage", { "price": selectTerminal.price_storage, "sale": mile })
+            return 0;
+        }
+        if (parseInt(mile) >= 40) {
+
+            // const init = await initialTransaction(qr);
+            // await AsyncStorage.setItem("transaction_uuid", init.transaction_uuid);
+            // const rcc = await RCCSendMSG({
+            //     transaction_uuid: init.transaction_uuid,
+            //     mile_count: parseInt(mile),
+            //     organization_name: "",
+            //     point_name: ""
+            // });
+            // if (rcc.responseCode == 0){
+            navigation.navigate("moa_code", { "price": selectTerminal.price_storage, "sale": mile });
+            // }
+
+        }
+
+
     }
 
     const renderTerminal = (obj) => {
@@ -406,7 +435,7 @@ const AddLuggage = ({ navigation, route }) => {
                                                 onFocus={() => setBKeyBoardView(true)}
                                                 onBlur={() => setBKeyBoardView(false)}
                                             />
-                                            <Text style={[{ textAlign: 'right', fontSize: 12, fontFamily: "Inter_400Regular" }, themeSubTextStyle]} >Мининимальное {"\n"}списание 40 миль</Text>
+                                            <Text style={[{ textAlign: 'right', fontSize: 12, fontFamily: "Inter_400Regular" }, bad ? { color: "#FF3956" } : themeSubTextStyle]} >Мининимальное {"\n"}списание 40 миль</Text>
                                         </View>
                                     </View>
                                 }
@@ -416,8 +445,8 @@ const AddLuggage = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Перейти к оплате</Text>
                             </TouchableOpacity> */}
                             <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={createLuggage} >
-                            <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Перейти к оплате</Text>
-                        </TouchableOpacity>
+                                <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Перейти к оплате</Text>
+                            </TouchableOpacity>
                             {/* <View style={{flex:1}}></View> */}
                         </View>
                     </ScrollView>

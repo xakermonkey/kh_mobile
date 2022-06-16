@@ -22,7 +22,7 @@ export async function initialTransaction(qr){
     {headers: {
         Authorization: "Bearer 77f763e0d3fe1ca63a9030dcecd700fe"
     }});
-    return res.data.data;
+    return res.data.data; // mile_count, transaction_uuid, redeem_part, min_redeem_mile_count
 }
 
 
@@ -43,7 +43,7 @@ export async function RCCSendMSG(data){
     {headers:{
         Authorization: "Bearer 77f763e0d3fe1ca63a9030dcecd700fe"
     }});
-    return res.data;
+    return res.data;    // responseCode, responseMessage
 }
 
 
@@ -53,7 +53,7 @@ export async function RCCFreezy(data){
     {headers:{
         Authorization: "Bearer 77f763e0d3fe1ca63a9030dcecd700fe"
     }});
-    return res.data;
+    return res.data; 
 }
 
 

@@ -289,6 +289,7 @@ const Orders = ({ navigation, route }) => {
                 onRefresh={onRefresh}
                 refreshing={refreshing}
                 ListEmptyComponent={<EmptyComponent />}
+                ListFooterComponent={<View style={{ height: 100}}></View>}
             />
             {selectOrder == null ?
                 <View style={{ position: 'absolute', bottom: '5%', width: '100%' }}>
@@ -301,10 +302,10 @@ const Orders = ({ navigation, route }) => {
                         <Text style={{ fontFamily: 'Inter_700Bold', color: '#000', fontSize: 14 }}>Забрать сейчас</Text>
                         <Text style={styles.subtext_btn}>{totalPrice > 0 ? `Товар на сумму ${totalPrice} ₽` : "Доплата не требуется"}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={.9} style={[styles.btn_2, themeBtn]} onPress={() => navigation.navigate('deliver_home')} >
+                    {/* <TouchableOpacity activeOpacity={.9} style={[styles.btn_2, themeBtn]} onPress={() => navigation.navigate('deliver_home')} >
                         <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14 }, themeBtnSubText]}>Доставить домой</Text>
                         <Text style={[styles.subtext_btn, themeBtnSubText2]}>{totalPrice > 0 ? `1 единицы на сумму ${totalPrice} ₽ + доставка` : "Оплата доставки"}</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
             }
 
@@ -384,7 +385,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: '3%',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     container_location: {
         width: '100%',

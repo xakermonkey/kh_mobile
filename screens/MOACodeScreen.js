@@ -6,11 +6,12 @@ import { domain } from '../domain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { CommonActions } from '@react-navigation/native';
+import { RCCFreezy } from '../moa';
 
 
 
 
-const MOACodeScreen = ({ navigation }) => {
+const MOACodeScreen = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
@@ -33,19 +34,27 @@ const MOACodeScreen = ({ navigation }) => {
                 setCode(code.slice(0, -1));
             }
         } else {
-            if (code.length < 4) {
+            if (code.length < 5) {
                 setCode(code + num);
             }
         }
     };
 
     useEffect(() => {
-        if (code.length === 4) {
+        if (code.length === 5) {
             (async () => {
-
+                // const transiction_uuid = await AsyncStorage.getItem("transiction_uuid");
+                // const res = await RCCFreezy({
+                //     transaction_uuid: transiction_uuid,
+                //     confirmation_code: code
+                // });
+                // if (res.responseCode == 0){
+                //     await AsyncStorage.setItem("confirmation_code", code);
+                    navigation.navigate("accept_luggage", { "price": route.params.price, "sale": route.params.sale })
+                // }
             })();
         }
-        else if (code.length < 4 && !verify) {
+        else if (code.length < 5 && !verify) {
             setVerify(true);
         }
     }, [code])

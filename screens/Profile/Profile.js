@@ -120,15 +120,17 @@ function Profile({ navigation }) {
     }, [navigation, colorScheme])
 
     const Exit = async () => {
-        await AsyncStorage.removeItem("token");
-        await AsyncStorage.removeItem("pin");
-        await AsyncStorage.removeItem("biometric");
-        await AsyncStorage.removeItem("first_join");
-        await AsyncStorage.removeItem("first_name");
-        await AsyncStorage.removeItem("last_name");
-        // await AsyncStorage.removeItem("patronymic");
-        await AsyncStorage.removeItem("airport");
-        await AsyncStorage.removeItem("airport_iata");
+        await AsyncStorage.multiRemove(await AsyncStorage.getAllKeys());
+        // await AsyncStorage.removeItem("token");
+        // await AsyncStorage.removeItem("pin");
+        // await AsyncStorage.removeItem("qr");
+        // await AsyncStorage.removeItem("biometric");
+        // await AsyncStorage.removeItem("first_join");
+        // await AsyncStorage.removeItem("first_name");
+        // await AsyncStorage.removeItem("last_name");
+        // // await AsyncStorage.removeItem("patronymic");
+        // await AsyncStorage.removeItem("airport");
+        // await AsyncStorage.removeItem("airport_iata");
         navigation.dispatch(
             CommonActions.reset({
                 index: 0,
@@ -155,10 +157,13 @@ function Profile({ navigation }) {
 
 
     const addMileProfile = async () => {
+        const token = await AsyncStorage.getItem("token");
         if (!isMile){
             const number = await AsyncStorage.getItem("phone_number");
             if (number != null){
                 const qr = await getQrCode(number);
+                console.warn(qr);
+                await axios.post(domain + "/add_mile_on_air", {"qr": qr}, {headers: {"Authorization": "Token " + token}});
                 await AsyncStorage.setItem("qr", qr);
                 Alert.alert("Поздравляем!", "Вы подключились к MILEONAIR");
             }else{
@@ -166,6 +171,7 @@ function Profile({ navigation }) {
             }
         }else{
             await AsyncStorage.removeItem("qr");
+            await axios.get(domain + "/remove_mile_on_air", {headers: {"Authorization": "Token " + token}});
             Alert.alert("Внимание", "Вы отключились от MILEONAIR");
         }
         setisMile(!isMile);
@@ -329,8 +335,8 @@ function Profile({ navigation }) {
                                 value={isMile}
                             />
                         </TouchableOpacity>
-                        <Text style={[styles.subtext, { lineHeight: 18 }, themeSubTextStyle]} >Мы зарегистрировали Вас в MILEONAIR. Для того, чтобы начать пользоваться милями Вам необходимо скачать мобильное приложение MILEONAIR</Text>
-                        <TouchableOpacity style={styles.inline}>
+                        {/* <Text style={[styles.subtext, { lineHeight: 18 }, themeSubTextStyle]} >Мы зарегистрировали Вас в MILEONAIR. Для того, чтобы начать пользоваться милями Вам необходимо скачать мобильное приложение MILEONAIR</Text> */}
+                        <TouchableOpacity style={styles.inline} onPress={() => navigation.navigate('how_join_moa')}>
                             <View>
                                 <Text style={[styles.text, themeTextStyle]} >Хочу стать участником MILEONAIR</Text>
                             </View>

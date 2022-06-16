@@ -147,6 +147,26 @@ const PinScreen = ({ navigation }) => {
     })
 
 
+    const Exit = async () => {
+        await AsyncStorage.multiRemove(await AsyncStorage.getAllKeys());
+        // await AsyncStorage.removeItem("token");
+        // await AsyncStorage.removeItem("pin");
+        // await AsyncStorage.removeItem("qr");
+        // await AsyncStorage.removeItem("biometric");
+        // await AsyncStorage.removeItem("first_join");
+        // await AsyncStorage.removeItem("first_name");
+        // await AsyncStorage.removeItem("last_name");
+        // // await AsyncStorage.removeItem("patronymic");
+        // await AsyncStorage.removeItem("airport");
+        // await AsyncStorage.removeItem("airport_iata");
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [{ name: "select_country_code" }]
+            }));
+    }
+
+
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]}>
             <StatusBar />
@@ -164,7 +184,7 @@ const PinScreen = ({ navigation }) => {
                 position: 'absolute',
                 alignItems: 'center'
             }}>
-                <TouchableOpacity onPress={() => navigation.navigate('license')}>
+                <TouchableOpacity onPress={Exit}>
                     <Text style={[{ color: '#000', fontFamily: 'Inter_700Bold', fontSize: 14, textAlign: 'center' }, themeSubTextStyle]} >Забыли пароль?</Text>
                 </TouchableOpacity>
                 <View style={styles.keyboard}>
