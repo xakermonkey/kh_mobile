@@ -34,27 +34,31 @@ const MOACodeScreen = ({ navigation, route }) => {
                 setCode(code.slice(0, -1));
             }
         } else {
-            if (code.length < 5) {
+            if (code.length < 4) {
                 setCode(code + num);
             }
         }
     };
 
     useEffect(() => {
-        if (code.length === 5) {
+        if (code.length === 4) {
             (async () => {
-                // const transiction_uuid = await AsyncStorage.getItem("transiction_uuid");
-                // const res = await RCCFreezy({
-                //     transaction_uuid: transiction_uuid,
-                //     confirmation_code: code
-                // });
-                // if (res.responseCode == 0){
-                //     await AsyncStorage.setItem("confirmation_code", code);
+                const transiction_uuid = await AsyncStorage.getItem("transaction_uuid");
+                console.log(transiction_uuid);
+                const res = await RCCFreezy({
+                    transaction_uuid: transiction_uuid,
+                    confirmation_code: code
+                });
+                console.log(res);
+                if (res.responseCode == 0){
+                    await AsyncStorage.setItem("confirmation_code", code);
                     navigation.navigate("accept_luggage", { "price": route.params.price, "sale": route.params.sale })
-                // }
+                }else{
+                    setVerify(false);
+                }
             })();
         }
-        else if (code.length < 5 && !verify) {
+        else if (code.length < 4 && !verify) {
             setVerify(true);
         }
     }, [code])

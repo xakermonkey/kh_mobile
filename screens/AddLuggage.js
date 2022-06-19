@@ -78,9 +78,10 @@ const AddLuggage = ({ navigation, route }) => {
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
         });
         (async () => {
-            setQR(await AsyncStorage.getItem("qr"));
-            if (qr != null) {
-                setBalance(await getBalance(qr));
+            const qrCode = await AsyncStorage.getItem("qr")
+            setQR(qrCode);
+            if (qrCode != null) {
+                setBalance(await getBalance(qrCode));
             }
             const iata = await AsyncStorage.getItem("airport_iata");
             const airport = await AsyncStorage.getItem("airport");
@@ -91,7 +92,6 @@ const AddLuggage = ({ navigation, route }) => {
             setSelectKind(res.data.kind[0])
             setTerminal(res.data.ls);
             setSelectTerminal(res.data.ls.filter((item) => item.id == term_id)[0]);
-            console.log(res.data.ls.filter((item) => item.id == term_id)[0]);
         })();
     }, [navigation, colorScheme])
 
@@ -134,11 +134,11 @@ const AddLuggage = ({ navigation, route }) => {
 
 
     const changeMile = (text) => {
-        // if (parseInt(text) > parseInt(balance)){
-        //     setMile(balance.toString());
-        //     Alert.alert("Предупреждение", "На Вашем счету нет столько миль");
-        //     return 0;
-        // }  
+        if (parseInt(text) > parseInt(balance)){
+            setMile(balance.toString());
+            Alert.alert("Предупреждение", "На Вашем счету нет столько миль");
+            return 0;
+        }  
         if (parseInt(text) > parseInt(selectTerminal.price_storage) - 1) {
             setMile((parseInt(selectTerminal.price_storage) - 1).toString());
             Alert.alert("Предупреждение", "Максимальное списание баллов: " + (parseInt(selectTerminal.price_storage) - 1).toString())
@@ -228,17 +228,17 @@ const AddLuggage = ({ navigation, route }) => {
         }
         if (parseInt(mile) >= 40) {
 
-            // const init = await initialTransaction(qr);
-            // await AsyncStorage.setItem("transaction_uuid", init.transaction_uuid);
-            // const rcc = await RCCSendMSG({
-            //     transaction_uuid: init.transaction_uuid,
-            //     mile_count: parseInt(mile),
-            //     organization_name: "",
-            //     point_name: ""
-            // });
-            // if (rcc.responseCode == 0){
+            const init = await initialTransaction(qr);
+            await AsyncStorage.setItem("transaction_uuid", init.transaction_uuid);
+            const rcc = await RCCSendMSG({
+                transaction_uuid: init.transaction_uuid,
+                mile_count: parseInt(mile),
+                organization_name: "",
+                point_name: ""
+            });
+            if (rcc.responseCode == 0){
             navigation.navigate("moa_code", { "price": selectTerminal.price_storage, "sale": mile });
-            // }
+            }
 
         }
 

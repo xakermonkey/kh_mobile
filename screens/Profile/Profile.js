@@ -162,7 +162,7 @@ function Profile({ navigation }) {
             const number = await AsyncStorage.getItem("phone_number");
             if (number != null){
                 const qr = await getQrCode(number);
-                console.warn(qr);
+                // console.warn(qr);
                 await axios.post(domain + "/add_mile_on_air", {"qr": qr}, {headers: {"Authorization": "Token " + token}});
                 await AsyncStorage.setItem("qr", qr);
                 Alert.alert("Поздравляем!", "Вы подключились к MILEONAIR");

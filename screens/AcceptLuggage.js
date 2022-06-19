@@ -59,8 +59,9 @@ const AcceptLuggage = ({ navigation, route }) => {
             }
         });
         const ret = await res.json();
+        console.log(ret);
         if (ret.status == true){
-            await AsyncStorage.setItem("lastLuggage", ret.id.toString());
+            await AsyncStorage.setItem("lastLuggage", ret.lg.id.toString());
             await AsyncStorage.removeItem("luggage_ls");
             await AsyncStorage.removeItem("luggage_kind");
             for (let i = 0; i < keys.length; i++) {
@@ -74,17 +75,27 @@ const AcceptLuggage = ({ navigation, route }) => {
                     transaction_uuid: transaction_uuid,
                     confirmation_code: code,
                     receipt: {
-                        fn_number: "",
+                        fn_number: "214356612",
                         date: `${date[0]} ${date[1].split(".")[0]}`,
-                        organization_name: "",
-                        organization_inn: "",
-                        point_name: "",
-                        kkt_number: "",
-                        operator: "",
-                        type: 0
+                        organization_name: ret.partner.name,
+                        organization_inn: ret.partner.inn,
+                        point_name: `${ret.ls.airport} Терминал ${ret.ls.terminal}`,
+                        kkt_number: "0000123",
+                        operator: "Хабибулина И.А.",
+                        type: 0,
+                        amount: (ret.lg.price_storage - ret.lg.sale_storage) * 100,
+                        products: [
+                            {
+                                id: ret.lg.id.toString(), 
+                                "name": "Услуга хранения багажа",
+                                "quantity": 1.0,  
+                                "price": (ret.lg.price_storage - ret.lg.sale_storage) * 100,
+                                "amount": (ret.lg.price_storage - ret.lg.sale_storage) * 100
+                            },
+                        ],
+                        url: "" 
                     }
                 })
-                console.warn("OK");
             }
             navigation.dispatch(
                 CommonActions.reset({
