@@ -306,7 +306,7 @@ const SelectTerminal = ({ navigation, route }) => {
         return (
             <View style={{ justifyContent: 'center', alignItems: 'center', marginTop:'10%' }} >
                 <Image style={{ height:200 }}resizeMode="contain" source={colorScheme === 'light' ? require("../assets/images/Lounge.png") : require("../assets/images/Lounge_white.png")} />
-                <Text style={[styles.subtext_notfounde, themeTextStyle]} >Ничего не найдено</Text>
+                <Text style={[styles.subtext_notfounde, themeTextStyle]} >В Аэропорту {airport} пока нет КХ, подключенных к нашему сервису</Text>
             </View>
         )
     }
@@ -388,14 +388,14 @@ const SelectTerminal = ({ navigation, route }) => {
 
     if (airport == null) {
         return (
-            <View style={{ flex: 1 }} >
+            <View style={[{ flex: 1 }, themeContainerStyle]} >
                 <Loading title={"Ищем где Вы"} />
             </View>
         )
     }
     if (terminals == null) {
         return (
-            <View style={{ flex: 1 }} >
+            <View style={[{ flex: 1}, themeContainerStyle ]} >
                 <Loading title={"Подбираем терминал"} />
             </View>
         )

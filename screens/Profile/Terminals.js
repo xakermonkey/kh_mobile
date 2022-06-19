@@ -27,25 +27,25 @@ const Terminals = ({ navigation, route }) => {
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
             // headerBackVisible: false,
             headerBackTitleVisible: false,
-            headerRight: () => {
-                return (
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                        <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
-                            <Image
-                                source={require("../../assets/images/profile.png")}
-                                style={{ width: 24, height: 30 }}
-                            />
-                        </TouchableOpacity>
-                    </View>)
-            }
+            // headerRight: () => {
+            //     return (
+            //         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+            //             <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
+            //                 <Image
+            //                     source={require("../../assets/images/profile.png")}
+            //                     style={{ width: 24, height: 30 }}
+            //                 />
+            //             </TouchableOpacity>
+            //         </View>)
+            // }
         });
         (async () => {
             const airport = await AsyncStorage.getItem("close_airport");
             navigation.setOptions({
                 headerTitle: () => {
-                    return (<View style={{ alignItems: 'center' }} >
+                    return (<View style={{ alignItems: 'center', justifyContent: 'center' }} >
                         <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
-                        <Text style={[styles.subtext, themeSubTextStyle]} >Вы здесь</Text>
+                        {/* <Text style={[styles.subtext, themeSubTextStyle]} >Вы здесь</Text> */}
                     </View>)
                 }
             })
@@ -85,11 +85,26 @@ const Terminals = ({ navigation, route }) => {
     return (
         <View style={[styles.container, themeContainerStyle]} >
             <StatusBar />
-            <ScrollView style={{ height: '100%' }}>
+            <View style={{
+                backgroundColor: '#F5CB57', borderRadius: 16,
+                height: 150, marginBottom: "10%", shadowOffset: {
+                    width: 0,
+                    height: 6,
+                },
+                shadowOpacity: 0.3,
+                shadowRadius: 4,
+                elevation: 1,
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}>
+                <Text style={[styles.text_holder, { color: '#000' }]} >Камеры{'\n'}хранения</Text>
+            </View>
+            <ScrollView style={{  }}>
                 <RefreshControl
                     refreshing={refreshing}
                     onRefresh={onRefresh}
                 />
+                <View style={{paddingHorizontal:'10%'}}>
                 <View style={styles.radiobutton_container}>
                     {terminals.map((obj) => {
                         return (
@@ -123,6 +138,7 @@ const Terminals = ({ navigation, route }) => {
                         )
                     })}
                 </View>
+                </View>
             </ScrollView>
         </View >
     )
@@ -133,8 +149,8 @@ export default Terminals
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop:'3%',
-        padding: '3%',
+        // marginTop:'3%',
+        paddingHorizontal: '10%',
     },
     container_select: {
         borderRadius: 16,

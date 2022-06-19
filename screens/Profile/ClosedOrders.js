@@ -54,17 +54,17 @@ const ClosedOrders = ({ navigation, route }) => {
             },
             headerBackTitleVisible: false,
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
-            headerRight: () => {
-                return (
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                        <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
-                            <Image
-                                source={require("../../assets/images/profile.png")}
-                                style={{ width: 24, height: 30 }}
-                            />
-                        </TouchableOpacity>
-                    </View>)
-            }
+            // headerRight: () => {
+            //     return (
+            //         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+            //             <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
+            //                 <Image
+            //                     source={require("../../assets/images/profile.png")}
+            //                     style={{ width: 24, height: 30 }}
+            //                 />
+            //             </TouchableOpacity>
+            //         </View>)
+            // }
         });
         (async () => {
             const term = await AsyncStorage.getItem("close_terminal_name");
@@ -89,8 +89,8 @@ const ClosedOrders = ({ navigation, route }) => {
 
     const EmptyComponent = () => {
         return (
-            <View style={{ alignContent: 'center', alignItems: 'center', height: '100%', justifyContent: 'center' }}>
-                <Image source={require('../../assets/images/NoOrders.png')} style={{ width: 128, height: 172 }} />
+            <View style={{ alignItems: 'center', justifyContent: 'center', height:500 }}>
+                <Image source={colorScheme === 'light' ? require('../../assets/images/NoOrders.png') : require('../../assets/images/NoOrders_white.png')} style={{ width: 128, height: 172 }} />
                 <Text style={[styles.text, { textAlign: 'center', marginTop: '20%' }, themeTextStyle]} >Заказов нет</Text>
             </View>
         )

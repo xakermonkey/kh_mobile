@@ -72,7 +72,7 @@ function Airport({ navigation }) {
 
     if (airport.length == 0) {
         return (
-            <View style={{ width: "100%", height: "100%" }} >
+            <View style={[{ flex:1 }, themeContainerStyle]} >
                 <Loading title={"Загрузка"} />
             </View>
         )
@@ -93,9 +93,10 @@ function Airport({ navigation }) {
                 placeholder="Найти аэропорт"
                 onChangeText={setSearch}
                 value={search}
-                containerStyle={{ backgroundColor: null, padding: '3%' }}
+                containerStyle={{ backgroundColor: null }}
                 inputContainerStyle={themeContainerSelectStyle}
                 platform='ios'
+                cancelButtonTitle='Отмена'
                 style={{color: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',}}
             />
             <ScrollView style={{ height: '100%' }}>
