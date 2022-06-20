@@ -115,8 +115,10 @@ const AddLuggage = ({ navigation, route }) => {
                     {
                         text: "Подключить",
                         onPress: async () => {
+                            const token = await AsyncStorage.getItem("token");
                             const number = await AsyncStorage.getItem("phone_number");
                             const qr = await getQrCode(number);
+                            await axios.post(domain + "/add_mile_on_air", { "qr": qr }, { headers: { "Authorization": "Token " + token } });
                             await AsyncStorage.setItem("qr", qr);
                             setQR(qr);
                             setBalance(await getBalance(qr));
@@ -134,11 +136,11 @@ const AddLuggage = ({ navigation, route }) => {
 
 
     const changeMile = (text) => {
-        if (parseInt(text) > parseInt(balance)){
+        if (parseInt(text) > parseInt(balance)) {
             setMile(balance.toString());
             Alert.alert("Предупреждение", "На Вашем счету нет столько миль");
             return 0;
-        }  
+        }
         if (parseInt(text) > parseInt(selectTerminal.price_storage) - 1) {
             setMile((parseInt(selectTerminal.price_storage) - 1).toString());
             Alert.alert("Предупреждение", "Максимальное списание баллов: " + (parseInt(selectTerminal.price_storage) - 1).toString())
@@ -163,20 +165,20 @@ const AddLuggage = ({ navigation, route }) => {
 
 
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync();
-        if (!result.cancelled) {
-            let shir = result.uri.split(".")
-            shir = shir[shir.length - 1]
-            const obj = {
-                uri: Platform.OS === 'android' ? result.uri : result.uri, //.replace("file://", ""),
-                type: 'image/' + shir,
-                name: `img${images.length + 1}.${shir}`
-            }
-            // console.log(obj)
-            setImages([...images, obj]);
-        }
-    };
+    // const pickImage = async () => {
+    //     let result = await ImagePicker.launchImageLibraryAsync();
+    //     if (!result.cancelled) {
+    //         let shir = result.uri.split(".")
+    //         shir = shir[shir.length - 1]
+    //         const obj = {
+    //             uri: Platform.OS === 'android' ? result.uri : result.uri, //.replace("file://", ""),
+    //             type: 'image/' + shir,
+    //             name: `img${images.length + 1}.${shir}`
+    //         }
+    //         // console.log(obj)
+    //         setImages([...images, obj]);
+    //     }
+    // };
 
     const takePhoto = async () => {
         const result = await cameraRef.current.takePictureAsync();
@@ -223,6 +225,12 @@ const AddLuggage = ({ navigation, route }) => {
             await AsyncStorage.setItem(`luggage_file${i + 1}`, images[i].uri);
         }
         if (mile == "" || parseInt(mile) == 0) {
+            if (qr != null){
+                const init = await initialTransaction(qr);
+                await AsyncStorage.setItem("transaction_uuid", init.transaction_uuid);
+            }else{
+                await AsyncStorage.removeItem("transaction_uuid");
+            }
             navigation.navigate("accept_luggage", { "price": selectTerminal.price_storage, "sale": mile })
             return 0;
         }
@@ -236,8 +244,8 @@ const AddLuggage = ({ navigation, route }) => {
                 organization_name: "",
                 point_name: ""
             });
-            if (rcc.responseCode == 0){
-            navigation.navigate("moa_code", { "price": selectTerminal.price_storage, "sale": mile });
+            if (rcc.responseCode == 0) {
+                navigation.navigate("moa_code", { "price": selectTerminal.price_storage, "sale": mile });
             }
 
         }

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Appearance, useColorScheme, Image, ScrollView, ImageBackground, RefreshControl } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Appearance, useColorScheme, Image, ScrollView, ImageBackground, RefreshControl, FlatList } from 'react-native'
 import React, { useLayoutEffect, useState, useCallback } from 'react'
 import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
@@ -17,6 +17,7 @@ const Terminals = ({ navigation, route }) => {
     const [terminals, setTerminals] = useState([]);
     // const [airport, setAirport] = useState("");
     const [refreshing, setRefresing] = useState(false);
+    const [airport, setAirport] = useState("");
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -51,6 +52,7 @@ const Terminals = ({ navigation, route }) => {
             })
             const token = await AsyncStorage.getItem("token");
             const iata = await AsyncStorage.getItem("close_airport_iata");
+            setAirport(await AsyncStorage.getItem("close_airport"));
             const res = await axios.get(domain + "/get_closed_termianls", {
                 params: {
                     iata: iata
@@ -81,6 +83,47 @@ const Terminals = ({ navigation, route }) => {
         await AsyncStorage.setItem("close_terminal_name", `Терминал ${item.terminal}, ${item.floor} этаж`);
         navigation.navigate("closed_orders");
     }
+    const EmptyComponent = () => {
+        return (
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop:'10%' }} >
+                <Image style={{ height:200 }}resizeMode="contain" source={colorScheme === 'light' ? require("../../assets/images/Lounge.png") : require("../../assets/images/Lounge_white.png")} />
+                <Text style={[styles.subtext_notfounde, themeTextStyle]} >Закрытых заказов нет</Text>
+            </View>
+        )
+    }
+
+
+    const itemTerminal = ({ item }) => {
+        return (
+            <TouchableOpacity activeOpacity={0.5} onPress={() => customSelectTerinal(item)}>
+                <View style={{
+                    height: 100, marginBottom: "5%", shadowOffset: {
+                        width: 0,
+                        height: 6,
+                    },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 4,
+                    elevation: 1,
+                }}>
+                    <ImageBackground source={{ uri: 'https://31tv.ru/wp-content/uploads/2020/09/rkyr.jpg' }} style={{ flex: 1 }} imageStyle={{ borderRadius: 16, }}>
+                        <View style={{ backgroundColor: 'rgba(0,0,0,0.3)', flexDirection: 'row', flex: 1, borderRadius: 16 }}>
+                            <View style={{ justifyContent: 'flex-end', flex: 1, bottom: 12, left: 12 }}>
+                                <Text style={[styles.title, { color: '#F2F2F3' }]}>Терминал {item.terminal}, {item.floor} этаж</Text>
+                                <Text style={[styles.terminal_subtext, { color: '#F2F2F3' }]} >{item.location}</Text>
+                            </View>
+                            <View style={{ alignItems: 'flex-end', justifyContent: 'flex-start', flex: 1, top: 12, right: 12 }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    {item.luggage != 0 && <Text style={[styles.subtext, { color: '#F2F2F3' }]} >{item.luggage} заказа</Text>}
+                                    <MaterialIcons name="arrow-forward-ios" size={32} color="#F5CB57" />
+                                </View>
+                            </View>
+                        </View>
+                    </ImageBackground>
+
+                </View>
+            </TouchableOpacity>
+        )
+    }
 
     return (
         <View style={[styles.container, themeContainerStyle]} >
@@ -99,47 +142,14 @@ const Terminals = ({ navigation, route }) => {
             }}>
                 <Text style={[styles.text_holder, { color: '#000' }]} >Камеры{'\n'}хранения</Text>
             </View>
-            <ScrollView style={{  }}>
-                <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                />
-                <View style={{paddingHorizontal:'10%'}}>
-                <View style={styles.radiobutton_container}>
-                    {terminals.map((obj) => {
-                        return (
-                            <TouchableOpacity key={obj.id} activeOpacity={0.5} onPress={() => customSelectTerinal(obj)}>
-                                <View style={{
-                                    height: 100, marginBottom: "5%", shadowOffset: {
-                                        width: 0,
-                                        height: 6,
-                                    },
-                                    shadowOpacity: 0.3,
-                                    shadowRadius: 4,
-                                    elevation: 1,
-                                }}>
-                                    <ImageBackground source={{ uri: 'https://31tv.ru/wp-content/uploads/2020/09/rkyr.jpg' }} style={{ flex: 1 }} imageStyle={{ borderRadius: 16, }}>
-                                        <View style={{ backgroundColor: 'rgba(0,0,0,0.3)', flexDirection: 'row', flex: 1, borderRadius: 16 }}>
-                                            <View style={{ justifyContent: 'flex-end', flex: 1, bottom: 12, left: 12 }}>
-                                                <Text style={[styles.title, { color: '#F2F2F3' }]}>Терминал {obj.terminal}, {obj.floor} этаж</Text>
-                                                <Text style={[styles.terminal_subtext, { color: '#F2F2F3' }]} >{obj.location}</Text>
-                                            </View>
-                                            <View style={{ alignItems: 'flex-end', justifyContent: 'flex-start', flex: 1, top: 12, right: 12 }}>
-                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                    {obj.luggage != 0 && <Text style={[styles.subtext, { color: '#F2F2F3' }]} >{obj.luggage} заказа</Text>}
-                                                    <MaterialIcons name="arrow-forward-ios" size={32} color="#F5CB57" />
-                                                </View>
-                                            </View>
-                                        </View>
-                                    </ImageBackground>
-
-                                </View>
-                            </TouchableOpacity>
-                        )
-                    })}
-                </View>
-                </View>
-            </ScrollView>
+            <FlatList
+                contentContainerStyle={{ height: "100%" }}
+                style={{ width: '100%', paddingHorizontal: '9%' }}
+                data={terminals}
+                keyExtractor={item => item.id}
+                renderItem={itemTerminal}
+                ListEmptyComponent={<EmptyComponent />}
+            />
         </View >
     )
 }
@@ -208,6 +218,12 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.48,
         shadowRadius: 16,
         elevation: 12,
+    },
+    subtext_notfounde: {
+        marginTop:'5%',
+        fontSize: 14,
+        fontFamily: "Inter_600SemiBold",
+        textAlign: 'center',
     },
 
 

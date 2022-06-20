@@ -30,6 +30,7 @@ import LicenseLuggage from './screens/LicenseLuggage';
 import AddLuggage from './screens/AddLuggage';
 import DeliverHome from './screens/DeliverHome';
 import MOACodeScreen from './screens/MOACodeScreen';
+import MOACodeScreenExtension from './screens/MOACodeScreenExtension';
 import AcceptLuggage from './screens/AcceptLuggage';
 import QRCodeScreen from './screens/QRCode';
 
@@ -105,6 +106,7 @@ function App() {
         <Stack.Screen options={{ headerShown: false }} name='add_luggage' component={AddLuggage} />
         <Stack.Screen options={{ headerShown: false, presentation: 'modal' }} name='camera'  component={CameraScreen} />
         <Stack.Screen options={{ headerShown: false }} name='moa_code' component={MOACodeScreen} />
+        <Stack.Screen options={{ headerShown: false }} name='moa_code_extension' component={MOACodeScreenExtension} />
         <Stack.Screen name='accept_luggage' component={AcceptLuggage} />
         <Stack.Screen name='qr_code' component={QRCodeScreen} />
         <Stack.Screen name='qr_code_take' component={QRCodeTakeScreen} />

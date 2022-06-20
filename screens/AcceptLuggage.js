@@ -5,7 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { domain } from '../domain';
 import { CommonActions } from '@react-navigation/native';
-import { RCCDiscard } from '../moa';
+import { RCCDiscard, collectMoa } from '../moa';
 
 const AcceptLuggage = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
@@ -28,6 +28,36 @@ const AcceptLuggage = ({ navigation, route }) => {
     }, [navigation])
 
 
+    const collectMOA = async (ret) => {
+        let date = new Date().toISOString().split("T");
+        const transaction_uuid = await AsyncStorage.getItem("transaction_uuid");
+        const res = await collectMoa({
+            transaction_uuid: transaction_uuid,
+            receipt: {
+                fn_number: "214356612",
+                date: `${date[0]} ${date[1].split(".")[0]}`,
+                organization_name: ret.partner.name,
+                organization_inn: ret.partner.inn,
+                point_name: `${ret.ls.airport} Терминал ${ret.ls.terminal}`,
+                kkt_number: "0000123",
+                operator: "Хабибулина И.А.",
+                type: 0,
+                amount: (ret.lg.price_storage - ret.lg.sale_storage) * 100,
+                products: [
+                    {
+                        id: ret.lg.id.toString(),
+                        "name": "Услуга хранения багажа",
+                        "quantity": 1.0,
+                        "price": (ret.lg.price_storage - ret.lg.sale_storage) * 100,
+                        "amount": (ret.lg.price_storage - ret.lg.sale_storage) * 100
+                    },
+                ],
+                url: ""
+            }
+        })
+    }
+
+
     const PayLuggage = async () => {
         const token = await AsyncStorage.getItem("token");
         const data = new FormData();
@@ -38,7 +68,7 @@ const AcceptLuggage = ({ navigation, route }) => {
         } else {
             data.append("sale", parseInt(route.params.sale));
         }
-        const keys =  (await AsyncStorage.getAllKeys()).filter((obj) => obj.startsWith("luggage_file"));
+        const keys = (await AsyncStorage.getAllKeys()).filter((obj) => obj.startsWith("luggage_file"));
         for (let i = 0; i < keys.length; i++) {
             let uri = await AsyncStorage.getItem(keys[i]);
             let shir = uri.split(".")
@@ -59,15 +89,14 @@ const AcceptLuggage = ({ navigation, route }) => {
             }
         });
         const ret = await res.json();
-        console.log(ret);
-        if (ret.status == true){
+        if (ret.status == true) {
             await AsyncStorage.setItem("lastLuggage", ret.lg.id.toString());
             await AsyncStorage.removeItem("luggage_ls");
             await AsyncStorage.removeItem("luggage_kind");
             for (let i = 0; i < keys.length; i++) {
                 await AsyncStorage.removeItem(keys[i]);
             }
-            if (route.params.sale != "" && parseInt(route.params.sale) != 0){
+            if (route.params.sale != "" && parseInt(route.params.sale) != 0) {
                 let date = new Date().toISOString().split("T");
                 const code = await AsyncStorage.getItem("confirmation_code");
                 const transaction_uuid = await AsyncStorage.getItem("transaction_uuid");
@@ -86,21 +115,23 @@ const AcceptLuggage = ({ navigation, route }) => {
                         amount: (ret.lg.price_storage - ret.lg.sale_storage) * 100,
                         products: [
                             {
-                                id: ret.lg.id.toString(), 
+                                id: ret.lg.id.toString(),
                                 "name": "Услуга хранения багажа",
-                                "quantity": 1.0,  
+                                "quantity": 1.0,
                                 "price": (ret.lg.price_storage - ret.lg.sale_storage) * 100,
                                 "amount": (ret.lg.price_storage - ret.lg.sale_storage) * 100
                             },
                         ],
-                        url: "" 
+                        url: ""
                     }
                 })
+            } else {
+                await collectMOA(ret);
             }
             navigation.dispatch(
                 CommonActions.reset({
-                  index: 0,
-                  routes: [{ name: "qr_code" }]
+                    index: 0,
+                    routes: [{ name: "qr_code" }]
                 }));
         }
     }
@@ -110,22 +141,22 @@ const AcceptLuggage = ({ navigation, route }) => {
         <SafeAreaView style={[styles.container, themeContainerStyle]}  >
             <View style={[styles.container, themeContainerStyle]}>
                 <StatusBar />
-                <View style={{flex:1, justifyContent:'flex-end'}}>
-                <View style={[styles.container_price, themeContainerSelectStyle]} >
-                    <View style={styles.price_line}>
-                        <Text style={[styles.price_line_text, themeTextStyle]} >Хранение багажа</Text>
-                        <Text style={[styles.price_line_price, themeTextStyle]} >{route.params.price} ₽</Text>
+                <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+                    <View style={[styles.container_price, themeContainerSelectStyle]} >
+                        <View style={styles.price_line}>
+                            <Text style={[styles.price_line_text, themeTextStyle]} >Хранение багажа</Text>
+                            <Text style={[styles.price_line_price, themeTextStyle]} >{route.params.price} ₽</Text>
+                        </View>
+                        <View style={styles.price_line}>
+                            <Text style={[styles.price_line_text, themeTextStyle]} >Списание миль</Text>
+                            <Text style={[styles.price_line_price, themeTextStyle]} >-{route.params.sale == "" ? 0 : route.params.sale} миль</Text>
+                        </View>
+                        <View style={[styles.line, themeContainerStyle]} ></View>
+                        <View style={styles.price_line}>
+                            <Text style={[styles.price_line_text, themeTextStyle]} >Итоговая стоимость</Text>
+                            <Text style={[styles.price_line_price, themeTextStyle]} >{route.params.sale == "" ? route.params.price : parseInt(route.params.price) - parseInt(route.params.sale)} ₽</Text>
+                        </View>
                     </View>
-                    <View style={styles.price_line}>
-                        <Text style={[styles.price_line_text, themeTextStyle]} >Списание миль</Text>
-                        <Text style={[styles.price_line_price, themeTextStyle]} >-{route.params.sale == "" ? 0 : route.params.sale} миль</Text>
-                    </View>
-                    <View style={[styles.line, themeContainerStyle]} ></View>
-                    <View style={styles.price_line}>
-                        <Text style={[styles.price_line_text, themeTextStyle]} >Итоговая стоимость</Text>
-                        <Text style={[styles.price_line_price, themeTextStyle]} >{route.params.sale == "" ? route.params.price : parseInt(route.params.price) - parseInt(route.params.sale)} ₽</Text>
-                    </View>
-                </View>
                 </View>
                 <View style={{ flex: 1, justifyContent: 'flex-end' }}>
                     <View style={styles.type_pay} >

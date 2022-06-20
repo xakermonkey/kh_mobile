@@ -1,4 +1,4 @@
-import { Appearance, useColorScheme, StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, Switch, TextInput } from 'react-native'
+import { Appearance, useColorScheme, StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, Switch, TextInput, Alert } from 'react-native'
 import React, { useLayoutEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
@@ -10,6 +10,7 @@ import { CommonActions } from '@react-navigation/native';
 import axios from 'axios';
 import { domain } from '../domain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getBalance} from '../moa';
 
 const AcceptLuggageMileonAir = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
@@ -20,11 +21,9 @@ const AcceptLuggageMileonAir = ({ navigation, route }) => {
 
     const [isEnabled, setIsEnabled] = useState(false);
     const [mile, setMile] = useState("")
+    const [qr, setQR] = useState("");
+    const [balance, setBalance] = useState("");
 
-
-    const toggleSwitch = () => {
-        setIsEnabled(!isEnabled)
-    }
 
     const bottomSheetModalRef = useRef(null);
     const snapPoints = useMemo(() => ['30%'], []);
@@ -44,15 +43,55 @@ const AcceptLuggageMileonAir = ({ navigation, route }) => {
             },
             headerBackTitleVisible: false,
             headerTintColor: colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3',
-        })
+        });
+        (async () => {
+            const qr = await AsyncStorage.getItem("qr");
+            if (qr != null){
+                setQR(qr);
+                setBalance(await getBalance(qr));
+            }
+        })();
     }, [navigation])
 
     const setSale = (text) => {
-        if (parseInt(text) > route.params.total_price) {
-            setMile(route.params.total_price.toString());
-        } else {
-            setMile(text);
+        if (parseInt(text) > parseInt(balance)) {
+            setMile(balance.toString());
+            Alert.alert("Предупреждение", "На Вашем счету нет столько миль");
+            return 0;
         }
+        if (parseInt(text) > parseInt(route.params.total_price) - 1) {
+            setMile((parseInt(route.params.total_price) - 1).toString());
+            Alert.alert("Предупреждение", "Максимальное списание баллов: " + (parseInt(route.params.total_price) - 1).toString())
+            return 0;
+        }
+        setMile(text);
+    }
+
+    const toggleSwitch = () => {
+        if (qr == null) {
+            Alert.alert("Внимание", "Вы еще не подключились к MILEONAIR",
+                [
+                    { text: "Отмена", style: 'destructive' },
+                    {
+                        text: "Подключить",
+                        onPress: async () => {
+                            const token = await AsyncStorage.getItem("token");
+                            const number = await AsyncStorage.getItem("phone_number");
+                            const qr = await getQrCode(number);
+                            await axios.post(domain + "/add_mile_on_air", { "qr": qr }, { headers: { "Authorization": "Token " + token } });
+                            await AsyncStorage.setItem("qr", qr);
+                            setQR(qr);
+                            setBalance(await getBalance(qr));
+                            setIsEnabled(true);
+                        },
+
+                    }
+                ]);
+        } else {
+            setMile("");
+            setIsEnabled(!isEnabled)
+        }
+
     }
 
     const Payment = async () => {
@@ -98,7 +137,7 @@ const AcceptLuggageMileonAir = ({ navigation, route }) => {
                 <View style={styles.container_mileonair} >
                     <View  >
                         <Text style={[styles.value, themeTextStyle]} >Оплатить милями MILEONAIR</Text>
-                        <Text style={[styles.label_mile, themeSubTextStyle]} >3 600 миль</Text>
+                        <Text style={[styles.label_mile, themeSubTextStyle]} >{qr != null ? balance + " миль" : "Не подключено"}</Text>
                     </View>
                     <Switch
                         trackColor={{ false: "#23232A14", true: "#23232A14" }}

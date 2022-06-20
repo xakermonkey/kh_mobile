@@ -11,7 +11,7 @@ import { RCCFreezy } from '../moa';
 
 
 
-const MOACodeScreen = ({ navigation, route }) => {
+const MOACodeScreenExtension = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
@@ -114,7 +114,7 @@ const MOACodeScreen = ({ navigation, route }) => {
     )
 }
 
-export default MOACodeScreen
+export default MOACodeScreenExtension
 
 const styles = StyleSheet.create({
     container: {

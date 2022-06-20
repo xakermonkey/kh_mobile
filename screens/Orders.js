@@ -256,8 +256,8 @@ const Orders = ({ navigation, route }) => {
 
     const EmptyComponent = () => {
         return (
-            <View style={{ alignContent: 'center', alignItems: 'center', height: '100%', justifyContent: 'center' }}>
-                <Image source={require('../assets/images/NoOrders.png')} style={{ width: 128, height: 172 }} />
+            <View style={{ alignItems: 'center', justifyContent: 'center', height:500 }}>
+                <Image source={colorScheme === 'light' ? require('../assets/images/NoOrders.png') : require('../assets/images/NoOrders_white.png')} style={{ width: 128, height: 172 }} />
                 <Text style={[styles.text, { textAlign: 'center', marginTop: '20%' }, themeTextStyle]} >Заказов нет</Text>
             </View>
         )
