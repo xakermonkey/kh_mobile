@@ -10,7 +10,7 @@ import { CommonActions } from '@react-navigation/native';
 import axios from 'axios';
 import { domain } from '../domain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getBalance} from '../moa';
+import { getBalance, initialTransaction, collectMoa, RCCSendMSG } from '../moa';
 
 const AcceptLuggageMileonAir = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
@@ -23,6 +23,7 @@ const AcceptLuggageMileonAir = ({ navigation, route }) => {
     const [mile, setMile] = useState("")
     const [qr, setQR] = useState("");
     const [balance, setBalance] = useState("");
+    const [bad, setBad] = useState(false);
 
 
     const bottomSheetModalRef = useRef(null);
@@ -31,6 +32,11 @@ const AcceptLuggageMileonAir = ({ navigation, route }) => {
         bottomSheetModalRef.current?.present();
     }, []);
     const handleSheetChanges = useCallback((index) => {
+                if (parseInt(mile) < 40 && parseInt(mile) != 0) {
+            Alert.alert("Предупреждение", "Минимально возжозмоное списание миль: 40");
+            setBad(true);
+            return 0;
+        }
         console.log('handleSheetChanges', index);
     }, []);
 
@@ -46,7 +52,7 @@ const AcceptLuggageMileonAir = ({ navigation, route }) => {
         });
         (async () => {
             const qr = await AsyncStorage.getItem("qr");
-            if (qr != null){
+            if (qr != null) {
                 setQR(qr);
                 setBalance(await getBalance(qr));
             }
@@ -93,11 +99,40 @@ const AcceptLuggageMileonAir = ({ navigation, route }) => {
         }
 
     }
+    const collectMOA = async (ret) => {
+        let date = new Date().toISOString().split("T");
+        const transaction_uuid = await AsyncStorage.getItem("transaction_uuid");
+        const res = await collectMoa({
+            transaction_uuid: transaction_uuid,
+            receipt: {
+                fn_number: "214356612",
+                date: `${date[0]} ${date[1].split(".")[0]}`,
+                organization_name: ret.partner.name,
+                organization_inn: ret.partner.inn,
+                point_name: `${ret.ls.airport} Терминал ${ret.ls.terminal}`,
+                kkt_number: "0000123",
+                operator: "Хабибулина И.А.",
+                type: 0,
+                amount: route.params.total_price * 100,
+                products: [
+                    {
+                        id: ret.lg.id.toString(),
+                        "name": "Услуга продления хранения багажа",
+                        "quantity": route.params.len_day,
+                        "price": route.params.price_per_day * 100,
+                        "amount": route.params.total_price * 100
+                    },
+                ],
+                url: ""
+            }
+        })
+        console.log(res);
+    }
 
     const Payment = async () => {
         const token = await AsyncStorage.getItem("token");
         const luggageId = await AsyncStorage.getItem("take_luggage");
-        await axios.post(domain + "/take_luggage/" + luggageId,
+        const res = await axios.post(domain + "/take_luggage/" + luggageId,
             {
                 price_for_storage: route.params.total_price,
                 day_len: route.params.len_day,
@@ -108,6 +143,31 @@ const AcceptLuggageMileonAir = ({ navigation, route }) => {
                     "Authorization": "Token " + token
                 }
             })
+        if (mile == "" || parseInt(mile) == 0) {
+            if (qr != null) {
+                const init = await initialTransaction(qr);
+                await AsyncStorage.setItem("transaction_uuid", init.transaction_uuid);
+                console.log(res.data);
+                await collectMOA(res.data)
+            } else {
+                await AsyncStorage.removeItem("transaction_uuid");
+            }
+        }
+        else if (parseInt(mile) >= 40) {
+            console.log(mile);
+            const init = await initialTransaction(qr);
+            await AsyncStorage.setItem("transaction_uuid", init.transaction_uuid);
+            const rcc = await RCCSendMSG({
+                transaction_uuid: init.transaction_uuid,
+                mile_count: parseInt(mile),
+                organization_name: "",
+                point_name: ""
+            });
+            if (rcc.responseCode == 0) {
+                navigation.navigate("moa_code_extension", {...route.params, sale:parseInt(mile) });
+                return 0;
+            }
+        }
         navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: "qr_code_take" }] }))
     }
 
@@ -170,7 +230,7 @@ const AcceptLuggageMileonAir = ({ navigation, route }) => {
                                 keyboardType="number-pad"
                                 maxLength={route.params.total_price.toString().length}
                             />
-                            <Text style={[{ textAlign: 'right', fontSize: 12, fontFamily: "Inter_400Regular" }, themeSubTextStyle]} >Мининимальное {"\n"}списание 40 миль</Text>
+                            <Text style={[{ textAlign: 'right', fontSize: 12, fontFamily: "Inter_400Regular" }, bad ? { color: "#FF3956" } : themeSubTextStyle]} >Мининимальное {"\n"}списание 40 миль</Text>
                         </View>
                     </View>
                 }

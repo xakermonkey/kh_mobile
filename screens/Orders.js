@@ -138,7 +138,7 @@ const Orders = ({ navigation, route }) => {
     const takeItems = async () => {
         await AsyncStorage.setItem("take_luggage", selectOrder.id.toString());
         if (totalPrice > 0) {
-            navigation.navigate('accept_luggage_mileonair', { "total_price": totalPrice, len_day: selectOrder.len_day });
+            navigation.navigate('accept_luggage_mileonair', { "total_price": totalPrice, len_day: selectOrder.len_day, price_per_day: selectOrder.price_per_day });
         } else {
             const token = await AsyncStorage.getItem("token");
             await axios.post(domain + "/take_luggage/" + selectOrder.id,

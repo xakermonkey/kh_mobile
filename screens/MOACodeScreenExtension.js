@@ -6,7 +6,7 @@ import { domain } from '../domain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { CommonActions } from '@react-navigation/native';
-import { RCCFreezy } from '../moa';
+import { RCCFreezy, RCCDiscard } from '../moa';
 
 
 
@@ -40,19 +40,60 @@ const MOACodeScreenExtension = ({ navigation, route }) => {
         }
     };
 
+
+    const PaymentMOA = async (ret) => {
+        let date = new Date().toISOString().split("T");
+        const transaction_uuid = await AsyncStorage.getItem("transaction_uuid");
+        const res = await RCCDiscard({
+            transaction_uuid: transaction_uuid,
+            confirmation_code: code,
+            receipt: {
+                fn_number: "214356612",
+                date: `${date[0]} ${date[1].split(".")[0]}`,
+                organization_name: ret.partner.name,
+                organization_inn: ret.partner.inn,
+                point_name: `${ret.ls.airport} Терминал ${ret.ls.terminal}`,
+                kkt_number: "0000123",
+                operator: "Хабибулина И.А.",
+                type: 0,
+                amount: (route.params.total_price - route.params.sale) * 100,
+                products: [
+                    {
+                        id: ret.lg.id.toString(),
+                        "name": "Услуга продления хранения багажа",
+                        "quantity": route.params.len_day,
+                        "price": (route.params.price_per_day - (route.params.sale / route.params.len_day).toFixed(2)) * 100,
+                        "amount": (route.params.total_price - route.params.sale) * 100,
+                    },
+                ],
+                url: ""
+            }
+        })
+        console.log(res);
+    }
+
     useEffect(() => {
         if (code.length === 4) {
             (async () => {
                 const transiction_uuid = await AsyncStorage.getItem("transaction_uuid");
-                console.log(transiction_uuid);
-                const res = await RCCFreezy({
+                let res = await RCCFreezy({
                     transaction_uuid: transiction_uuid,
                     confirmation_code: code
                 });
-                console.log(res);
                 if (res.responseCode == 0) {
-                    await AsyncStorage.setItem("confirmation_code", code);
-                    navigation.navigate("accept_luggage", { "price": route.params.price, "sale": route.params.sale })
+                    const token = await AsyncStorage.getItem("token");
+                    const luggageId = await AsyncStorage.getItem("take_luggage");
+                    const data = await axios.get(domain + "/get_luggage", {
+                        params: {
+                            pk: luggageId,
+                            full: true
+                        },
+                        headers: {
+                            "Authorization": "Token " + token
+                        }
+                    });
+                    await PaymentMOA(data.data);
+                    navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: "qr_code_take" }] }))
                 } else {
                     setVerify(false);
                 }
