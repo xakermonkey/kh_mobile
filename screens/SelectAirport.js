@@ -1,4 +1,4 @@
-import { Appearance, useColorScheme, StyleSheet, Text, View, ScrollView, RefreshControl, TouchableOpacity, ImageBackground } from 'react-native'
+import { Appearance, useColorScheme, StyleSheet, Text, View, ScrollView, RefreshControl, TouchableOpacity, ImageBackground, ActivityIndicator } from 'react-native'
 import { SearchBar } from 'react-native-elements';
 import React, { useLayoutEffect, useState, useEffect, useCallback } from 'react'
 import RadioForm, { RadioButton, RadioButtonInput } from 'react-native-simple-radio-button';
@@ -121,7 +121,7 @@ const SelectAirport = ({ navigation }) => {
                                     shadowRadius: 4,
                                     elevation: 1,
                                 }}>
-                                    <ImageBackground source={{ uri: domain_domain + obj.image }} style={{ flex: 1 }} imageStyle={{ borderRadius: 16, }}>
+                                    <ImageBackground source={{ uri: domain_domain + obj.image }} defaultSource={require("../assets/images/payload.gif")} style={{ flex: 1 }} imageStyle={{ borderRadius: 16, }}>
                                         <View style={{ backgroundColor: 'rgba(0,0,0,0.3)', flexDirection: 'row', flex: 1, borderRadius: 16 }}>
                                             <View style={{ justifyContent: 'flex-end', flex: 1, bottom: 12, left: 12 }}>
                                                 {/* {selectAirport == obj.id && <Text style={[styles.subtext, { color: '#F2F2F3' }]} >Вы здесь</Text>} */}

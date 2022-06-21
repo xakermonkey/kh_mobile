@@ -1,11 +1,12 @@
 import { Appearance, useColorScheme, StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image } from 'react-native'
-import React, { useLayoutEffect } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { domain } from '../domain';
 import { CommonActions } from '@react-navigation/native';
 import { RCCDiscard, collectMoa } from '../moa';
+import { Inter_500Medium } from '@expo-google-fonts/inter';
 
 const AcceptLuggage = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
@@ -13,6 +14,8 @@ const AcceptLuggage = ({ navigation, route }) => {
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
+
+    const [loading, setLoading] = useState(false);
 
 
     useLayoutEffect(() => {
@@ -59,6 +62,7 @@ const AcceptLuggage = ({ navigation, route }) => {
 
 
     const PayLuggage = async () => {
+        setLoading(true);
         const token = await AsyncStorage.getItem("token");
         const data = new FormData();
         data.append("ls", parseInt(await AsyncStorage.getItem("luggage_ls")));
@@ -89,6 +93,7 @@ const AcceptLuggage = ({ navigation, route }) => {
             }
         });
         const ret = await res.json();
+        setLoading(false);
         if (ret.status == true) {
             await AsyncStorage.setItem("lastLuggage", ret.lg.id.toString());
             await AsyncStorage.removeItem("luggage_ls");
@@ -137,10 +142,16 @@ const AcceptLuggage = ({ navigation, route }) => {
     }
 
 
+
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]}  >
+            {loading && <View style={{ position: 'absolute', justifyContent: 'center', alignItems: 'center', zIndex: 1, backgroundColor: "rgba(0,0,0,0.5)", height: "100%", width: "100%", flex: 1 }}>
+                <Image width="100%" height="100%" source={require("../assets/images/cat.gif")}  />
+                <Text style={[{ textAlign: 'center', fontSize: 18, fontFamily: "Inter_500Medium" }, themeTextStyle]} >Идет обработка заказа</Text>
+            </View>}
             <View style={[styles.container, themeContainerStyle]}>
                 <StatusBar />
+
                 <View style={{ flex: 1, justifyContent: 'flex-end' }}>
                     <View style={[styles.container_price, themeContainerSelectStyle]} >
                         <View style={styles.price_line}>

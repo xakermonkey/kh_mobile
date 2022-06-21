@@ -137,9 +137,15 @@ const AddLuggage = ({ navigation, route }) => {
 
     const changeMile = (text) => {
         if (parseInt(text) > parseInt(balance)) {
-            setMile(balance.toString());
-            Alert.alert("Предупреждение", "На Вашем счету нет столько миль");
-            return 0;
+            if (parseInt(balance) < parseInt(selectTerminal.price_storage) - 1) {
+                setMile(balance.toString());
+                Alert.alert("Предупреждение", "На Вашем счету нет столько миль");
+                return 0;
+            } else {
+                setMile((parseInt(selectTerminal.price_storage) - 1).toString());
+                Alert.alert("Предупреждение", "Максимальное списание баллов: " + (parseInt(selectTerminal.price_storage) - 1).toString())
+                return 0;
+            }
         }
         if (parseInt(text) > parseInt(selectTerminal.price_storage) - 1) {
             setMile((parseInt(selectTerminal.price_storage) - 1).toString());
@@ -225,10 +231,10 @@ const AddLuggage = ({ navigation, route }) => {
             await AsyncStorage.setItem(`luggage_file${i + 1}`, images[i].uri);
         }
         if (mile == "" || parseInt(mile) == 0) {
-            if (qr != null){
+            if (qr != null) {
                 const init = await initialTransaction(qr);
                 await AsyncStorage.setItem("transaction_uuid", init.transaction_uuid);
-            }else{
+            } else {
                 await AsyncStorage.removeItem("transaction_uuid");
             }
             navigation.navigate("accept_luggage", { "price": selectTerminal.price_storage, "sale": mile })
