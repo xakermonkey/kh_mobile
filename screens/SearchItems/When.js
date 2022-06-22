@@ -77,7 +77,7 @@ const When = ({ navigation }) => {
                         index={ind}
                         isSelected={selectPlace == obj}
                         onPress={() => ClickPlace(obj)}
-                        buttonInnerColor='#F5CB57'
+                        buttonInnerColor='#21cfba'
                         buttonOuterColor="#f2f2f2"
                         buttonSize={24}
                         buttonOuterSize={31}
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
         textAlign: 'left',
     },
     btn: {
-        backgroundColor: '#F5CB58',
+        backgroundColor: '#21cfba',
         width: 64,
         height: 64,
         borderRadius: 64,

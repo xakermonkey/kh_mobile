@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     innertBtn: {
-        backgroundColor: '#F5CB57',
+        backgroundColor: '#21cfba',
         paddingVertical: 14
     },
 

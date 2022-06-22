@@ -179,7 +179,7 @@ const Orders = ({ navigation, route }) => {
             <View style={[styles.container_location, themeContainerSelectStyle]}>
                 <ScrollView contentContainerStyle={styles.row_center} horizontal={true}>
                     {item.photo.map((obj, ind) => {
-                        return (<Image key={ind} height={60} width={60} resizeMode="contain" source={{ uri: domain_domain + obj.photo }} style={styles.img} />)
+                        return (<Image key={ind} resizeMode='center' source={{ uri: domain_domain + obj.photo }} style={styles.img} />)
                     })}
                 </ScrollView>
                 <View style={{ marginTop: '4%' }}>
@@ -461,9 +461,8 @@ const styles = StyleSheet.create({
     },
 
     img: {
+        width: 56, height: 56, borderRadius: 8,
         marginRight: 8,
-        height: 60,
-        width: 60
     },
 
 

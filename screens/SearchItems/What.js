@@ -73,7 +73,7 @@ const What = ({ navigation }) => {
                             index={ind}
                             isSelected={selectKind == obj}
                             onPress={() => ClickKind(obj)}
-                            buttonInnerColor='#F5CB57'
+                            buttonInnerColor='#21cfba'
                             buttonOuterColor="#f2f2f2"
                             buttonSize={24}
                             buttonOuterSize={31}
@@ -109,7 +109,7 @@ const What = ({ navigation }) => {
                 <Text style={[styles.title, themeTextStyle]}>Какого цвета?</Text>
 
                 <View style={{ flexDirection: 'row' }}>
-                    <View style={{ height: 30, width: 30, backgroundColor: '#F5CB57', borderRadius: '50%' }}></View>
+                    <View style={{ height: 30, width: 30, backgroundColor: '#21cfba', borderRadius: '50%' }}></View>
                     <View style={{ height: 30, width: 30, backgroundColor: '#F5C', borderRadius: '50%', marginLeft:10 }}></View>
                     <View style={{ height: 30, width: 30, backgroundColor: '#F50', borderRadius: '50%', marginLeft:10 }}></View>
                 </View>
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     },
     btn: {
         marginBottom: '5%',
-        backgroundColor: '#F5CB57',
+        backgroundColor: '#21cfba',
         borderRadius: 12,
         fontSize: 14,
         justifyContent: 'center',
