@@ -74,7 +74,7 @@ const MOACodeScreen = ({ navigation, route }) => {
                 <Text style={[styles.subsubtext, themeSubTextStyle]} >{phone}</Text>
             </View>
             <View style={{ flex: 1, justifyContent: 'center' }}>
-                <TextInput autoFocus style={[styles.inputText, verify ? themeTextStyle : { color: "#9B0000" }]} showSoftInputOnFocus={false} value={code} />
+                <TextInput textContentType='oneTimeCode' autoFocus style={[styles.inputText, verify ? themeTextStyle : { color: "#9B0000" }]} showSoftInputOnFocus={false} value={code} />
             </View>
             <View style={{
                 bottom: 20,
