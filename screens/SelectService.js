@@ -3,7 +3,7 @@ import React, { useLayoutEffect, useState, useCallback, useRef, useEffect } from
 import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { domain } from '../domain';
+import { domain, domain_domain } from '../domain';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Carousel from 'react-native-snap-carousel';
@@ -23,6 +23,7 @@ const SelectService = ({ navigation, route }) => {
     const [terminals, setTerminals] = useState(null);
     const [airport, setAirport] = useState(null);
     const [iata, setIATA] = useState(null);
+    const [airportPhoto, setAirportPhoto] = useState(null);
 
 
     const getAirport = async (location, airorts) => {
@@ -35,7 +36,9 @@ const SelectService = ({ navigation, route }) => {
             }
         }
         setIATA(iata);
+        setAirportPhoto(air.image);
         await AsyncStorage.setItem("airport", air.name);
+        await AsyncStorage.setItem("airport_photo", air.image);
         return air;
     }
 
@@ -68,6 +71,8 @@ const SelectService = ({ navigation, route }) => {
             if (airport_iata != null) {
                 setIATA(airport_iata);
                 const airport = await AsyncStorage.getItem("airport");
+                const airport_photo = await AsyncStorage.getItem("airport_photo");
+                setAirportPhoto(airport_photo)
                 setAirport(airport);
                 navigation.setOptions({
                     headerLeft: () => {
@@ -135,7 +140,7 @@ const SelectService = ({ navigation, route }) => {
     return (
         <View style={[styles.container, themeContainerStyle]} >
             <StatusBar />
-            <ImageBackground source={{ uri: 'https://31tv.ru/wp-content/uploads/2020/09/rkyr.jpg' }} style={{ width: '100%', height: '50%', marginTop: 20 }} resizeMode='stretch' imageStyle={{}}>
+            <ImageBackground source={{ uri: domain_domain + airportPhoto }} style={{ width: '100%', height: '50%', marginTop: 20 }} resizeMode='stretch' imageStyle={{}}>
                 <LinearGradient
                     colors={['rgba(242, 242, 250, 0)', 'rgba(242, 242, 250, 1)']}
                     style={{ width: '100%', height: '50%' }}
