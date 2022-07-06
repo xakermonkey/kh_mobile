@@ -26,6 +26,7 @@ const SelectTerminal = ({ navigation, route }) => {
     const [refreshing, setRefreshing] = useState(false);
     const [scrollOpacity, setScrollOpacity] = useState(0);
     const [selectIndex, setSelectIndex] = useState(0);
+    const [airportPhoto, setAirportPhoto] = useState(null);
 
 
     const getAirport = async (location, airorts) => {
@@ -38,7 +39,9 @@ const SelectTerminal = ({ navigation, route }) => {
             }
         }
         setIATA(iata);
+        setAirporPhoto(air.image);
         await AsyncStorage.setItem("airport", air.name);
+        await AsyncStorage.setItem("airport_photo", air.image);
         return air;
     }
 
@@ -77,6 +80,8 @@ const SelectTerminal = ({ navigation, route }) => {
             if (airport_iata != null) {
                 setIATA(airport_iata);
                 const airport = await AsyncStorage.getItem("airport");
+                const air_photo = await AsyncStorage.getItem("airport_photo");
+                setAirportPhoto(air_photo);
                 setAirport(airport);
                 navigation.setOptions({
                     headerLeft: () => {
@@ -99,6 +104,7 @@ const SelectTerminal = ({ navigation, route }) => {
                     }
                 })
                 const res = await axios.get(domain + "/get_terminals", { params: { "iata": airport_iata }, headers: { "Authorization": "Token " + token } })
+                console.log(res.data);
                 setTerminals(res.data)
             } else {
                 let { status } = await Location.requestForegroundPermissionsAsync();
@@ -170,78 +176,78 @@ const SelectTerminal = ({ navigation, route }) => {
 
     const carouselRef = useRef();
 
-    useEffect(() => {
-        if (selectIndex == 0) {
-            navigation.setOptions({
-                headerLeft: () => {
-                    return (
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                            <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 8 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
-                                <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
-                                <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
+    // useEffect(() => {
+    //     if (selectIndex == 0) {
+    //         navigation.setOptions({
+    //             headerLeft: () => {
+    //                 return (
+    //                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+    //                         <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 8 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
+    //                             <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
+    //                             <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
 
-                            </TouchableOpacity>
-                            {/* 
-                            <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
-                                <Image
-                                    source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
-                                    style={{ width: 24, height: 30 }}
-                                />
-                            </TouchableOpacity> */}
-                        </View>
-                    )
-                },
-                headerRight: () => {
-                    return (
-                        <TouchableOpacity onPress={() => navigation.navigate('profile')}>
-                            <Image
-                                source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
-                                style={{
-                                    width: 100, height: 40
-                                }}
-                                resizeMode='contain'
-                            />
-                        </TouchableOpacity>
-                    )
-                }
-            })
-        } else {
-            navigation.setOptions({
-                headerLeft: () => {
-                    return (
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                            <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 8 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
-                                <FontAwesome name="location-arrow" size={28} style={{ color: '#21cfba' }} />
-                                <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
+    //                         </TouchableOpacity>
+    //                         {/* 
+    //                         <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
+    //                             <Image
+    //                                 source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
+    //                                 style={{ width: 24, height: 30 }}
+    //                             />
+    //                         </TouchableOpacity> */}
+    //                     </View>
+    //                 )
+    //             },
+    //             headerRight: () => {
+    //                 return (
+    //                     <TouchableOpacity onPress={() => navigation.navigate('profile')}>
+    //                         <Image
+    //                             source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
+    //                             style={{
+    //                                 width: 100, height: 40
+    //                             }}
+    //                             resizeMode='contain'
+    //                         />
+    //                     </TouchableOpacity>
+    //                 )
+    //             }
+    //         })
+    //     } else {
+    //         navigation.setOptions({
+    //             headerLeft: () => {
+    //                 return (
+    //                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+    //                         <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 8 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
+    //                             <FontAwesome name="location-arrow" size={28} style={{ color: '#21cfba' }} />
+    //                             <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
 
-                            </TouchableOpacity>
-                            {/* 
-                            <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
-                                <Image
-                                    source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
-                                    style={{ width: 24, height: 30 }}
-                                />
-                            </TouchableOpacity> */}
-                        </View>
-                    )
-                },
-                headerRight: () => {
-                    return (
-                        <TouchableOpacity onPress={() => navigation.navigate('profile')}>
-                            <Image
-                                source={colorScheme === 'light' ? require("../assets/images/lost_logo.png") : require("../assets/images/lost_logo_white.png")}
-                                style={{
-                                    width: 100, height: 40
-                                }}
-                                resizeMode='contain'
-                            />
-                        </TouchableOpacity>
-                    )
-                }
-            })
-        }
+    //                         </TouchableOpacity>
+    //                         {/* 
+    //                         <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
+    //                             <Image
+    //                                 source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
+    //                                 style={{ width: 24, height: 30 }}
+    //                             />
+    //                         </TouchableOpacity> */}
+    //                     </View>
+    //                 )
+    //             },
+    //             headerRight: () => {
+    //                 return (
+    //                     <TouchableOpacity onPress={() => navigation.navigate('profile')}>
+    //                         <Image
+    //                             source={colorScheme === 'light' ? require("../assets/images/lost_logo.png") : require("../assets/images/lost_logo_white.png")}
+    //                             style={{
+    //                                 width: 100, height: 40
+    //                             }}
+    //                             resizeMode='contain'
+    //                         />
+    //                     </TouchableOpacity>
+    //                 )
+    //             }
+    //         })
+    //     }
 
-    }, [navigation, selectIndex]);
+    // }, [navigation, selectIndex]);
 
 
 
@@ -359,10 +365,6 @@ const SelectTerminal = ({ navigation, route }) => {
         )
     }
 
-    const newOpacity = (obj) => {
-        setScrollOpacity(obj.nativeEvent.contentOffset.x / 312);
-        return obj;
-    }
 
 
 
@@ -370,7 +372,7 @@ const SelectTerminal = ({ navigation, route }) => {
         <View style={[styles.container, themeContainerStyle]} >
             <StatusBar />
             <View style={{ alignItems: 'center', marginTop: '3%' }}>
-            <View style={{ alignItems: 'center' }} >
+            <View style={{ alignItems: 'center', width: "100%" }} >
                     <FlatList
                         contentContainerStyle={{ height: "100%" }}
                         style={{ width: '100%', paddingHorizontal: '9%' }}

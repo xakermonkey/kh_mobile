@@ -66,6 +66,7 @@ const SelectAirport = ({ navigation }) => {
     const customSelectAirport = async (obj) => {
         await AsyncStorage.setItem("airport", obj.name);
         await AsyncStorage.setItem("airport_iata", obj.iata);
+        await AsyncStorage.setItem("airport_photo", obj.image);
         navigation.dispatch(
             CommonActions.reset({
                 index: 0,
