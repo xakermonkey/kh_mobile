@@ -22,7 +22,9 @@ import SelectDocument from './screens/SelectDocument';
 import DateGetScreen from './screens/DateGetScreen';
 import ImageScreen from './screens/ImageScreen';
 
+import SelectService from './screens/SelectService';
 import SelectAirport from './screens/SelectAirport';
+import SearchLostItems from './screens/SearchLostItems';
 import SelectTerminal from './screens/SelectTerminal';
 import Terminal from './screens/Terminal';
 import Orders from './screens/Orders';
@@ -99,7 +101,9 @@ function App() {
         <Stack.Screen name='date_get' component={DateGetScreen} />
         <Stack.Screen name='input_image' component={ImageScreen} /> */}
 
+        <Stack.Screen name='select_service' component={SelectService} />
         <Stack.Screen name='select_terminal' component={SelectTerminal} />
+        <Stack.Screen name='search_lost_tems' component={SearchLostItems} />
         <Stack.Screen options={{ presentation: 'modal' }} name='select_airport' component={SelectAirport} />
         <Stack.Screen name='terminal' component={Terminal} />
         <Stack.Screen name='license_luggage' component={LicenseLuggage} />

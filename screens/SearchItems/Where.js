@@ -98,7 +98,7 @@ const Where = ({ navigation }) => {
                                                     index={0}
                                                     isSelected={selectAirport === obj}
                                                     onPress={() => customSelectAirport(obj)}
-                                                    buttonInnerColor='#F5CB57'
+                                                    buttonInnerColor='#21cfba'
                                                     buttonOuterColor={colorScheme === 'light' ? '#23232A07' : '#F2F2F31F'}
                                                     buttonSize={24}
                                                     buttonOuterSize={31}
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
         textAlign: 'left',
     },
     btn: {
-        backgroundColor: '#F5CB58',
+        backgroundColor: '#21cfba',
         width: 64,
         height: 64,
         borderRadius: 64

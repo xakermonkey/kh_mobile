@@ -1,4 +1,8 @@
-import { Appearance, useColorScheme, StyleSheet, Text, View, SafeAreaView, TouchableOpacity, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Image, Switch, TextInput, Alert } from 'react-native'
+import {
+    Appearance, useColorScheme, StyleSheet, Text, View, SafeAreaView,
+    TouchableOpacity, TouchableWithoutFeedback, Keyboard,
+    KeyboardAvoidingView, Image, Switch, TextInput, Alert, ScrollView
+} from 'react-native'
 import React, { useLayoutEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
@@ -10,18 +14,19 @@ import { CommonActions } from '@react-navigation/native';
 import axios from 'axios';
 import { domain } from '../domain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getBalance, initialTransaction, collectMoa, RCCSendMSG } from '../moa';
+import { getBalance, initialTransaction, collectMoa, RCCSendMSG, getQrCode } from '../moa';
 
 const AcceptLuggageMileonAir = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
     const themeContainerStyle = colorScheme === 'light' ? styles.lightContainer : styles.darkContainer;
+    const themeLineStyle = colorScheme === 'light' ? styles.lightLine : styles.darkLine;
     const themeTextStyle = colorScheme === 'light' ? styles.lightText : styles.darkText;
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
 
     const [isEnabled, setIsEnabled] = useState(false);
     const [mile, setMile] = useState("")
-    const [qr, setQR] = useState("");
+    const [qr, setQR] = useState(null);
     const [balance, setBalance] = useState("");
     const [bad, setBad] = useState(false);
 
@@ -177,132 +182,138 @@ const AcceptLuggageMileonAir = ({ navigation, route }) => {
 
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false} >
-            <View style={[styles.container, themeContainerStyle]}  >
-                <StatusBar />
-                <View style={[styles.container_price, themeContainerSelectStyle]} >
-                    <View style={styles.price_line}>
-                        <Text style={[styles.price_line_text, themeSubTextStyle]} >Хранение багажа</Text>
-                        <Text style={[styles.price_line_price, themeTextStyle]} >{route.params.total_price} ₽</Text>
-                    </View>
-                    <View style={{ height: 1, backgroundColor: '#fff' }}></View>
-                    <View style={styles.price_line}>
-                        <Text style={[styles.price_line_text, themeSubTextStyle]} >Списание миль</Text>
-                        <Text style={[styles.price_line_price, themeTextStyle]} >-{mile == "" ? "0" : mile} миль</Text>
-                    </View>
-                    <View style={{ height: 1, backgroundColor: '#fff' }}></View>
-                    <View style={[styles.line, themeContainerStyle]} ></View>
-                    <View style={styles.price_line}>
-                        <Text style={[styles.price_line_text, themeSubTextStyle]} >Итоговая стоимость</Text>
-                        <Text style={[styles.price_line_price, themeTextStyle]} >{mile == "" ? route.params.total_price : route.params.total_price - parseInt(mile)} ₽</Text>
-                    </View>
-                </View>
-
-                <View style={{ height: 150, width: '100%', marginTop: '20%' }}>
-                    <View style={styles.container_mileonair} >
-                        <View  >
-                            <Text style={[styles.value, themeTextStyle]} >Оплатить милями MILEONAIR</Text>
-                            <Text style={[styles.label_mile, themeSubTextStyle]} >{qr != null ? balance + " миль" : "Не подключено"}</Text>
-                        </View>
-                        <Switch
-                            trackColor={{ false: "#23232A14", true: "#23232A14" }}
-                            thumbColor={isEnabled ? "#F5CB57" : "#F2F2F3"}
-                            ios_backgroundColor="#23232A14"
-                            onValueChange={toggleSwitch}
-                            value={isEnabled}
-                        />
-                    </View>
-                    {isEnabled &&
-                        <View style={[{ borderRadius: 12, flexDirection: 'row', justifyContent: 'space-between', marginTop: '5%' }, themeContainerSelectStyle]}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{ alignItems: 'center', alignContent: 'center', paddingHorizontal: 20, paddingVertical: 6 }}>
-                                    <Icon
-                                        name="airplane"
-                                        type="ionicon"
-                                        color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                                    />
-                                    <Text style={themeSubTextStyle} >миль</Text>
+        <SafeAreaView style={[{ flex: 1 }, themeContainerStyle]}>
+            <StatusBar />
+            {/* <ScrollView> */}
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false} >
+                    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+                        <View style={[styles.container, themeContainerStyle]}>
+                            <View style={{flex:1, justifyContent:'flex-end'}}>
+                            <View style={[styles.container_price, themeContainerSelectStyle]} >
+                                <View style={styles.price_line}>
+                                    <Text style={[styles.price_line_text, themeSubTextStyle]} >Хранение багажа</Text>
+                                    <Text style={[styles.price_line_price, themeTextStyle]} >{route.params.total_price} ₽</Text>
                                 </View>
-                                <View style={[{ width: 1, backgroundColor: '#fff' }, themeContainerStyle]}></View>
+                                <View style={[styles.line, themeLineStyle]} ></View>
+                                <View style={styles.price_line}>
+                                    <Text style={[styles.price_line_text, themeSubTextStyle]} >Списание миль</Text>
+                                    <Text style={[styles.price_line_price, themeTextStyle]} >-{mile == "" ? "0" : mile} миль</Text>
+                                </View>
+                                <View style={[styles.line, themeLineStyle]} ></View>
+                                <View style={styles.price_line}>
+                                    <Text style={[styles.price_line_text, themeSubTextStyle]} >Итоговая стоимость</Text>
+                                    <Text style={[styles.price_line_price, themeTextStyle]} >{mile == "" ? route.params.total_price : route.params.total_price - parseInt(mile)} ₽</Text>
+                                </View>
+                            </View></View>
+
+                            <View style={{ flex: 1, marginTop:'5%' }}>
+                                <View style={{ height: 150 }}>
+                                    <View style={styles.container_mileonair} >
+                                        <View  >
+                                            <Text style={[styles.value, themeTextStyle]} >Оплатить милями MILEONAIR</Text>
+                                            <Text style={[styles.label_mile, themeSubTextStyle]} >{qr != null ? balance + " миль" : "Не подключено"}</Text>
+                                        </View>
+                                        <Switch
+                                            trackColor={{ false: "#23232A14", true: "#23232A14" }}
+                                            thumbColor={isEnabled ? "#F5CB57" : "#F2F2F3"}
+                                            ios_backgroundColor="#23232A14"
+                                            onValueChange={toggleSwitch}
+                                            value={isEnabled}
+                                        />
+                                    </View>
+                                    {isEnabled &&
+                                        <View style={[{ borderRadius: 12, flexDirection: 'row', justifyContent: 'space-between', marginTop: '5%' }, themeContainerSelectStyle]}>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <View style={{ alignItems: 'center', alignContent: 'center', paddingHorizontal: 20, paddingVertical: 6 }}>
+                                                    <Icon
+                                                        name="airplane"
+                                                        type="ionicon"
+                                                        color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                                                    />
+                                                    <Text style={themeSubTextStyle} >миль</Text>
+                                                </View>
+                                                <View style={[{ width: 1, backgroundColor: '#fff' }, themeContainerStyle]}></View>
+                                            </View>
+
+                                            <View style={{ flex:1,flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }}>
+                                                <TextInput
+                                                    value={mile}
+                                                    placeholder="40"
+                                                    onChangeText={setSale}
+                                                    style={[styles.text_input, themeTextStyle, { width: 120,}]}
+                                                    keyboardType="number-pad"
+                                                    maxLength={route.params.total_price.toString().length}
+                                                />
+                                                <Text style={[{ textAlign: 'right', fontSize: 12, fontFamily: "Inter_400Regular" }, bad ? { color: "#FF3956" } : themeSubTextStyle]} >Мининимальное {"\n"}списание 40 миль</Text>
+                                            </View>
+                                        </View>
+                                    }
+                                </View>
+
+
+                                <View style={styles.type_pay} >
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                                        <Image
+                                            source={require("../assets/images/visa.png")}
+                                            width={50}
+                                            height={50}
+                                            style={styles.card_img}
+                                        />
+                                        <View style={{ marginLeft: '5%' }} >
+                                            <Text style={[styles.text_type, themeTextStyle]} >Способ оплаты</Text>
+                                            <Text style={[styles.subtext, themeSubTextStyle]} >Visa **** 1679</Text>
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                                        <Text style={[styles.subtext, themeSubTextStyle]} >Изменить</Text>
+                                        <Icon
+                                            name="chevron-forward-outline"
+                                            type="ionicon"
+                                            color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
+                                        />
+                                    </View>
+                                </View>
                             </View>
 
-                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1, paddingHorizontal: 20 }}>
-                                <TextInput
-                                    value={mile}
-                                    placeholder="40"
-                                    onChangeText={setSale}
-                                    style={[styles.text_input, themeTextStyle]}
-                                    keyboardType="number-pad"
-                                    maxLength={route.params.total_price.toString().length}
-                                />
-                                <Text style={[{ textAlign: 'right', fontSize: 12, fontFamily: "Inter_400Regular" }, bad ? { color: "#FF3956" } : themeSubTextStyle]} >Мининимальное {"\n"}списание 40 миль</Text>
-                            </View>
-                        </View>
-                    }
-                </View>
-
-
-                <View style={styles.type_pay} >
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                        <Image
-                            source={require("../assets/images/visa.png")}
-                            width={50}
-                            height={50}
-                            style={styles.card_img}
-                        />
-                        <View style={{ marginLeft: '5%' }} >
-                            <Text style={[styles.text_type, themeTextStyle]} >Способ оплаты</Text>
-                            <Text style={[styles.subtext, themeSubTextStyle]} >Visa **** 1679</Text>
-                        </View>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                        <Text style={[styles.subtext, themeSubTextStyle]} >Изменить</Text>
-                        <Icon
-                            name="chevron-forward-outline"
-                            type="ionicon"
-                            color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                        />
-                    </View>
-                </View>
-
-
-
-
-                <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={handlePresentModalPress} >
-                    <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Оплатить</Text>
-                </TouchableOpacity>
-
-
-                <BottomSheetModalProvider>
-                    <View>
-                        <BottomSheetModal
-                            ref={bottomSheetModalRef}
-                            index={0}
-                            snapPoints={snapPoints}
-                            onChange={handleSheetChanges}
-                            backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
-                        >
-                            <Text style={[styles.text, { textAlign: 'center' }, themeTextStyle]} >Чеки за оплату</Text>
-
-                            <View style={{ padding: '5%' }}>
-                                <View style={[styles.row_center_between, { marginBottom: '5%' }]}>
-                                    <Text style={[styles.text, themeTextStyle]} >Чек за хранение</Text>
-                                    <Text style={[styles.text_description, { color: '#0C0C0D7A' }, themeSubTextStyle]} >21 сентября 2022</Text>
-                                </View>
-                                <View style={[styles.row_center_between, { marginBottom: '5%' }]}>
-                                    <Text style={[styles.text, themeTextStyle]} >Чек за хранение</Text>
-                                    <Text style={[styles.text_description, { color: '#0C0C0D7A' }, themeSubTextStyle]} >21 сентября 2022</Text>
-                                </View>
-
-                                <TouchableOpacity activeOpacity={.9} style={styles.btn_bottomsheet} onPress={Payment} >
-                                    <Text style={{ fontFamily: 'Inter_700Bold', color: '#000', fontSize: 14 }}>Сохранить чеки</Text>
+                            <View style={{ flex: 0, justifyContent: 'flex-end' }}>
+                                <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={handlePresentModalPress} >
+                                    <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>Оплатить</Text>
                                 </TouchableOpacity>
                             </View>
-                        </BottomSheetModal>
-                    </View>
-                </BottomSheetModalProvider>
-            </View>
-        </TouchableWithoutFeedback>
+                        </View>
+                    </KeyboardAvoidingView>
+                </TouchableWithoutFeedback>
+            {/* </ScrollView> */}
+
+            <BottomSheetModalProvider>
+                <View>
+                    <BottomSheetModal
+                        ref={bottomSheetModalRef}
+                        index={0}
+                        snapPoints={snapPoints}
+                        onChange={handleSheetChanges}
+                        backgroundStyle={{ backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C' }}
+                    >
+                        <Text style={[styles.text, { textAlign: 'center' }, themeTextStyle]} >Чеки за оплату</Text>
+
+                        <View style={{ padding: '5%' }}>
+                            <View style={[styles.row_center_between, { marginBottom: '5%' }]}>
+                                <Text style={[styles.text, themeTextStyle]} >Чек за хранение</Text>
+                                <Text style={[styles.text_description, { color: '#0C0C0D7A' }, themeSubTextStyle]} >21 сентября 2022</Text>
+                            </View>
+                            <View style={[styles.row_center_between, { marginBottom: '5%' }]}>
+                                <Text style={[styles.text, themeTextStyle]} >Чек за хранение</Text>
+                                <Text style={[styles.text_description, { color: '#0C0C0D7A' }, themeSubTextStyle]} >21 сентября 2022</Text>
+                            </View>
+
+                            <TouchableOpacity activeOpacity={.9} style={styles.btn_bottomsheet} onPress={Payment} >
+                                <Text style={{ fontFamily: 'Inter_700Bold', color: '#000', fontSize: 14 }}>Сохранить чеки</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </BottomSheetModal>
+                </View>
+            </BottomSheetModalProvider>
+        </SafeAreaView>
     )
 }
 
@@ -319,16 +330,17 @@ const styles = StyleSheet.create({
         // color: "#0C0C0D7A",
     },
     container: {
-        // backgroundColor: "#F9F9FA",
         flex: 1,
         padding: '4%',
-        // width: "100%",
-        alignItems: "center"
+        // justifyContent: 'flex-end',
+        // marginBottom: "10%",
     },
     container_price: {
-        width: "100%",
+        // flex: 1,
+        // justifyContent:'flex-end',
+        // width: "100%",
         borderRadius: 16,
-        marginTop: "20%",
+        // marginTop: "20%",
         // backgroundColor: "#23232A14" 
     },
     price_line: {
@@ -338,13 +350,12 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     line: {
-        // backgroundColor: "#F9F9FA",
-        // width: "100%",
         height: 2
     },
     text_input: {
         fontSize: 32,
         fontFamily: 'Inter_800ExtraBold',
+        // textAlign:'left'
         // color: "#0C0C0D7A",
     },
     price_line_text: {
@@ -358,9 +369,9 @@ const styles = StyleSheet.create({
         fontFamily: "Inter_800ExtraBold"
     },
     btn: {
-        position: 'absolute',
+        // position: 'absolute',
         backgroundColor: '#F5CB57',
-        width: '100%',
+        // width: '100%',
         borderRadius: 12,
         fontSize: 14,
         justifyContent: 'center',
@@ -373,14 +384,14 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.48,
         shadowRadius: 16,
-        bottom: "5%",
+        // bottom: "5%",
         elevation: 12,
     },
     type_pay: {
         flexDirection: 'row',
-        width: "100%",
+        // width: "85%",
         justifyContent: 'space-between',
-        marginTop: "20%"
+        marginBottom: "5%"
     },
     card_img: {
         width: 50,
@@ -448,6 +459,12 @@ const styles = StyleSheet.create({
     darkContainer: {
         backgroundColor: '#17171C',
     },
+    lightLine: {
+        backgroundColor: "#F9F9FA",
+    },
+    darkLine: {
+        backgroundColor: '#17171C',
+    },
     lightText: {
         color: "#0C0C0D",
     },
@@ -455,7 +472,7 @@ const styles = StyleSheet.create({
         color: '#F2F2F3',
     },
     lightSubText: {
-        color: "#000",
+        color: "#0C0C0D7A",
     },
     darkSubText: {
         color: '#F2F2F37A',

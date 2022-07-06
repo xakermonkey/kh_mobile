@@ -9,10 +9,15 @@ const CameraScreen = ({ navigation, route }) => {
     const takePhoto = async () => {
         // console.log(await cameraRef.current.getAvailablePictureSizesAsync());
         const result = await cameraRef.current.takePictureAsync({quality: 0.1});
+        let H = (result.height /4).toFixed(0);
+        let W = (result.width / 4).toFixed(0);
         const img = await ImageManipulator.manipulateAsync(result.uri,
             [
-                {resize: {height: 640, width: 480}}
+                {resize: {height: parseInt(H), width: parseInt(W)}},
+                // {crop: {height: 1000, width: 1000, originX: (W/2).toFixed(0)-500, originY: (H/2).toFixed(0) - 500 }}
+                
             ]);
+        
         let shir = img.uri.split(".")
         shir = shir[shir.length - 1]
         const obj = {
