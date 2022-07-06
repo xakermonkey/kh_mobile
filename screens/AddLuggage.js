@@ -352,8 +352,8 @@ const AddLuggage = ({ navigation, route }) => {
             </SafeAreaView>
 
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false} >
-                <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1, zIndex: -1 }}>
-                    <ScrollView>
+        <ScrollView>
+                <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex:1 }}> 
                         <View style={[styles.container, themeContainerStyle]}>
                             <View style={[styles.container_price, themeContainerSelectStyle]} >
                                 <View style={styles.price_line}>
@@ -380,8 +380,8 @@ const AddLuggage = ({ navigation, route }) => {
                                     />
                                 </TouchableOpacity>
                             </View>
-                            <TouchableOpacity style={styles.container_select} onPress={handlePresentModalKindPress}>
                                 <Text style={[styles.label, themeSubTextStyle]} >Вид багажа</Text>
+                            <TouchableOpacity style={styles.container_select} onPress={handlePresentModalKindPress}>
                                 <View style={[styles.select, themeContainerSelectStyle]} >
                                     <Text style={[styles.value, themeTextStyle]} >{selectKind.name}</Text>
                                     <Icon
@@ -463,8 +463,8 @@ const AddLuggage = ({ navigation, route }) => {
                             </TouchableOpacity>
                             {/* <View style={{flex:1}}></View> */}
                         </View>
-                    </ScrollView>
                 </KeyboardAvoidingView>
+                </ScrollView>
             </TouchableWithoutFeedback>
 
             <BottomSheet

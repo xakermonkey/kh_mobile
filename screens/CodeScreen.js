@@ -124,12 +124,9 @@ const CodeScreen = ({ navigation, route }) => {
                 // position: 'absolute',
                 alignItems: 'center'
             }}>
-                <TouchableOpacity activeOpacity={0.9}>
-                    <View style={[{ width: 110, height: 50, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginBottom: '3%' }, themeContainerSelectStyle]}><Text style={[{ fontSize: 14, fontFamily: 'Inter_600SemiBold' }, themeTextStyle]}>2222</Text><Text style={[{ fontSize: 12, fontFamily: 'Inter_500Medium' }, themeSubTextStyle]}>из сообщения</Text></View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('license')}>
+                {/* <TouchableOpacity onPress={() => navigation.navigate('license')}>
                     <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14, textAlign: 'center' }, themeSubTextStyle]} >Отправить код повторно</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <View style={styles.keyboard}>
                     <View style={styles.row} >
                         <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('1')}  ><Text style={[styles.num, themeTextStyle]} >1</Text></TouchableOpacity>

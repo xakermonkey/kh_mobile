@@ -44,8 +44,9 @@ const Info = ({ navigation }) => {
 
                 
 
-            <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('select_terminal')} >
-                <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>К терминалам</Text>
+            <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('select_service')} >
+                <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>На главную</Text>
+                {/* <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>К терминалам</Text> */}
             </TouchableOpacity>
         </View>
     )
