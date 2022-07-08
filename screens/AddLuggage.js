@@ -156,36 +156,6 @@ const AddLuggage = ({ navigation, route }) => {
     }
 
 
-    useEffect(() => {
-        (async () => {
-            if (Platform.OS !== 'web') {
-                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-                if (status !== 'granted') {
-                    alert('Sorry, we need camera roll permissions to make this work!');
-                }
-            }
-            const { status } = await Camera.requestCameraPermissionsAsync();
-        })();
-    }, []);
-
-
-
-
-    // const pickImage = async () => {
-    //     let result = await ImagePicker.launchImageLibraryAsync();
-    //     if (!result.cancelled) {
-    //         let shir = result.uri.split(".")
-    //         shir = shir[shir.length - 1]
-    //         const obj = {
-    //             uri: Platform.OS === 'android' ? result.uri : result.uri, //.replace("file://", ""),
-    //             type: 'image/' + shir,
-    //             name: `img${images.length + 1}.${shir}`
-    //         }
-    //         // console.log(obj)
-    //         setImages([...images, obj]);
-    //     }
-    // };
-
     const takePhoto = async () => {
         const result = await cameraRef.current.takePictureAsync();
         let shir = result.uri.split(".")

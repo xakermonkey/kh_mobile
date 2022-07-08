@@ -11,6 +11,7 @@ import axios from 'axios';
 import { domain, domain_domain } from '../domain';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 import { CommonActions } from '@react-navigation/native';
+import { nameDay } from '../morf';
 
 
 
@@ -54,9 +55,9 @@ const Orders = ({ navigation, route }) => {
                 return (
                     <TouchableOpacity onPress={() => navigation.navigate('profile')}>
                         <Image
-                            source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
+                            source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
                             style={{
-                                width: 100, height: 40
+                                width: 35, height: 35,
                             }}
                             resizeMode='contain'
                         />
@@ -202,7 +203,7 @@ const Orders = ({ navigation, route }) => {
                     {item.len_day > 0 &&
                         <View style={styles.row_center_between}>
                             <Text style={[styles.description, themeSubTextStyle]} >Хранение </Text>
-                            <Text style={[styles.text_description, themeTextStyle]} >{item.len_day} дня</Text>
+                            <Text style={[styles.text_description, themeTextStyle]} >{item.len_day} {nameDay(parseInt(item.len_day))}</Text>
                         </View>
                     }
                     {item.len_day > 0 &&

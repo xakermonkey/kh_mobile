@@ -71,9 +71,9 @@ const Terminal = ({ navigation }) => {
                 return (
                     <TouchableOpacity onPress={() => navigation.navigate('profile')}>
                         <Image
-                            source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
+                            source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
                             style={{
-                                width: 100, height: 40
+                                width: 35, height: 35,
                             }}
                             resizeMode='contain'
                         />

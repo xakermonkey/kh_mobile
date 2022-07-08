@@ -3,15 +3,16 @@ import React, { useLayoutEffect, useState, useCallback, useRef, useEffect } from
 import { Icon } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { domain } from '../domain';
+import { domain, domain_domain } from '../domain';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Carousel from 'react-native-snap-carousel';
 import RadioForm, { RadioButton, RadioButtonInput } from 'react-native-simple-radio-button';
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome, Entypo } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import Loading from './Loading';
 import { LinearGradient } from 'expo-linear-gradient';
+import { nameOrders } from '../morf';
 
 const SelectTerminal = ({ navigation, route }) => {
     const colorScheme = useColorScheme();
@@ -24,8 +25,6 @@ const SelectTerminal = ({ navigation, route }) => {
     const [airport, setAirport] = useState(null);
     const [iata, setIATA] = useState(null);
     const [refreshing, setRefreshing] = useState(false);
-    const [scrollOpacity, setScrollOpacity] = useState(0);
-    const [selectIndex, setSelectIndex] = useState(0);
     const [airportPhoto, setAirportPhoto] = useState(null);
 
 
@@ -39,7 +38,7 @@ const SelectTerminal = ({ navigation, route }) => {
             }
         }
         setIATA(iata);
-        setAirporPhoto(air.image);
+        setAirportPhoto(air.image);
         await AsyncStorage.setItem("airport", air.name);
         await AsyncStorage.setItem("airport_photo", air.image);
         return air;
@@ -54,19 +53,13 @@ const SelectTerminal = ({ navigation, route }) => {
             },
             headerBackVisible: false,
             headerBackTitleVisible: false,
-            // headerTitle: () => {
-            //     return (<View style={{ alignItems: 'center' }} >
-            //         <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
-            //         <Text style={[styles.subtext, themeSubTextStyle]} >{airport ? "Вы здесь" : "Поиск..."}</Text>
-            //     </View>)
-            // },
             headerRight: () => {
                 return (
                     <TouchableOpacity onPress={() => navigation.navigate('profile')}>
                         <Image
-                            source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
+                            source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
                             style={{
-                                width: 100, height: 40
+                                width: 35, height: 35,
                             }}
                             resizeMode='contain'
                         />
@@ -90,15 +83,7 @@ const SelectTerminal = ({ navigation, route }) => {
                                 <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 8 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
                                     <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
                                     <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
-
                                 </TouchableOpacity>
-                                {/* 
-                            <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
-                                <Image
-                                    source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
-                                    style={{ width: 24, height: 30 }}
-                                />
-                            </TouchableOpacity> */}
                             </View>
                         )
                     }
@@ -126,15 +111,7 @@ const SelectTerminal = ({ navigation, route }) => {
                                     <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 8 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
                                         <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
                                         <Text style={[styles.title_header, themeTextStyle]} >{air.name}</Text>
-
                                     </TouchableOpacity>
-                                    {/* 
-                                <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
-                                    <Image
-                                        source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
-                                        style={{ width: 24, height: 30 }}
-                                    />
-                                </TouchableOpacity> */}
                                 </View>
                             )
                         }
@@ -167,87 +144,6 @@ const SelectTerminal = ({ navigation, route }) => {
         }
 
     }
-    const [cards, setCards] = useState([
-        { title: "КХ" },
-        { title: "КХ ЗВ" },
-
-    ]
-    )
-
-    const carouselRef = useRef();
-
-    // useEffect(() => {
-    //     if (selectIndex == 0) {
-    //         navigation.setOptions({
-    //             headerLeft: () => {
-    //                 return (
-    //                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-    //                         <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 8 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
-    //                             <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
-    //                             <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
-
-    //                         </TouchableOpacity>
-    //                         {/* 
-    //                         <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
-    //                             <Image
-    //                                 source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
-    //                                 style={{ width: 24, height: 30 }}
-    //                             />
-    //                         </TouchableOpacity> */}
-    //                     </View>
-    //                 )
-    //             },
-    //             headerRight: () => {
-    //                 return (
-    //                     <TouchableOpacity onPress={() => navigation.navigate('profile')}>
-    //                         <Image
-    //                             source={colorScheme === 'light' ? require("../assets/images/kh_logo.png") : require("../assets/images/kh_logo_white.png")}
-    //                             style={{
-    //                                 width: 100, height: 40
-    //                             }}
-    //                             resizeMode='contain'
-    //                         />
-    //                     </TouchableOpacity>
-    //                 )
-    //             }
-    //         })
-    //     } else {
-    //         navigation.setOptions({
-    //             headerLeft: () => {
-    //                 return (
-    //                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-    //                         <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 8 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
-    //                             <FontAwesome name="location-arrow" size={28} style={{ color: '#21cfba' }} />
-    //                             <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
-
-    //                         </TouchableOpacity>
-    //                         {/* 
-    //                         <TouchableOpacity style={{ marginRight: 5 }} activeOpacity={0.5} onPress={() => navigation.navigate('profile')} >
-    //                             <Image
-    //                                 source={colorScheme === 'light' ? require("../assets/images/profile.png") : require("../assets/images/profile_white.png")}
-    //                                 style={{ width: 24, height: 30 }}
-    //                             />
-    //                         </TouchableOpacity> */}
-    //                     </View>
-    //                 )
-    //             },
-    //             headerRight: () => {
-    //                 return (
-    //                     <TouchableOpacity onPress={() => navigation.navigate('profile')}>
-    //                         <Image
-    //                             source={colorScheme === 'light' ? require("../assets/images/lost_logo.png") : require("../assets/images/lost_logo_white.png")}
-    //                             style={{
-    //                                 width: 100, height: 40
-    //                             }}
-    //                             resizeMode='contain'
-    //                         />
-    //                     </TouchableOpacity>
-    //                 )
-    //             }
-    //         })
-    //     }
-
-    // }, [navigation, selectIndex]);
 
 
 
@@ -263,7 +159,7 @@ const SelectTerminal = ({ navigation, route }) => {
                     shadowRadius: 4,
                     elevation: 1,
                 }}>
-                    <ImageBackground source={{ uri: 'https://31tv.ru/wp-content/uploads/2020/09/rkyr.jpg' }} style={{ flex: 1 }} imageStyle={{ borderRadius: 16, }}>
+                    <ImageBackground source={{ uri: domain_domain + airportPhoto }} style={{ flex: 1 }} imageStyle={{ borderRadius: 16, }}>
                         <View style={{ backgroundColor: 'rgba(0,0,0,0.3)', flexDirection: 'row', flex: 1, borderRadius: 16 }}>
                             <View style={{ justifyContent: 'flex-end', flex: 1, bottom: 12, left: 12 }}>
                                 <Text style={[styles.title, { color: '#F2F2F3' }]}>Терминал {item.terminal}, {item.floor} этаж</Text>
@@ -271,40 +167,13 @@ const SelectTerminal = ({ navigation, route }) => {
                             </View>
                             <View style={{ alignItems: 'flex-end', justifyContent: 'flex-start', flex: 1, top: 12, right: 12 }}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    {item.luggage != 0 && <Text style={[styles.subtext, { color: '#F2F2F3' }]} >{item.luggage} заказ(а)</Text>}
+                                    {item.luggage != 0 && <Text style={[styles.subtext, { color: '#F2F2F3' }]} >{item.luggage} {nameOrders(parseInt(item.luggage))}</Text>}
                                     <MaterialIcons name="arrow-forward-ios" size={32} color="#F5CB57" />
                                 </View>
-                                {/* <RadioButtonInput
-                                    obj={{}}
-                                    index={0}
-                                    isSelected={{}}
-                                    onPress={{}}
-                                    buttonInnerColor='#F5CB57'
-                                    buttonOuterColor={colorScheme === 'light' ? '#23232A07' : '#F2F2F31F'}
-                                    buttonSize={24}
-                                    buttonOuterSize={31}
-                                    buttonStyle={{ backgroundColor: colorScheme === 'light' ? '#e8e8e9' : '#F2F2F31F' }}
-                                /> */}
                             </View>
                         </View>
                     </ImageBackground>
                 </View>
-
-
-                {/* <View style={styles.terminal_line}>
-                <View style={styles.name_terminal}>
-                    <Text style={[styles.title, themeTextStyle]} >Терминал {obj.terminal}, {obj.floor} этаж</Text>
-                    <Text style={[styles.subtext, themeSubTextStyle]} >{obj.location}</Text>
-                </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    {obj.luggage != 0 && <Text style={[styles.subtext, themeSubTextStyle]} >{obj.luggage} заказа</Text>}
-                    <Icon
-                        name="chevron-forward-outline"
-                        type="ionicon"
-                        color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'}
-                    />
-                </View>
-            </View> */}
             </TouchableOpacity>
         )
     }
@@ -315,39 +184,6 @@ const SelectTerminal = ({ navigation, route }) => {
                 <Text style={[styles.subtext_notfounde, themeTextStyle]} >В Аэропорту {airport} пока нет КХ, подключенных к нашему сервису</Text>
             </View>
         )
-    }
-    const renderItem = ({ item, index }) => {
-        if (index == 1) {
-            return (
-                <View style={{ flex: 1 }} >
-                    <View style={{
-                        backgroundColor: '#21cfba', borderRadius: 16, width: '103%',
-                        height: 150, shadowOffset: {
-                            width: 0,
-                            height: 6,
-                        },
-                        shadowOpacity: 0.3,
-                        shadowRadius: 4,
-                        elevation: 1,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}>
-                        <Text style={[styles.text_holder, { color: '#000' }]} >Поиск забытых и потерянных вещей</Text>
-                    </View>
-                    <View style={{ flex: 1, paddingHorizontal: '9%' }}>
-                        <View style={{ justifyContent: 'center', flex: 1 }}>
-                            <Text style={[styles.subtext, themeSubTextStyle, {}]} >Если Вы забыли или потеряли личные вещи или багаж в аэропорту мы поможем Вам их найти </Text>
-                        </View>
-                        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                            <TouchableOpacity activeOpacity={.9} style={styles.btn} onPress={() => navigation.navigate('where_forget')} >
-                                <Text style={{ fontFamily: 'Inter_700Bold', color: '#000' }}>НАЧАТЬ ПОИСК</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-            )
-        }
-
     }
 
     if (airport == null) {
@@ -371,8 +207,12 @@ const SelectTerminal = ({ navigation, route }) => {
     return (
         <View style={[styles.container, themeContainerStyle]} >
             <StatusBar />
+            <TouchableOpacity style={[{  flexDirection: 'row', alignItems: 'center' }, ]} activeOpacity={0.5} onPress={() => navigation.goBack()} >
+                <Entypo name="chevron-small-left" size={28} color={colorScheme === 'light' ? '#0C0C0D' : '#F2F2F3'} />
+                <Text style={[styles.title_header, themeTextStyle]} >Вернуться назад</Text>
+            </TouchableOpacity>
             <View style={{ alignItems: 'center', marginTop: '3%' }}>
-            <View style={{ alignItems: 'center', width: "100%" }} >
+                <View style={{ alignItems: 'center', width: "100%" }} >
                     <FlatList
                         contentContainerStyle={{ height: "100%" }}
                         style={{ width: '100%', paddingHorizontal: '9%' }}
@@ -384,26 +224,7 @@ const SelectTerminal = ({ navigation, route }) => {
                         showsVerticalScrollIndicator={false}
                         ListEmptyComponent={<EmptyComponent />}
                     />
-                    {/* <ScrollView style={{ height: '100%' }}>
-                        <RefreshControl
-                            refreshing={refreshing}
-                            onRefresh={onRefresh}
-                        />
-                        <View style={styles.radiobutton_container}>
-                            {terminals.map((obj) => {
-                                
-                            })}
-                        </View>
-                    </ScrollView> */}
                 </View>
-                {/* <Carousel
-                    ref={carouselRef}
-                    data={cards}
-                    renderItem={renderItem}
-                    sliderWidth={Dimensions.get('window').width}
-                    itemWidth={Dimensions.get('window').width * 0.8}
-                    onSnapToItem={obj => setSelectIndex(obj)}
-                /> */}
             </View>
         </View >
     )

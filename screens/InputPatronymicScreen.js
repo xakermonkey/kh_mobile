@@ -33,7 +33,7 @@ const InputPatronymicScreen = ({ navigation }) => {
                     navigation.dispatch(
                         CommonActions.reset({
                             index: 0,
-                            routes: [{ name: "select_terminal" }]
+                            routes: [{ name: "select_service" }]
                         }));
                 }
             })
@@ -62,7 +62,7 @@ const InputPatronymicScreen = ({ navigation }) => {
             navigation.dispatch(
                 CommonActions.reset({
                     index: 0,
-                    routes: [{ name: "select_terminal" }]
+                    routes: [{ name: "select_service" }]
                 }));
         }
     }
@@ -97,7 +97,7 @@ const InputPatronymicScreen = ({ navigation }) => {
                     navigation.dispatch(
                         CommonActions.reset({
                             index: 0,
-                            routes: [{ name: "select_terminal" }]
+                            routes: [{ name: "select_service" }]
                         }));
 
                 }

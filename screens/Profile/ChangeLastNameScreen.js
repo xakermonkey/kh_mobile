@@ -61,7 +61,7 @@ const ChangeLastNameScreen = ({ navigation }) => {
                     navigation.dispatch(
                         CommonActions.reset({
                             index: 0,
-                            routes: [{ name: "select_terminal" }, { name: "profile" }]
+                            routes: [{ name: "select_service" }, { name: "select_terminal" }, { name: "profile" }]
                         }));
 
                 }

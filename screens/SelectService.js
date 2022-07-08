@@ -20,7 +20,6 @@ const SelectService = ({ navigation, route }) => {
     const themeSubTextStyle = colorScheme === 'light' ? styles.lightSubText : styles.darkSubText;
     const themeContainerSelectStyle = colorScheme === 'light' ? styles.lightContainerSelect : styles.darkContainerSelect;
 
-    const [terminals, setTerminals] = useState(null);
     const [airport, setAirport] = useState(null);
     const [iata, setIATA] = useState(null);
     const [airportPhoto, setAirportPhoto] = useState(null);
@@ -81,7 +80,6 @@ const SelectService = ({ navigation, route }) => {
                                 <TouchableOpacity style={[{ marginRight: 20, flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 8 }, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => navigation.navigate('select_airport')} >
                                     <FontAwesome name="location-arrow" size={28} style={{ color: '#F5CB57' }} />
                                     <Text style={[styles.title_header, themeTextStyle]} >{airport}</Text>
-
                                 </TouchableOpacity>
                             </View>
                         )
@@ -129,42 +127,36 @@ const SelectService = ({ navigation, route }) => {
             </View>
         )
     }
-    if (terminals == null) {
-        return (
-            <View style={[{ flex: 1 }, themeContainerStyle]} >
-                <Loading title={"Подбираем терминал"} />
-            </View>
-        )
-    }
-
     return (
         <View style={[styles.container, themeContainerStyle]} >
             <StatusBar />
             <ImageBackground source={{ uri: domain_domain + airportPhoto }} style={{ width: '100%', height: '50%', marginTop: 20 }} resizeMode='stretch' imageStyle={{}}>
                 <LinearGradient
-                    colors={['rgba(242, 242, 250, 0)', 'rgba(242, 242, 250, 1)']}
+                    colors={ colorScheme === 'light' ? ['rgba(242, 242, 250, 0)', 'rgba(242, 242, 250, 1)'] : ['rgba(23, 23, 28, 0)', 'rgba(23, 23, 28, 1)']}
                     style={{ width: '100%', height: '50%' }}
                 >
                 </LinearGradient>
             </ImageBackground>
-            <View style={{ paddingHorizontal: '7%', top: '-35%' }}>
+            <View style={{ paddingHorizontal: '7%', top: '-35%', width:'100%' }}>
                 <TouchableOpacity activeOpacity={0.9} style={[styles.btn, {backgroundColor: '#F5CB57'}]} onPress={() => navigation.navigate('select_terminal', { "title": airport })}>
                     <Image
-                        source={colorScheme === 'light' ? require("../assets/images/safe_btn.png") : require("../assets/images/safe_btn.png")}
+                        source={colorScheme === 'light' ? require("../assets/images/kh_icon.png") : require("../assets/images/kh_icon.png")}
                         style={{
-                            width: 115, height: '100%',
-                            borderRadius: 16
+                            width:'20%', height:'50%',
+                            borderRadius: 16,
                         }}
                         resizeMode='contain'
                     />
                     <Text style={[styles.text_holder, { color: '#000' }]} >Камеры хранения</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity activeOpacity={0.9} style={styles.btn} onPress={() => navigation.navigate('search_lost_tems')}>
+                <TouchableOpacity activeOpacity={0.9} style={styles.btn} onPress={() => 
+                    navigation.navigate('search_lost_tems')
+                    }>
                     <Image
-                        source={colorScheme === 'light' ? require("../assets/images/find_btn.png") : require("../assets/images/find_btn.png")}
+                        source={colorScheme === 'light' ? require("../assets/images/find_icon.png") : require("../assets/images/find_icon.png")}
                         style={{
-                            width: 115, height: '100%',
+                            width:'20%', height:'50%',
                             borderRadius: 16
                         }}
                         resizeMode='contain'
@@ -191,6 +183,7 @@ const styles = StyleSheet.create({
     text_holder: {
         fontSize: 24,
         fontFamily: "Inter_700Bold",
+        width:'80%'
         // textAlign: 'center',
         // marginBottom: '5%'
     },
@@ -241,7 +234,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         marginTop:'5%',
-        height: 92
+        height: 92,
+        justifyContent:'space-between',
     },
 
 

@@ -41,7 +41,7 @@ const SearchLostItems = ({ navigation }) => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            title: "",
+            title: "Поиск потерянных вещей",
             headerShadowVisible: false,
             headerStyle: {
                 backgroundColor: colorScheme === 'light' ? '#f2f2f2' : '#17171C'

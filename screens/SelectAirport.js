@@ -70,7 +70,8 @@ const SelectAirport = ({ navigation }) => {
         navigation.dispatch(
             CommonActions.reset({
                 index: 0,
-                routes: [{ name: "select_terminal" }]
+                routes: [{ name: "select_service" }]
+                // routes: [{ name: "select_terminal" }]
             }));
     }
 

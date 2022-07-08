@@ -20,17 +20,23 @@ const CodeScreen = ({ navigation, route }) => {
     const [code, setCode] = useState('');
     const [verify, setVerify] = useState(true);
 
-    const Click = (num) => {
-        if (num === 'del') {
-            if (code.length > 0) {
-                setCode(code.slice(0, -1));
-            }
-        } else {
-            if (code.length < 4) {
-                setCode(code + num);
-            }
-        }
-    };
+    // const Click = (num) => {
+    //     if (num === 'del') {
+    //         if (code.length > 0) {
+    //             setCode(code.slice(0, -1));
+    //         }
+    //     } else {
+    //         if (code.length < 4) {
+    //             console.log('kdd')
+    //             setCode(code + num);
+    //             console.log(code)
+    //         }
+    //     }
+    // };
+
+    const Click2 = (num) => {
+        setCode(num)
+    }
 
     useEffect(() => {
         if (code.length === 4) {
@@ -47,7 +53,7 @@ const CodeScreen = ({ navigation, route }) => {
                         await AsyncStorage.setItem("first_name", res.data.doc.first_name);
                         await AsyncStorage.setItem("first_join", "true");
                     }
-                    if (res.data.qr.qr != null){
+                    if (res.data.qr.qr != null) {
                         await AsyncStorage.setItem("qr", res.data.qr.qr);
                     }
                     // if (res.data.doc.how_get != null) {
@@ -110,24 +116,26 @@ const CodeScreen = ({ navigation, route }) => {
     return (
         <SafeAreaView style={[styles.container, themeContainerStyle]} >
             <StatusBar />
-            <View style={{ flex: 0, alignItems: 'center' }}>
+            <View style={{ alignItems: 'center' }}>
                 <Text style={[styles.title, themeTextStyle]}>Код из СМС</Text>
                 <Text style={[styles.subtext, themeSubTextStyle]} >Введите код из сообщения,</Text>
                 <Text style={[styles.subsubtext, themeSubTextStyle]} >отправленного на номер</Text>
                 <Text style={[styles.subsubtext, themeSubTextStyle]} >{route.params.login}</Text>
             </View>
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-                <TextInput autoFocus style={[styles.inputText, verify ? themeTextStyle : { color: "#9B0000" }]} showSoftInputOnFocus={false} value={code} />
+            <View style={{ justifyContent: 'center', marginTop: '10%' }}>
+                <TextInput keyboardType='number-pad' maxLength={4} textContentType='oneTimeCode' autoFocus style={[styles.inputText, verify ? themeTextStyle : { color: "#9B0000" }]}
+                    onChangeText={(code) => Click2(code)}
+                />
             </View>
-            <View style={{
+            {/* <View style={{
                 bottom: 20,
                 // position: 'absolute',
                 alignItems: 'center'
             }}>
-                {/* <TouchableOpacity onPress={() => navigation.navigate('license')}>
+                <TouchableOpacity onPress={() => navigation.navigate('license')}>
                     <Text style={[{ fontFamily: 'Inter_700Bold', fontSize: 14, textAlign: 'center' }, themeSubTextStyle]} >Отправить код повторно</Text>
-                </TouchableOpacity> */}
-                <View style={styles.keyboard}>
+                </TouchableOpacity> 
+               <View style={styles.keyboard}>
                     <View style={styles.row} >
                         <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('1')}  ><Text style={[styles.num, themeTextStyle]} >1</Text></TouchableOpacity>
                         <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('2')}><Text style={[styles.num, themeTextStyle]}>2</Text></TouchableOpacity>
@@ -148,8 +156,8 @@ const CodeScreen = ({ navigation, route }) => {
                         <TouchableOpacity style={[styles.btn, themeContainerSelectStyle]} activeOpacity={0.5} onPress={() => Click('0')}><Text style={[styles.num, themeTextStyle]}>0</Text></TouchableOpacity>
                         <TouchableOpacity style={[styles.btn, themeContainerStyle]} activeOpacity={0.5} onPress={() => Click('del')}><Ionicons name="backspace-outline" size={28} color={colorScheme === 'light' ? '#F5CB57' : '#F2F2F3'} /></TouchableOpacity>
                     </View>
-                </View>
-            </View>
+                </View> 
+            </View> */}
         </SafeAreaView>
     )
 }
