@@ -50,7 +50,7 @@ const QRCodeTakeScreen = ({ navigation }) => {
                     index: 0,
                     routes: [{ name: "select_terminal" }]
                 }))} >
-                <Text style={[{ fontFamily: 'Inter_700Bold' }, themeTextStyle]}>Перейти к заказу</Text>
+                <Text style={[{ fontFamily: 'Inter_700Bold' }, themeTextStyle]}>Перейти к заказам</Text>
             </TouchableOpacity>
         </View>
     )

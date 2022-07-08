@@ -85,8 +85,6 @@ const SelectService = ({ navigation, route }) => {
                         )
                     }
                 })
-                const res = await axios.get(domain + "/get_terminals", { params: { "iata": airport_iata }, headers: { "Authorization": "Token " + token } })
-                setTerminals(res.data)
             } else {
                 let { status } = await Location.requestForegroundPermissionsAsync();
                 if (status !== 'granted') {
@@ -113,8 +111,6 @@ const SelectService = ({ navigation, route }) => {
                             )
                         }
                     })
-                    const term = await axios.get(domain + "/get_terminals", { params: { "iata": air.iata }, headers: { "Authorization": "Token " + token } })
-                    setTerminals(term.data);
                 }
             }
         })();
